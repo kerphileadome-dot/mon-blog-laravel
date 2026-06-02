@@ -27,8 +27,6 @@
                         @csrf
                         <button class="btn-ghost">Déconnexion</button>
                     </form>
-                @else
-                    <a href="{{ route('login') }}" class="btn-ghost">Connexion</a>
                 @endauth
             </div>
         </div>
