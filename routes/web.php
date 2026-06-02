@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Route;
 // Page d'accueil
 Route::get('/', [PostController::class, 'index'])->name('posts.index');
 
+// Route temporaire pour créer l'admin (à supprimer après usage)
+Route::get('/create-admin-account', function () {
+    if (\App\Models\User::where('email', 'kerphilesaint@gmail.com')->exists()) {
+        return 'Le compte admin existe déjà !';
+    }
+
+    \App\Models\User::create([
+        'name' => 'Kerphile Saint',
+        'email' => 'kerphilesaint@gmail.com',
+        'password' => bcrypt('password'),
+        'role' => 'admin',
+        'email_verified_at' => now(),
+    ]);
+
+    return 'Compte admin créé avec succès ! Email: kerphilesaint@gmail.com / Mot de passe: password';
+});
+
 // Routes Admin (protégées)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
