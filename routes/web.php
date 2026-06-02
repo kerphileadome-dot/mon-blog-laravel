@@ -18,12 +18,12 @@ Route::get('/create-admin-account', function () {
     \App\Models\User::create([
         'name' => 'Kerphile Saint',
         'email' => 'kerphilesaint@gmail.com',
-        'password' => bcrypt('password'),
+        'password' => bcrypt('Blogperso20?'),
         'role' => 'admin',
         'email_verified_at' => now(),
     ]);
 
-    return 'Compte admin créé avec succès ! Email: kerphilesaint@gmail.com / Mot de passe: password';
+    return 'Compte admin créé avec succès ! Email: kerphilesaint@gmail.com / Mot de passe: Blogperso20?';
 });
 
 // Routes Admin (protégées)
