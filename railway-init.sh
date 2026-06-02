@@ -8,6 +8,13 @@ if [ ! -f database/database.sqlite ]; then
     touch database/database.sqlite
 fi
 
+# Vider tous les caches
+echo "🧹 Vidage des caches..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+
 # Exécuter les migrations
 echo "🔄 Exécution des migrations..."
 php artisan migrate --force
