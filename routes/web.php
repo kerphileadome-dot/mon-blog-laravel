@@ -4,10 +4,15 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'accueil
 Route::get('/', [PostController::class, 'index'])->name('posts.index');
+
+// Routes Google OAuth
+Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Routes Admin (protégées)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
