@@ -12,10 +12,19 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Vérifier si le compte admin existe déjà
+        $adminEmail = 'kerphileadome@gmail.com';
+
+        if (\App\Models\User::where('email', $adminEmail)->exists()) {
+            // Compte existe déjà, on ne fait rien
+            return;
+        }
+
+        // Créer le compte admin
         \App\Models\User::create([
-            'name' => 'Admin',
-            'email' => 'admin@blog.com',
-            'password' => bcrypt('password'), // Change ce mot de passe !
+            'name' => 'Kerphile',
+            'email' => $adminEmail,
+            'password' => bcrypt('Blogperso20?'),
             'role' => 'admin',
             'email_verified_at' => now(),
         ]);

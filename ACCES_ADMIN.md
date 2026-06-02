@@ -38,7 +38,7 @@ https://web-production-c5c2f.up.railway.app/login
 - Gérer le blog
 
 **Identifiants :**
-- Email : **kerphilesaint@gmail.com**
+- Email : **kerphileadome@gmail.com**
 - Mot de passe : **Blogperso20?**
 
 ---
