@@ -18,6 +18,9 @@ class DashboardController extends Controller
             'total_comments' => Comment::count(),
             'pending_comments' => Comment::where('approved', false)->count(),
             'total_views' => Post::sum('views'),
+            'total_users' => \App\Models\User::where('role', 'visitor')->count(),
+            'total_likes' => \App\Models\Like::count(),
+            'total_favorites' => \App\Models\Favorite::count(),
         ];
 
         $recentPosts = Post::with(['comments', 'likes'])
@@ -25,13 +28,23 @@ class DashboardController extends Controller
                            ->take(5)
                            ->get();
 
+        $popularPosts = Post::where('published', true)
+                           ->orderBy('views', 'desc')
+                           ->take(5)
+                           ->get();
+
+        $recentUsers = \App\Models\User::where('role', 'visitor')
+                                       ->latest()
+                                       ->take(5)
+                                       ->get();
+
         $pendingComments = Comment::where('approved', false)
                                   ->with('post')
                                   ->latest()
                                   ->take(10)
                                   ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentPosts', 'pendingComments'));
+        return view('admin.dashboard', compact('stats', 'recentPosts', 'popularPosts', 'recentUsers', 'pendingComments'));
     }
 
     public function posts()

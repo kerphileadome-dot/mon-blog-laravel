@@ -35,6 +35,14 @@
         </div>
 
         <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $stats['total_users'] }}</div>
+                <div class="stat-label">Utilisateurs</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
             <div class="stat-icon">💬</div>
             <div class="stat-content">
                 <div class="stat-value">{{ $stats['total_comments'] }}</div>
@@ -57,6 +65,22 @@
                 <div class="stat-label">Vues totales</div>
             </div>
         </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">❤️</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $stats['total_likes'] }}</div>
+                <div class="stat-label">Likes</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $stats['total_favorites'] }}</div>
+                <div class="stat-label">Favoris</div>
+            </div>
+        </div>
     </div>
 
     <!-- Navigation rapide -->
@@ -69,6 +93,9 @@
         </a>
         <a href="{{ route('admin.comments') }}" class="admin-btn admin-btn-secondary">
             💬 Gérer les commentaires
+        </a>
+        <a href="{{ route('admin.users.index') }}" class="admin-btn admin-btn-secondary">
+            👥 Gérer les utilisateurs
         </a>
     </div>
 
