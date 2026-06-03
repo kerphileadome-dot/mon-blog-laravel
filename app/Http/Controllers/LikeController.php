@@ -11,15 +11,18 @@ class LikeController extends Controller
     // Ajouter ou retirer un like
     public function toggle(Post $post)
     {
-        $ip = request()->ip();
+        $userId = auth()->id();
 
-        $like = $post->likes()->where('ip_address', $ip)->first();
+        $like = $post->likes()->where('user_id', $userId)->first();
 
         if ($like) {
             $like->delete();
             $message = 'Like retiré !';
         } else {
-            $post->likes()->create(['ip_address' => $ip]);
+            $post->likes()->create([
+                'user_id' => $userId,
+                'ip_address' => request()->ip()
+            ]);
             $message = 'Article liké !';
         }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KerpheX · Inscription</title>
+    <title>KerpheX · Connexion Admin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="blog-body" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
@@ -19,77 +19,70 @@
                 <span>{{ config('app.name') }}</span>
             </a>
             <p style="color:var(--text-muted);margin-top:0.75rem;font-size:0.9rem;">
-                Créez votre compte pour accéder aux articles.
+                🔐 Connexion Administrateur
             </p>
         </div>
 
         <!-- Card -->
         <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;">
 
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
-
-                <!-- Nom -->
-                <div style="margin-bottom:1.25rem;">
-                    <label class="field-label">Nom</label>
-                    <input type="text" name="name"
-                        class="form-input"
-                        value="{{ old('name') }}"
-                        placeholder="Votre nom"
-                        required autofocus>
-                    @error('name')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
+            @if(session('error'))
+                <div style="background:#ef4444;color:white;padding:0.75rem;border-radius:0.5rem;margin-bottom:1.5rem;font-size:0.875rem;">
+                    {{ session('error') }}
                 </div>
+            @endif
+
+            <form method="POST" action="{{ route('admin.login.submit') }}">
+                @csrf
 
                 <!-- Email -->
                 <div style="margin-bottom:1.25rem;">
-                    <label class="field-label">Email</label>
+                    <label class="field-label">Email administrateur</label>
                     <input type="email" name="email"
                         class="form-input"
                         value="{{ old('email') }}"
-                        placeholder="votre@email.com"
-                        required>
+                        placeholder="admin@exemple.com"
+                        required autofocus>
                     @error('email')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Mot de passe -->
-                <div style="margin-bottom:1.25rem;">
+                <div style="margin-bottom:1.5rem;">
                     <label class="field-label">Mot de passe</label>
                     <input type="password" name="password"
                         class="form-input"
-                        placeholder="Minimum 8 caractères"
+                        placeholder="••••••••"
                         required>
                     @error('password')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Confirmation -->
+                <!-- Se souvenir -->
                 <div style="margin-bottom:1.5rem;">
-                    <label class="field-label">Confirmer le mot de passe</label>
-                    <input type="password" name="password_confirmation"
-                        class="form-input"
-                        placeholder="Répétez le mot de passe"
-                        required>
+                    <label class="publish-checkbox">
+                        <input type="checkbox" name="remember"
+                            style="width:1rem;height:1rem;accent-color:var(--accent);">
+                        Se souvenir de moi
+                    </label>
                 </div>
 
                 <!-- Bouton -->
                 <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;">
-                    Créer mon compte →
+                    Se connecter au panel admin →
                 </button>
 
             </form>
 
         </div>
 
-        <!-- Lien login -->
+        <!-- Lien visiteur -->
         <p style="text-align:center;margin-top:1.5rem;color:var(--text-dim);font-size:0.875rem;">
-            Déjà un compte ?
+            Vous êtes visiteur ?
             <a href="{{ route('login') }}" style="color:var(--accent);text-decoration:none;">
-                Se connecter
+                Connexion visiteur
             </a>
         </p>
 

@@ -8,11 +8,17 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'accueil
 Route::get('/', [PostController::class, 'index'])->name('posts.index');
+
+// Routes de connexion Admin séparées
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login')->middleware('guest');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit')->middleware('guest');
+Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
 // Routes Google OAuth
 Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
@@ -41,19 +47,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Bibliothèque de médias
     Route::get('/media', [MediaController::class, 'index'])->name('media.index');
-    Route::post('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::post('/media', [MediaController::class, 'store'])->name('media.store')->middleware('throttle:10,1'); // Max 10 uploads par minute
     Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
     Route::delete('/media/bulk', [MediaController::class, 'bulkDelete'])->name('media.bulk-delete');
 });
 
 // Routes protégées (admin uniquement)
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.delete');
 });
 
 // Articles (après les routes fixes)

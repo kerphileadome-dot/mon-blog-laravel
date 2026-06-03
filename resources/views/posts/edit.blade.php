@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
@@ -6,7 +6,7 @@
 
     <h1 class="write-title">✏️ Modifier l'article</h1>
 
-    <form method="POST" action="{{ route('posts.update', $post) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.posts.update', $post) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 

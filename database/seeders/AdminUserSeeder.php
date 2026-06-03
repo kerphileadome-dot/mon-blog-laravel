@@ -12,21 +12,26 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Vérifier si le compte admin existe déjà
-        $adminEmail = 'kerphileadome@gmail.com';
+        // Créer le compte admin principal
+        $adminEmail = 'kerphilesaint@gmail.com';
 
-        if (\App\Models\User::where('email', $adminEmail)->exists()) {
-            // Compte existe déjà, on ne fait rien
-            return;
+        if (!\App\Models\User::where('email', $adminEmail)->exists()) {
+            $admin = new \App\Models\User();
+            $admin->name = 'Kerphile Admin';
+            $admin->email = $adminEmail;
+            $admin->password = bcrypt('Franklinblog20?');
+            $admin->role = 'admin';
+            $admin->email_verified_at = now();
+            $admin->blocked = false;
+            $admin->save();
         }
 
-        // Créer le compte admin
-        \App\Models\User::create([
-            'name' => 'Kerphile',
-            'email' => $adminEmail,
-            'password' => bcrypt('Blogperso20?'),
-            'role' => 'admin',
-            'email_verified_at' => now(),
-        ]);
+        // S'assurer que kerphileadome@gmail.com est admin aussi (pour Google OAuth)
+        $googleEmail = 'kerphileadome@gmail.com';
+        $googleUser = \App\Models\User::where('email', $googleEmail)->first();
+
+        if ($googleUser) {
+            $googleUser->update(['role' => 'admin', 'blocked' => false]);
+        }
     }
 }

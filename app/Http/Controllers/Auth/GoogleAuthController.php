@@ -29,28 +29,33 @@ class GoogleAuthController extends Controller
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
+                // Vérifier si l'utilisateur est bloqué
+                if ($user->blocked) {
+                    return redirect()->route('login')->with('error', 'Votre compte a été bloqué. Contactez l\'administrateur.');
+                }
+
                 // L'utilisateur existe déjà
                 Auth::login($user);
             } else {
-                // Créer un nouveau compte uniquement si l'email est autorisé
-                // Pour un blog personnel, on limite à ton email
-                if ($googleUser->getEmail() === 'kerphileadome@gmail.com') {
-                    $user = User::create([
-                        'name' => $googleUser->getName(),
-                        'email' => $googleUser->getEmail(),
-                        'password' => bcrypt(uniqid()), // Mot de passe aléatoire (non utilisé)
-                        'role' => 'admin',
-                        'email_verified_at' => now(),
-                    ]);
+                // Créer un nouveau compte visiteur via Google
+                $user = new User();
+                $user->name = $googleUser->getName();
+                $user->email = $googleUser->getEmail();
+                $user->password = bcrypt(uniqid()); // Mot de passe aléatoire (non utilisé)
+                $user->role = $googleUser->getEmail() === 'kerphileadome@gmail.com' ? 'admin' : 'visitor';
+                $user->email_verified_at = now();
+                $user->blocked = false;
+                $user->save();
 
-                    Auth::login($user);
-                } else {
-                    // Email non autorisé
-                    return redirect()->route('login')->with('error', 'Accès non autorisé. Seul l\'administrateur peut se connecter.');
-                }
+                Auth::login($user);
             }
 
-            return redirect()->route('admin.dashboard');
+            // Rediriger selon le rôle
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            } else {
+                return redirect()->route('posts.index')->with('success', 'Bienvenue sur le blog !');
+            }
 
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');

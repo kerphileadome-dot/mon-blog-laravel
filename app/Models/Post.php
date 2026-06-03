@@ -21,6 +21,7 @@ class Post extends Model
 
     protected $casts = [
         'published' => 'boolean',
+        'views' => 'integer',
     ];
 
     // Relation avec l'auteur
@@ -42,6 +43,12 @@ class Post extends Model
     }
 
     // Relation avec les favoris
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    // Relation avec les utilisateurs qui ont mis en favori
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
@@ -51,6 +58,13 @@ class Post extends Model
     public function isFavoritedBy($user)
     {
         return $this->favoritedBy()->where('user_id', $user->id)->exists();
+    }
+
+    // Vérifier si un utilisateur a liké cet article
+    public function isLikedBy($user)
+    {
+        if (!$user) return false;
+        return $this->likes()->where('user_id', $user->id)->exists();
     }
 
     // Générer le slug automatiquement

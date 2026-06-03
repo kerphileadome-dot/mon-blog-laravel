@@ -68,33 +68,61 @@ class MediaController extends Controller
             'path' => 'required|string',
         ]);
 
-        $path = $request->path;
+        $path = $request->input('path');
 
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-            return back()->with('success', 'Image supprimée avec succès !');
+        if (!Storage::disk('public')->exists($path)) {
+            return back()->with('error', 'Image introuvable !');
         }
 
-        return back()->with('error', 'Image introuvable !');
+        // Vérifier si l'image est utilisée par un article publié
+        $imageUrl = Storage::url($path);
+        $usedByPost = \App\Models\Post::where('cover_image', $path)
+            ->where('published', true)
+            ->exists();
+
+        if ($usedByPost) {
+            return back()->with('error', 'Cette image est utilisée par un article publié. Impossible de la supprimer.');
+        }
+
+        Storage::disk('public')->delete($path);
+        return back()->with('success', 'Image supprimée avec succès !');
     }
 
     // Supprimer plusieurs fichiers
     public function bulkDelete(Request $request)
     {
         $request->validate([
-            'files' => 'required|array',
+            'files' => 'required|array|max:50', // Limite à 50 fichiers
             'files.*' => 'string',
         ]);
 
         $deletedCount = 0;
+        $skippedCount = 0;
 
-        foreach ($request->files as $file) {
-            if (Storage::disk('public')->exists($file)) {
-                Storage::disk('public')->delete($file);
-                $deletedCount++;
+        foreach ($request->input('files') as $file) {
+            if (!Storage::disk('public')->exists($file)) {
+                continue;
             }
+
+            // Vérifier si utilisé par un article publié
+            $usedByPost = \App\Models\Post::where('cover_image', $file)
+                ->where('published', true)
+                ->exists();
+
+            if ($usedByPost) {
+                $skippedCount++;
+                continue;
+            }
+
+            Storage::disk('public')->delete($file);
+            $deletedCount++;
         }
 
-        return back()->with('success', "$deletedCount image(s) supprimée(s) avec succès !");
+        $message = "$deletedCount image(s) supprimée(s)";
+        if ($skippedCount > 0) {
+            $message .= " ($skippedCount ignorée(s) car utilisée(s))";
+        }
+
+        return back()->with('success', $message);
     }
 }

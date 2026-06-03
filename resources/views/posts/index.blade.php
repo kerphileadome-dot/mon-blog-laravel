@@ -77,7 +77,7 @@
         <p class="empty-title">Aucun article pour l'instant.</p>
         @auth
             @if(auth()->user()->isAdmin())
-                <a href="{{ route('posts.create') }}" class="btn-primary" style="margin-top:1rem;">
+                <a href="{{ route('admin.posts.create') }}" class="btn-primary" style="margin-top:1rem;">
                     + Écrire le premier article
                 </a>
             @endif

@@ -50,6 +50,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Vérifier si l'utilisateur est bloqué
+        if (Auth::user()->blocked) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Votre compte a été bloqué. Contactez l\'administrateur.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

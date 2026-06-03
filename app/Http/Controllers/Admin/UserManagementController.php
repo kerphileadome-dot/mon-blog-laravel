@@ -50,9 +50,9 @@ class UserManagementController extends Controller
             return back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte !');
         }
 
-        // Empêcher de supprimer un admin
+        // Empêcher de supprimer n'importe quel admin
         if ($user->isAdmin()) {
-            return back()->with('error', 'Impossible de supprimer un administrateur !');
+            return back()->with('error', 'Impossible de supprimer un compte administrateur !');
         }
 
         $user->delete();

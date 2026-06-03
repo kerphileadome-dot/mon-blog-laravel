@@ -16,7 +16,7 @@
         <div style="text-align:center;margin-bottom:2.5rem;">
             <a href="{{ route('posts.index') }}" class="blog-logo" style="justify-content:center;">
                 <span class="logo-dot"></span>
-                <span>KerpheX</span>
+                <span>{{ config('app.name') }}</span>
             </a>
             <p style="color:var(--text-muted);margin-top:0.75rem;font-size:0.9rem;">
                 Bienvenue ! Connectez-vous pour continuer.
@@ -93,9 +93,19 @@
 
         </div>
 
-        <!-- Message blog personnel -->
+        <!-- Lien inscription -->
         <p style="text-align:center;margin-top:1.5rem;color:var(--text-dim);font-size:0.875rem;">
-            Blog personnel · Connexion administrateur uniquement
+            Pas encore de compte ?
+            <a href="{{ route('register') }}" style="color:var(--accent);text-decoration:none;">
+                S'inscrire
+            </a>
+        </p>
+
+        <!-- Lien admin -->
+        <p style="text-align:center;margin-top:0.75rem;color:var(--text-dim);font-size:0.75rem;">
+            <a href="{{ route('admin.login') }}" style="color:#6b7280;text-decoration:none;">
+                🔐 Accès administrateur
+            </a>
         </p>
 
     </div>

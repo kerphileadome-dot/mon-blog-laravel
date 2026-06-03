@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
 <div class="admin-container">
     <div class="admin-header">
         <h1 class="admin-title">📝 Gestion des articles</h1>
-        <a href="{{ route('posts.create') }}" class="admin-btn admin-btn-primary">➕ Nouvel article</a>
+        <a href="{{ route('admin.posts.create') }}" class="admin-btn admin-btn-primary">➕ Nouvel article</a>
     </div>
 
     <div class="admin-section">

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
@@ -85,7 +85,7 @@
 
     <!-- Navigation rapide -->
     <div class="admin-actions">
-        <a href="{{ route('posts.create') }}" class="admin-btn admin-btn-primary">
+        <a href="{{ route('admin.posts.create') }}" class="admin-btn admin-btn-primary">
             ➕ Nouvel article
         </a>
         <a href="{{ route('admin.posts') }}" class="admin-btn admin-btn-secondary">

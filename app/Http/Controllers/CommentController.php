@@ -12,15 +12,15 @@ class CommentController extends Controller
     public function store(Request $request, Post $post)
     {
         $request->validate([
-            'name' => 'required|max:100',
-            'email' => 'nullable|email',
             'body' => 'required|max:1000',
         ]);
 
         $post->comments()->create([
-            'name'  => $request->name,
-            'email' => $request->email,
+            'user_id' => auth()->id(),
+            'name'  => auth()->user()->name,
+            'email' => auth()->user()->email,
             'body'  => $request->body,
+            'approved' => true, // Auto-approuvé pour les utilisateurs connectés
         ]);
 
         return back()->with('success', 'Commentaire ajouté !');

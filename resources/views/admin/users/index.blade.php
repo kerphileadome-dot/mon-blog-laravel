@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div style="max-width:1400px;margin:0 auto;padding:2rem;">
@@ -18,19 +18,19 @@
         </div>
     @endif
 
-    <div style="background:white;border-radius:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);overflow:hidden;">
-        <table style="width:100%;border-collapse:collapse;">
+    <div style="background:white;border-radius:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);overflow-x:auto;">
+        <table style="width:100%;min-width:1200px;border-collapse:collapse;">
             <thead style="background:#f9fafb;">
                 <tr>
-                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;">Nom</th>
-                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;">Email</th>
-                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;">Rôle</th>
-                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;">Articles</th>
-                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;">Commentaires</th>
-                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;">Favoris</th>
-                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;">Inscription</th>
-                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;">Statut</th>
-                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;">Actions</th>
+                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;white-space:nowrap;">Nom</th>
+                    <th style="padding:1rem;text-align:left;font-weight:600;color:#374151;white-space:nowrap;">Email</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;">Rôle</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;">Articles</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;">Commentaires</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;">Favoris</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;">Inscription</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;">Statut</th>
+                    <th style="padding:1rem;text-align:center;font-weight:600;color:#374151;white-space:nowrap;min-width:280px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,16 +50,16 @@
                         <td style="padding:1rem;text-align:center;">{{ $user->posts_count }}</td>
                         <td style="padding:1rem;text-align:center;">{{ $user->comments_count }}</td>
                         <td style="padding:1rem;text-align:center;">{{ $user->favorites_count }}</td>
-                        <td style="padding:1rem;color:#6b7280;font-size:0.875rem;">{{ $user->created_at->format('d/m/Y') }}</td>
-                        <td style="padding:1rem;">
+                        <td style="padding:1rem;color:#6b7280;font-size:0.875rem;white-space:nowrap;">{{ $user->created_at->format('d/m/Y') }}</td>
+                        <td style="padding:1rem;text-align:center;white-space:nowrap;">
                             @if($user->blocked)
                                 <span style="background:#ef4444;color:white;padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.75rem;font-weight:600;">Bloqué</span>
                             @else
                                 <span style="background:#10b981;color:white;padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.75rem;font-weight:600;">Actif</span>
                             @endif
                         </td>
-                        <td style="padding:1rem;text-align:center;">
-                            <div style="display:flex;gap:0.5rem;justify-content:center;">
+                        <td style="padding:1rem;white-space:nowrap;">
+                            <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:nowrap;">
                                 <a href="{{ route('admin.users.show', $user) }}" style="background:#3b82f6;color:white;padding:0.5rem 1rem;border-radius:0.5rem;text-decoration:none;font-size:0.875rem;">
                                     👁️ Voir
                                 </a>

@@ -26,11 +26,12 @@ class PostController extends Controller
         }
 
         $post->increment('views');
-        $comments = $post->comments()->where('approved', true)->latest()->get();
+        $comments = $post->comments()->where('approved', true)->whereNull('parent_id')->with('replies')->latest()->get();
         $likesCount = $post->likes()->count();
-        $isFavorited = auth()->check() ? $post->isFavoritedBy(auth()->user()) : false;
+        $isLiked = $post->isLikedBy(auth()->user());
+        $isFavorited = $post->isFavoritedBy(auth()->user());
 
-        return view('posts.show', compact('post', 'comments', 'likesCount', 'isFavorited'));
+        return view('posts.show', compact('post', 'comments', 'likesCount', 'isLiked', 'isFavorited'));
     }
 
     public function create()

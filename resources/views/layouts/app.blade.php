@@ -13,9 +13,11 @@
 
     <nav class="blog-nav">
         <div class="nav-inner">
-            <a href="{{ route('posts.index') }}" class="blog-logo">
-                <span class="logo-dot"></span>
-                <span>{{ config('app.name') }}</span>
+            <a href="{{ route('posts.index') }}" style="display:flex;align-items:center;gap:0.75rem;text-decoration:none;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg, #00bf72 0%, #00a862 100%);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1.1rem;box-shadow:0 2px 8px rgba(0,191,114,0.25);">
+                    K
+                </div>
+                <span style="font-size:1.25rem;font-weight:700;color:var(--text-primary);">{{ config('app.name') }}</span>
             </a>
             <div class="nav-links">
                 @auth
@@ -26,7 +28,7 @@
                         <a href="{{ route('admin.users.index') }}" class="btn-ghost">👥 Utilisateurs</a>
                         <a href="{{ route('admin.media.index') }}" class="btn-ghost">🖼️ Médias</a>
                         <a href="{{ route('admin.settings.index') }}" class="btn-ghost">⚙️ Paramètres</a>
-                        <a href="{{ route('posts.create') }}" class="btn-primary">+ Nouvel article</a>
+                        <a href="{{ route('admin.posts.create') }}" class="btn-primary">+ Nouvel article</a>
                     @else
                         <a href="{{ route('favorites.index') }}" class="btn-ghost">⭐ Mes Favoris</a>
                     @endif
