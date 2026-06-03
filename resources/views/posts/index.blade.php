@@ -76,9 +76,11 @@
         <div class="empty-icon">📭</div>
         <p class="empty-title">Aucun article pour l'instant.</p>
         @auth
-            <a href="{{ route('posts.create') }}" class="btn-primary" style="margin-top:1rem;">
-                + Écrire le premier article
-            </a>
+            @if(auth()->user()->isAdmin())
+                <a href="{{ route('posts.create') }}" class="btn-primary" style="margin-top:1rem;">
+                    + Écrire le premier article
+                </a>
+            @endif
         @endauth
     </div>
 @endif
