@@ -37,25 +37,21 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->role = 'visitor'; // Par défaut, tous les nouveaux utilisateurs sont des visiteurs
-        $user->save();
-
-        event(new Registered($user));
-
-        // Envoyer l'email de bienvenue (désactivé en production si MAIL_MAILER=log)
         try {
-            $user->notify(new WelcomeNotification());
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->role = 'visitor';
+            $user->blocked = false;
+            $user->save();
+
+            Auth::login($user);
+
+            return redirect()->route('posts.index')->with('success', 'Bienvenue sur le blog !');
         } catch (\Exception $e) {
-            // Email échoué mais on continue l'inscription
-            \Log::warning('Email de bienvenue non envoyé: ' . $e->getMessage());
+            \Log::error('Erreur inscription: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['email' => 'Une erreur est survenue. Réessayez.']);
         }
-
-        Auth::login($user);
-
-        return redirect(route('posts.index', absolute: false))->with('success', 'Bienvenue sur le blog !');
     }
 }
