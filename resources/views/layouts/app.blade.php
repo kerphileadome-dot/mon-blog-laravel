@@ -22,11 +22,16 @@
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="btn-ghost">📊 Dashboard</a>
                         <a href="{{ route('posts.create') }}" class="btn-primary">+ Nouvel article</a>
+                    @else
+                        <a href="{{ route('favorites.index') }}" class="btn-ghost">⭐ Mes Favoris</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button class="btn-ghost">Déconnexion</button>
                     </form>
+                @else
+                    <a href="{{ route('login') }}" class="btn-ghost">Se connecter</a>
+                    <a href="{{ route('register') }}" class="btn-primary">S'inscrire</a>
                 @endauth
             </div>
         </div>

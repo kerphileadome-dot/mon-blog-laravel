@@ -20,10 +20,17 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        // Seuls les utilisateurs connectés peuvent lire les articles
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Vous devez créer un compte ou vous connecter pour lire les articles.');
+        }
+
         $post->increment('views');
         $comments = $post->comments()->where('approved', true)->latest()->get();
         $likesCount = $post->likes()->count();
-        return view('posts.show', compact('post', 'comments', 'likesCount'));
+        $isFavorited = auth()->check() ? $post->isFavoritedBy(auth()->user()) : false;
+
+        return view('posts.show', compact('post', 'comments', 'likesCount', 'isFavorited'));
     }
 
     public function create()

@@ -41,6 +41,18 @@ class Post extends Model
         return $this->hasMany(Like::class);
     }
 
+    // Relation avec les favoris
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+
+    // Vérifier si un utilisateur a mis cet article en favori
+    public function isFavoritedBy($user)
+    {
+        return $this->favoritedBy()->where('user_id', $user->id)->exists();
+    }
+
     // Générer le slug automatiquement
     public static function boot()
     {

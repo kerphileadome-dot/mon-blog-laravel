@@ -3,6 +3,7 @@
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
@@ -36,8 +37,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Articles (après les routes fixes)
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
-// Commentaires et Likes (public)
-Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
+// Commentaires et Likes (utilisateurs connectés)
+Route::middleware('auth')->group(function () {
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
+    Route::post('/posts/{post}/favorite', [FavoriteController::class, 'toggle'])->name('posts.favorite');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+});
 
 require __DIR__.'/auth.php';

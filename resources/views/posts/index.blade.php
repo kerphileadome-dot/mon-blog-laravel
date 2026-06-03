@@ -22,14 +22,28 @@
                     @else
                         <div class="card-gradient {{ $grad }}">📝</div>
                     @endif
+                    @guest
+                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;border-radius:1rem 1rem 0 0;">
+                            <div style="text-align:center;color:white;">
+                                <div style="font-size:3rem;margin-bottom:0.5rem;">🔒</div>
+                                <p style="font-size:0.9rem;font-weight:500;">Connexion requise</p>
+                            </div>
+                        </div>
+                    @endguest
                 </div>
                 <div class="card-body">
                     @if($post->category)
                         <div class="card-category">{{ $post->category }}</div>
                     @endif
-                    <a href="{{ route('posts.show', $post) }}" class="card-title">
-                        {{ $post->title }}
-                    </a>
+                    @auth
+                        <a href="{{ route('posts.show', $post) }}" class="card-title">
+                            {{ $post->title }}
+                        </a>
+                    @else
+                        <div class="card-title" style="cursor:not-allowed;opacity:0.6;">
+                            {{ $post->title }}
+                        </div>
+                    @endauth
                     <p class="card-excerpt">
                         {{ $post->excerpt ?? Str::limit(strip_tags($post->content), 100) }}
                     </p>
@@ -41,6 +55,13 @@
                             <span>💬 {{ $post->comments->count() }}</span>
                         </div>
                     </div>
+                    @guest
+                        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);">
+                            <a href="{{ route('register') }}" class="btn-primary" style="width:100%;text-align:center;display:block;font-size:0.875rem;">
+                                Créer un compte pour lire
+                            </a>
+                        </div>
+                    @endguest
                 </div>
             </article>
         @endforeach

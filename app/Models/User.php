@@ -38,6 +38,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Relation avec les favoris
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Articles favoris
+     */
+    public function favoritePosts()
+    {
+        return $this->belongsToMany(Post::class, 'favorites')->withTimestamps();
+    }
+
+    /**
+     * Vérifier si un article est en favoris
+     */
+    public function hasFavorited(Post $post): bool
+    {
+        return $this->favoritePosts()->where('post_id', $post->id)->exists();
+    }
+
+    /**
      * Vérifier si l'utilisateur est admin
      */
     public function isAdmin(): bool

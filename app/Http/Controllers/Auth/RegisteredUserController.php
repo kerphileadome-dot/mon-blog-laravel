@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\WelcomeNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,12 +41,16 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'visitor', // Par défaut, tous les nouveaux utilisateurs sont des visiteurs
         ]);
 
         event(new Registered($user));
 
+        // Envoyer l'email de bienvenue
+        $user->notify(new WelcomeNotification());
+
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('posts.index', absolute: false))->with('success', 'Bienvenue sur le blog ! Consultez votre email pour confirmer votre inscription.');
     }
 }
