@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div style="max-width:1000px;margin:0 auto;padding:2rem;">
