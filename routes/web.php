@@ -7,6 +7,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::get('/settings/export-users', [SettingsController::class, 'exportUsers'])->name('settings.export-users');
     Route::get('/settings/export-stats', [SettingsController::class, 'exportStats'])->name('settings.export-stats');
+
+    // Bibliothèque de médias
+    Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+    Route::post('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
+    Route::delete('/media/bulk', [MediaController::class, 'bulkDelete'])->name('media.bulk-delete');
 });
 
 // Routes protégées (admin uniquement)
