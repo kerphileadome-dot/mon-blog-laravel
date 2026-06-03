@@ -44,8 +44,8 @@
                             <td>{{ $post->comments->count() }}</td>
                             <td>{{ $post->created_at->format('d/m/Y') }}</td>
                             <td class="action-buttons">
-                                <a href="{{ route('posts.edit', $post) }}" class="action-btn" title="Modifier">✏️</a>
-                                <form method="POST" action="{{ route('posts.destroy', $post) }}" class="inline">
+                                <a href="{{ route('admin.posts.edit', $post) }}" class="action-btn" title="Modifier">✏️</a>
+                                <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button class="action-btn" onclick="return confirm('Supprimer cet article ?')" title="Supprimer">🗑️</button>

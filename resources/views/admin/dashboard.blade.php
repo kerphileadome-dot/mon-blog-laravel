@@ -135,7 +135,7 @@
                             <td>{{ $post->comments->count() }}</td>
                             <td>{{ $post->created_at->format('d/m/Y') }}</td>
                             <td>
-                                <a href="{{ route('posts.edit', $post) }}" class="action-btn">✏️</a>
+                                <a href="{{ route('admin.posts.edit', $post) }}" class="action-btn">✏️</a>
                             </td>
                         </tr>
                     @empty
