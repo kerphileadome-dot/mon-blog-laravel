@@ -36,13 +36,13 @@ class PostController extends Controller
 
     public function create()
     {
-        $this->authorize('create', Post::class);
+        // Pas d'autorisation ici, déjà géré par le middleware admin
         return view('posts.create');
     }
 
     public function store(Request $request)
     {
-        $this->authorize('create', Post::class);
+        // Pas d'autorisation ici, déjà géré par le middleware admin
 
         $request->validate([
             'title'       => 'required|max:255',
@@ -67,18 +67,18 @@ class PostController extends Controller
             'published'   => $request->has('published'),
         ]);
 
-        return redirect()->route('posts.index')->with('success', 'Article publié avec succès !');
+        return redirect()->route('admin.dashboard')->with('success', 'Article publié avec succès !');
     }
 
     public function edit(Post $post)
     {
-        $this->authorize('update', $post);
+        // Pas d'autorisation ici, déjà géré par le middleware admin
         return view('posts.edit', compact('post'));
     }
 
     public function update(Request $request, Post $post)
     {
-        $this->authorize('update', $post);
+        // Pas d'autorisation ici, déjà géré par le middleware admin
 
         $request->validate([
             'title'       => 'required|max:255',
@@ -109,12 +109,12 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        $this->authorize('delete', $post);
+        // Pas d'autorisation ici, déjà géré par le middleware admin
 
         if ($post->cover_image) {
             Storage::disk('public')->delete($post->cover_image);
         }
         $post->delete();
-        return redirect()->route('posts.index')->with('success', 'Article supprimé !');
+        return redirect()->route('admin.dashboard')->with('success', 'Article supprimé !');
     }
 }
