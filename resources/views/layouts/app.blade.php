@@ -21,6 +21,11 @@
                 @auth
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="btn-ghost">📊 Dashboard</a>
+                        <a href="{{ route('admin.posts') }}" class="btn-ghost">📝 Articles</a>
+                        <a href="{{ route('admin.comments') }}" class="btn-ghost">💬 Commentaires</a>
+                        <a href="{{ route('admin.users.index') }}" class="btn-ghost">👥 Utilisateurs</a>
+                        <a href="{{ route('admin.media.index') }}" class="btn-ghost">🖼️ Médias</a>
+                        <a href="{{ route('admin.settings.index') }}" class="btn-ghost">⚙️ Paramètres</a>
                         <a href="{{ route('posts.create') }}" class="btn-primary">+ Nouvel article</a>
                     @else
                         <a href="{{ route('favorites.index') }}" class="btn-ghost">⭐ Mes Favoris</a>
