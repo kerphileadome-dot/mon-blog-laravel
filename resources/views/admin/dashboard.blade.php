@@ -170,7 +170,7 @@
                                 @csrf
                                 <button class="btn-approve">✅ Approuver</button>
                             </form>
-                            <form method="POST" action="{{ route('comments.destroy', $comment) }}" class="inline">
+                            <form method="POST" action="{{ route('admin.comments.delete', $comment) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn-delete" onclick="return confirm('Supprimer ce commentaire ?')">🗑️ Supprimer</button>

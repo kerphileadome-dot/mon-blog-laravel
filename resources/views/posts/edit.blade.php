@@ -132,6 +132,4 @@ function previewImage(input) {
 }
 </script>
 
-@endsection<a href="{{ route('posts.index') }}" class="back-link">← Retour aux articles</a>
-
 @endsection

@@ -55,11 +55,13 @@
                             </span>
                         </div>
                         @auth
-                            <form method="POST" action="{{ route('comments.destroy', $comment) }}">
+                            @if(auth()->user()->role === 'admin')
+                            <form method="POST" action="{{ route('admin.comments.delete', $comment) }}">
                                 @csrf
                                 @method('DELETE')
                                 <button class="action-link danger" style="font-size:0.8rem;">✕</button>
                             </form>
+                            @endif
                         @endauth
                     </div>
                     <p class="comment-body">{{ $comment->body }}</p>
@@ -154,12 +156,13 @@
 
         {{-- Actions admin --}}
         @auth
+            @if(auth()->user()->role === 'admin')
             <div class="sidebar-card">
                 <p class="sidebar-title">Administration</p>
-                <a href="{{ route('posts.edit', $post) }}" class="action-link">
+                <a href="{{ route('admin.posts.edit', $post) }}" class="action-link">
                     ✏️ Modifier l'article
                 </a>
-                <form method="POST" action="{{ route('posts.destroy', $post) }}">
+                <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
                     @csrf
                     @method('DELETE')
                     <button class="action-link danger"
@@ -168,6 +171,7 @@
                     </button>
                 </form>
             </div>
+            @endif
         @endauth
 
     </aside>

@@ -13,10 +13,10 @@ class FavoriteController extends Controller
         $user = auth()->user();
 
         if ($user->hasFavorited($post)) {
-            $user->favorites()->detach($post->id);
+            $user->favoritePosts()->detach($post->id);
             return back()->with('success', 'Article retiré des favoris');
         } else {
-            $user->favorites()->attach($post->id);
+            $user->favoritePosts()->attach($post->id);
             return back()->with('success', 'Article ajouté aux favoris');
         }
     }
