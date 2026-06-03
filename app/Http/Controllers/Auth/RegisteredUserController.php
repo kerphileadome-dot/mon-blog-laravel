@@ -46,11 +46,16 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // Envoyer l'email de bienvenue
-        $user->notify(new WelcomeNotification());
+        // Envoyer l'email de bienvenue (désactivé en production si MAIL_MAILER=log)
+        try {
+            $user->notify(new WelcomeNotification());
+        } catch (\Exception $e) {
+            // Email échoué mais on continue l'inscription
+            \Log::warning('Email de bienvenue non envoyé: ' . $e->getMessage());
+        }
 
         Auth::login($user);
 
-        return redirect(route('posts.index', absolute: false))->with('success', 'Bienvenue sur le blog ! Consultez votre email pour confirmer votre inscription.');
+        return redirect(route('posts.index', absolute: false))->with('success', 'Bienvenue sur le blog !');
     }
 }
