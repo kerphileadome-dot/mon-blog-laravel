@@ -76,4 +76,24 @@ class DashboardController extends Controller
         $comment->update(['approved' => false]);
         return back()->with('success', 'Commentaire rejeté !');
     }
+
+    // Répondre à un commentaire
+    public function replyToComment(Request $request, Comment $comment)
+    {
+        $request->validate([
+            'body' => 'required|max:1000',
+        ]);
+
+        Comment::create([
+            'post_id' => $comment->post_id,
+            'parent_id' => $comment->id,
+            'user_id' => auth()->id(),
+            'name' => auth()->user()->name,
+            'email' => auth()->user()->email,
+            'body' => $request->body,
+            'approved' => true, // Auto-approuvé car vient de l'admin
+        ]);
+
+        return back()->with('success', 'Réponse publiée avec succès !');
+    }
 }

@@ -28,6 +28,9 @@
                     <a href="{{ route('admin.users.index') }}" style="color:#6b7280;text-decoration:none;font-weight:500;padding:0.5rem 1rem;border-radius:0.5rem;transition:all 0.2s;{{ request()->routeIs('admin.users.*') ? 'background:#f3f4f6;color:#111827;' : '' }}">
                         👥 Utilisateurs
                     </a>
+                    <a href="{{ route('admin.settings.index') }}" style="color:#6b7280;text-decoration:none;font-weight:500;padding:0.5rem 1rem;border-radius:0.5rem;transition:all 0.2s;{{ request()->routeIs('admin.settings.*') ? 'background:#f3f4f6;color:#111827;' : '' }}">
+                        ⚙️ Paramètres
+                    </a>
                 </div>
             </div>
             <div style="display:flex;gap:1rem;align-items:center;">

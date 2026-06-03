@@ -6,6 +6,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,12 +24,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/comments', [DashboardController::class, 'comments'])->name('comments');
     Route::post('/comments/{comment}/approve', [DashboardController::class, 'approveComment'])->name('comments.approve');
     Route::post('/comments/{comment}/reject', [DashboardController::class, 'rejectComment'])->name('comments.reject');
+    Route::post('/comments/{comment}/reply', [DashboardController::class, 'replyToComment'])->name('comments.reply');
 
     // Gestion des utilisateurs
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show');
     Route::post('/users/{user}/toggle-block', [UserManagementController::class, 'toggleBlock'])->name('users.toggle-block');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+
+    // Paramètres et export
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/settings/export-users', [SettingsController::class, 'exportUsers'])->name('settings.export-users');
+    Route::get('/settings/export-stats', [SettingsController::class, 'exportStats'])->name('settings.export-stats');
 });
 
 // Routes protégées (admin uniquement)

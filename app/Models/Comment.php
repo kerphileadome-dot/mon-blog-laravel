@@ -8,6 +8,8 @@ class Comment extends Model
 {
     protected $fillable = [
         'post_id',
+        'parent_id',
+        'user_id',
         'name',
         'email',
         'body',
@@ -22,5 +24,29 @@ class Comment extends Model
     public function post()
     {
         return $this->belongsTo(Post::class);
+    }
+
+    // Relation avec l'utilisateur (si connecté)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Commentaire parent
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    // Réponses au commentaire
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id')->where('approved', true);
+    }
+
+    // Vérifier si c'est une réponse
+    public function isReply()
+    {
+        return !is_null($this->parent_id);
     }
 }
