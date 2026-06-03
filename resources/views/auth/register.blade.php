@@ -26,62 +26,67 @@
         <!-- Card -->
         <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;">
 
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
+            <!-- Container centré pour tous les champs -->
+            <div style="max-width:320px;margin:0 auto;">
 
-                <!-- Nom -->
-                <div style="margin-bottom:1.25rem;">
-                    <label class="field-label">Nom</label>
-                    <input type="text" name="name"
-                        class="form-input"
-                        value="{{ old('name') }}"
-                        placeholder="Votre nom"
-                        required autofocus>
-                    @error('name')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
 
-                <!-- Email -->
-                <div style="margin-bottom:1.25rem;">
-                    <label class="field-label">Email</label>
-                    <input type="email" name="email"
-                        class="form-input"
-                        value="{{ old('email') }}"
-                        placeholder="votre@email.com"
-                        required>
-                    @error('email')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <!-- Nom -->
+                    <div style="margin-bottom:1.25rem;">
+                        <label class="field-label">Nom</label>
+                        <input type="text" name="name"
+                            class="form-input"
+                            value="{{ old('name') }}"
+                            placeholder="Votre nom"
+                            required autofocus>
+                        @error('name')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <!-- Mot de passe -->
-                <div style="margin-bottom:1.25rem;">
-                    <label class="field-label">Mot de passe</label>
-                    <input type="password" name="password"
-                        class="form-input"
-                        placeholder="Minimum 8 caractères"
-                        required>
-                    @error('password')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <!-- Email -->
+                    <div style="margin-bottom:1.25rem;">
+                        <label class="field-label">Email</label>
+                        <input type="email" name="email"
+                            class="form-input"
+                            value="{{ old('email') }}"
+                            placeholder="votre@email.com"
+                            required>
+                        @error('email')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <!-- Confirmation -->
-                <div style="margin-bottom:1.5rem;">
-                    <label class="field-label">Confirmer le mot de passe</label>
-                    <input type="password" name="password_confirmation"
-                        class="form-input"
-                        placeholder="Répétez le mot de passe"
-                        required>
-                </div>
+                    <!-- Mot de passe -->
+                    <div style="margin-bottom:1.25rem;">
+                        <label class="field-label">Mot de passe</label>
+                        <input type="password" name="password"
+                            class="form-input"
+                            placeholder="Minimum 8 caractères"
+                            required>
+                        @error('password')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <!-- Bouton -->
-                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;">
-                    Créer mon compte →
-                </button>
+                    <!-- Confirmation -->
+                    <div style="margin-bottom:1.5rem;">
+                        <label class="field-label">Confirmer le mot de passe</label>
+                        <input type="password" name="password_confirmation"
+                            class="form-input"
+                            placeholder="Répétez le mot de passe"
+                            required>
+                    </div>
 
-            </form>
+                    <!-- Bouton -->
+                    <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;">
+                        Créer mon compte →
+                    </button>
+
+                </form>
+
+            </div>
 
         </div>
 

@@ -26,55 +26,60 @@
         <!-- Card -->
         <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;">
 
-            @if(session('error'))
-                <div style="background:#ef4444;color:white;padding:0.75rem;border-radius:0.5rem;margin-bottom:1.5rem;font-size:0.875rem;">
-                    {{ session('error') }}
-                </div>
-            @endif
+            <!-- Container centré pour tous les champs -->
+            <div style="max-width:320px;margin:0 auto;">
 
-            <form method="POST" action="{{ route('admin.login.submit') }}">
-                @csrf
+                @if(session('error'))
+                    <div style="background:#ef4444;color:white;padding:0.75rem;border-radius:0.5rem;margin-bottom:1.5rem;font-size:0.875rem;">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-                <!-- Email -->
-                <div style="margin-bottom:1.25rem;">
-                    <label class="field-label">Email administrateur</label>
-                    <input type="email" name="email"
-                        class="form-input"
-                        value="{{ old('email') }}"
-                        placeholder="admin@exemple.com"
-                        required autofocus>
-                    @error('email')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
+                <form method="POST" action="{{ route('admin.login.submit') }}">
+                    @csrf
 
-                <!-- Mot de passe -->
-                <div style="margin-bottom:1.5rem;">
-                    <label class="field-label">Mot de passe</label>
-                    <input type="password" name="password"
-                        class="form-input"
-                        placeholder="••••••••"
-                        required>
-                    @error('password')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <!-- Email -->
+                    <div style="margin-bottom:1.25rem;">
+                        <label class="field-label">Email administrateur</label>
+                        <input type="email" name="email"
+                            class="form-input"
+                            value="{{ old('email') }}"
+                            placeholder="admin@exemple.com"
+                            required autofocus>
+                        @error('email')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <!-- Se souvenir -->
-                <div style="margin-bottom:1.5rem;">
-                    <label class="publish-checkbox">
-                        <input type="checkbox" name="remember"
-                            style="width:1rem;height:1rem;accent-color:var(--accent);">
-                        Se souvenir de moi
-                    </label>
-                </div>
+                    <!-- Mot de passe -->
+                    <div style="margin-bottom:1.5rem;">
+                        <label class="field-label">Mot de passe</label>
+                        <input type="password" name="password"
+                            class="form-input"
+                            placeholder="••••••••"
+                            required>
+                        @error('password')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <!-- Bouton -->
-                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;">
-                    Se connecter au panel admin →
-                </button>
+                    <!-- Se souvenir -->
+                    <div style="margin-bottom:1.5rem;">
+                        <label class="publish-checkbox">
+                            <input type="checkbox" name="remember"
+                                style="width:1rem;height:1rem;accent-color:var(--accent);">
+                            Se souvenir de moi
+                        </label>
+                    </div>
 
-            </form>
+                    <!-- Bouton -->
+                    <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;">
+                        Se connecter au panel admin →
+                    </button>
+
+                </form>
+
+            </div>
 
         </div>
 
