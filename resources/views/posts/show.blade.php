@@ -36,8 +36,8 @@
     {{-- Colonne principale --}}
     <div>
         <div class="article-content">
-            <div class="article-body">
-                {!! nl2br(e($post->content)) !!}
+            <div class="article-body" style="white-space: pre-line;">
+                {{ $post->content }}
             </div>
         </div>
 
