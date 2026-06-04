@@ -36,7 +36,7 @@
     {{-- Colonne principale --}}
     <div>
         <div class="article-content">
-            <div class="article-body" style="white-space: pre-line;">
+            <div class="article-body" style="white-space: pre-line; color: #1a1a1a; font-size: 1.05rem; line-height: 1.8;">
                 {{ $post->content }}
             </div>
         </div>
@@ -64,7 +64,55 @@
                             @endif
                         @endauth
                     </div>
-                    <p class="comment-body">{{ $comment->body }}</p>
+                    <p class="comment-body" style="color: #2d2d2d; font-size: 0.95rem;">{{ $comment->body }}</p>
+
+                    {{-- Bouton répondre pour admin --}}
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                        <button onclick="toggleReplyForm{{ $comment->id }}()"
+                                style="color:var(--accent);background:none;border:none;cursor:pointer;font-size:0.85rem;margin-top:0.5rem;">
+                            💬 Répondre
+                        </button>
+                        <div id="replyForm{{ $comment->id }}" style="display:none;margin-top:1rem;padding:1rem;background:#f9fafb;border-radius:8px;">
+                            <form method="POST" action="{{ route('admin.comments.reply', $comment) }}">
+                                @csrf
+                                <textarea name="body" rows="3" placeholder="Votre réponse *"
+                                    class="form-input" style="margin-bottom:0.75rem;resize:vertical;"
+                                    required></textarea>
+                                <div style="display:flex;gap:0.5rem;">
+                                    <button type="submit" class="btn-primary" style="padding:0.5rem 1rem;font-size:0.875rem;">
+                                        Envoyer
+                                    </button>
+                                    <button type="button" onclick="toggleReplyForm{{ $comment->id }}()"
+                                            class="btn-ghost" style="padding:0.5rem 1rem;font-size:0.875rem;">
+                                        Annuler
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <script>
+                            function toggleReplyForm{{ $comment->id }}() {
+                                const form = document.getElementById('replyForm{{ $comment->id }}');
+                                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                            }
+                        </script>
+                        @endif
+                    @endauth
+
+                    {{-- Afficher les réponses --}}
+                    @if($comment->replies->count() > 0)
+                        <div style="margin-left:2rem;margin-top:1rem;padding-left:1rem;border-left:3px solid var(--border);">
+                            @foreach($comment->replies as $reply)
+                                <div style="margin-bottom:1rem;">
+                                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+                                        <span style="font-weight:600;color:var(--accent);font-size:0.875rem;">{{ $reply->name }}</span>
+                                        <span style="color:var(--text-dim);font-size:0.75rem;">{{ $reply->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <p style="color:#2d2d2d;font-size:0.875rem;">{{ $reply->body }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             @empty
                 <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1.5rem;">
@@ -135,24 +183,28 @@
             @endauth
         </div>
 
-        {{-- Stats --}}
-        <div class="sidebar-card">
-            <p class="sidebar-title">Statistiques</p>
-            <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
-                    <span style="color:var(--text-muted);">👁 Vues</span>
-                    <span style="color:var(--text);font-weight:600;">{{ $post->views }}</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
-                    <span style="color:var(--text-muted);">❤️ Likes</span>
-                    <span style="color:var(--text);font-weight:600;">{{ $likesCount }}</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
-                    <span style="color:var(--text-muted);">💬 Commentaires</span>
-                    <span style="color:var(--text);font-weight:600;">{{ $comments->count() }}</span>
+        {{-- Stats (admin uniquement) --}}
+        @auth
+            @if(auth()->user()->role === 'admin')
+            <div class="sidebar-card">
+                <p class="sidebar-title">Statistiques</p>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
+                        <span style="color:var(--text-muted);">👁 Vues</span>
+                        <span style="color:var(--text);font-weight:600;">{{ $post->views }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
+                        <span style="color:var(--text-muted);">❤️ Likes</span>
+                        <span style="color:var(--text);font-weight:600;">{{ $likesCount }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
+                        <span style="color:var(--text-muted);">💬 Commentaires</span>
+                        <span style="color:var(--text);font-weight:600;">{{ $comments->count() }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
+            @endif
+        @endauth
 
         {{-- Actions admin --}}
         @auth
