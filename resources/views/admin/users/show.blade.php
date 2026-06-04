@@ -1,75 +1,131 @@
 @extends('layouts.admin')
 
 @section('content')
-<div style="max-width:1200px;margin:0 auto;padding:2rem;">
-    <a href="{{ route('admin.users.index') }}" style="color:var(--accent);text-decoration:none;margin-bottom:2rem;display:inline-block;">
-        ← Retour à la liste
-    </a>
 
-    <div style="background:white;border-radius:1rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);margin-bottom:2rem;">
-        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:2rem;">
-            <div>
-                <h1 style="font-size:2rem;font-weight:700;margin-bottom:0.5rem;">{{ $user->name }}</h1>
-                <p style="color:#6b7280;">{{ $user->email }}</p>
-            </div>
-            <div>
-                @if($user->isAdmin())
-                    <span style="background:#3b82f6;color:white;padding:0.5rem 1rem;border-radius:9999px;font-weight:600;">👑 Administrateur</span>
-                @else
-                    <span style="background:#10b981;color:white;padding:0.5rem 1rem;border-radius:9999px;font-weight:600;">👤 Visiteur</span>
-                @endif
-            </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:2rem;">
-            <div style="background:#f9fafb;padding:1.5rem;border-radius:0.75rem;text-align:center;">
-                <div style="font-size:2rem;font-weight:700;color:#3b82f6;">{{ $user->posts->count() }}</div>
-                <div style="color:#6b7280;font-size:0.875rem;margin-top:0.5rem;">Articles publiés</div>
-            </div>
-            <div style="background:#f9fafb;padding:1.5rem;border-radius:0.75rem;text-align:center;">
-                <div style="font-size:2rem;font-weight:700;color:#10b981;">{{ $user->comments->count() }}</div>
-                <div style="color:#6b7280;font-size:0.875rem;margin-top:0.5rem;">Commentaires</div>
-            </div>
-            <div style="background:#f9fafb;padding:1.5rem;border-radius:0.75rem;text-align:center;">
-                <div style="font-size:2rem;font-weight:700;color:#f59e0b;">{{ $user->favorites->count() }}</div>
-                <div style="color:#6b7280;font-size:0.875rem;margin-top:0.5rem;">Favoris</div>
-            </div>
-            <div style="background:#f9fafb;padding:1.5rem;border-radius:0.75rem;text-align:center;">
-                <div style="font-size:1rem;font-weight:700;color:#6b7280;">{{ $user->created_at->format('d/m/Y') }}</div>
-                <div style="color:#6b7280;font-size:0.875rem;margin-top:0.5rem;">Inscrit le</div>
-            </div>
-        </div>
+<div class="admin-container">
+    <div class="admin-header">
+        <h1 class="admin-title">👤 Détails de l'utilisateur</h1>
     </div>
 
-    @if($user->comments->count() > 0)
-        <div style="background:white;border-radius:1rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);margin-bottom:2rem;">
-            <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;">💬 Derniers commentaires</h2>
-            @foreach($user->comments()->latest()->take(5)->get() as $comment)
-                <div style="border-bottom:1px solid #e5e7eb;padding:1rem 0;">
-                    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.5rem;">
-                        <a href="{{ route('posts.show', $comment->post) }}" style="color:#3b82f6;text-decoration:none;font-weight:600;">
-                            {{ $comment->post->title }}
-                        </a>
-                        <span style="color:#6b7280;font-size:0.875rem;">{{ $comment->created_at->diffForHumans() }}</span>
-                    </div>
-                    <p style="color:#374151;">{{ Str::limit($comment->body, 150) }}</p>
+    <div class="admin-section">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem;">
+            <div style="background:white;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;">
+                <div style="font-size:0.875rem;color:#666;margin-bottom:0.5rem;">Nom</div>
+                <div style="font-size:1.25rem;font-weight:600;">{{ $user->name }}</div>
+            </div>
+            <div style="background:white;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;">
+                <div style="font-size:0.875rem;color:#666;margin-bottom:0.5rem;">Email</div>
+                <div style="font-size:1.25rem;font-weight:600;">{{ $user->email }}</div>
+            </div>
+            <div style="background:white;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;">
+                <div style="font-size:0.875rem;color:#666;margin-bottom:0.5rem;">Rôle</div>
+                <div style="font-size:1.25rem;font-weight:600;">
+                    @if($user->role === 'admin')
+                        👑 Admin
+                    @else
+                        👤 Visiteur
+                    @endif
                 </div>
-            @endforeach
-        </div>
-    @endif
-
-    @if($user->favorites->count() > 0)
-        <div style="background:white;border-radius:1rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-            <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;">⭐ Articles favoris</h2>
-            <div style="display:grid;gap:1rem;">
-                @foreach($user->favoritePosts as $post)
-                    <a href="{{ route('posts.show', $post) }}" style="display:flex;justify-content:space-between;padding:1rem;background:#f9fafb;border-radius:0.5rem;text-decoration:none;color:inherit;">
-                        <span style="font-weight:600;">{{ $post->title }}</span>
-                        <span style="color:#6b7280;">👁 {{ $post->views }} vues</span>
-                    </a>
-                @endforeach
+            </div>
+            <div style="background:white;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;">
+                <div style="font-size:0.875rem;color:#666;margin-bottom:0.5rem;">Statut</div>
+                <div style="font-size:1.25rem;font-weight:600;">
+                    @if($user->blocked)
+                        🚫 Bloqué
+                    @else
+                        ✅ Actif
+                    @endif
+                </div>
             </div>
         </div>
-    @endif
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem;">
+            <div style="background:#f9fafb;padding:1.25rem;border-radius:12px;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">📝</div>
+                <div style="font-size:1.5rem;font-weight:700;color:#333;">{{ $user->posts->count() }}</div>
+                <div style="font-size:0.875rem;color:#666;">Articles</div>
+            </div>
+            <div style="background:#f9fafb;padding:1.25rem;border-radius:12px;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">💬</div>
+                <div style="font-size:1.5rem;font-weight:700;color:#333;">{{ $user->comments->count() }}</div>
+                <div style="font-size:0.875rem;color:#666;">Commentaires</div>
+            </div>
+            <div style="background:#f9fafb;padding:1.25rem;border-radius:12px;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">⭐</div>
+                <div style="font-size:1.5rem;font-weight:700;color:#333;">{{ $user->favorites->count() }}</div>
+                <div style="font-size:0.875rem;color:#666;">Favoris</div>
+            </div>
+            <div style="background:#f9fafb;padding:1.25rem;border-radius:12px;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">📅</div>
+                <div style="font-size:1.5rem;font-weight:700;color:#333;">{{ $user->created_at->format('d/m/Y') }}</div>
+                <div style="font-size:0.875rem;color:#666;">Inscription</div>
+            </div>
+        </div>
+
+        @if($user->posts->count() > 0)
+        <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:1rem;">📝 Articles de {{ $user->name }}</h3>
+        <div class="admin-table-container" style="margin-bottom:2rem;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Statut</th>
+                        <th>Vues</th>
+                        <th>Likes</th>
+                        <th>Commentaires</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($user->posts as $post)
+                        <tr>
+                            <td>
+                                <a href="{{ route('posts.show', $post) }}" class="table-link" target="_blank">
+                                    {{ Str::limit($post->title, 50) }}
+                                </a>
+                            </td>
+                            <td>
+                                @if($post->published)
+                                    <span class="badge badge-success">✅ Publié</span>
+                                @else
+                                    <span class="badge badge-warning">📋 Brouillon</span>
+                                @endif
+                            </td>
+                            <td>{{ $post->views }}</td>
+                            <td>{{ $post->likes->count() }}</td>
+                            <td>{{ $post->comments->count() }}</td>
+                            <td>{{ $post->created_at->format('d/m/Y') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
+
+        @if($user->id !== auth()->id())
+        <div style="display:flex;gap:1rem;margin-top:2rem;">
+            <form method="POST" action="{{ route('admin.users.toggle-block', $user) }}">
+                @csrf
+                @if($user->blocked)
+                    <button class="admin-btn admin-btn-primary">✅ Débloquer l'utilisateur</button>
+                @else
+                    <button class="admin-btn" style="background:#fee2e2;color:#991b1b;border:2px solid #fecaca;">🚫 Bloquer l'utilisateur</button>
+                @endif
+            </form>
+            @if(!$user->isAdmin())
+                <form method="POST" action="{{ route('admin.users.destroy', $user)}}" onsubmit="return confirm('Supprimer définitivement cet utilisateur ?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="admin-btn" style="background:#fee2e2;color:#991b1b;border:2px solid #fecaca;">🗑️ Supprimer l'utilisateur</button>
+                </form>
+            @endif
+        </div>
+        @endif
+    </div>
+
+    <div class="back-link">
+        <a href="{{ route('admin.users.index') }}">← Retour à la liste des utilisateurs</a>
+    </div>
 </div>
+
 @endsection
