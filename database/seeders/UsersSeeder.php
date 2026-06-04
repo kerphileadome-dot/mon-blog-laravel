@@ -10,6 +10,12 @@ class UsersSeeder extends Seeder
 {
     public function run(): void
     {
+        // Vérifier si les utilisateurs existent déjà (en comptant les visiteurs)
+        if (User::where('role', 'visitor')->count() > 0) {
+            $this->command->info('Utilisateurs visiteurs déjà existants, skip.');
+            return;
+        }
+
         // Utilisateur 1
         User::create([
             'name' => 'Jean-Baptiste Kpossou',

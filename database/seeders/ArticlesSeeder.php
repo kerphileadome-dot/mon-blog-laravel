@@ -18,6 +18,12 @@ class ArticlesSeeder extends Seeder
             return;
         }
 
+        // Vérifier si les articles existent déjà
+        if (Post::count() > 0) {
+            $this->command->info('Articles déjà existants, skip.');
+            return;
+        }
+
         // Article 1: Coupe du Monde 2026
         Post::create([
             'user_id' => $admin->id,
