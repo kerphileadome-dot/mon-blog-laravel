@@ -2,33 +2,37 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class AdminUserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $adminEmail = config('blog.admin_emails')[0] ?? 'kerphilesaint@gmail.com';
+        $adminEmails = config('blog.admin_emails', ['kerphilesaint@gmail.com']);
+        $primaryEmail = $adminEmails[0] ?? 'kerphilesaint@gmail.com';
 
-        if (!\App\Models\User::where('email', $adminEmail)->exists()) {
-            $admin = new \App\Models\User();
-            $admin->name = 'Kerphile Admin';
-            $admin->email = $adminEmail;
-            $admin->password = bcrypt('Franklinblog20?');
-            $admin->role = 'admin';
-            $admin->email_verified_at = now();
-            $admin->blocked = false;
-            $admin->save();
+        if (!User::where('email', $primaryEmail)->exists()) {
+            User::create([
+                'name' => 'Kerphile Admin',
+                'email' => $primaryEmail,
+                'password' => bcrypt('Franklinblog20?'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+                'blocked' => false,
+            ]);
+
+            $this->command->info("Compte admin créé : {$primaryEmail}");
         }
 
-        foreach (array_slice(config('blog.admin_emails', []), 1) as $email) {
-            $user = \App\Models\User::where('email', $email)->first();
-            if ($user) {
-                $user->update(['role' => 'admin', 'blocked' => false]);
+        foreach ($adminEmails as $email) {
+            $updated = User::where('email', $email)->update([
+                'role' => 'admin',
+                'blocked' => false,
+            ]);
+
+            if ($updated) {
+                $this->command->info("Rôle admin confirmé : {$email}");
             }
         }
     }
