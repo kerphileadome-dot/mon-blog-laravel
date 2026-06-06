@@ -10,7 +10,8 @@ class ArticlesSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::where('email', 'kerphilesaint@gmail.com')->first();
+        $adminEmail = config('blog.admin_emails')[0] ?? 'kerphilesaint@gmail.com';
+        $admin = User::where('email', $adminEmail)->first();
 
         if (!$admin) {
             $this->command->error('Compte admin introuvable. Lancez AdminUserSeeder d\'abord.');

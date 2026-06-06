@@ -31,6 +31,8 @@
                 </div>
             </form>
         </div>
+    @else
+        <a href="{{ route('login') }}" class="reply-btn" style="text-decoration:none;display:inline-block;">Répondre</a>
     @endauth
 
     @php $children = $allComments->where('parent_id', $comment->id); @endphp

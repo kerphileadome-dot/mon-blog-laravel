@@ -27,7 +27,7 @@ class CommentController extends Controller
             ? 'Commentaire publié !'
             : 'Commentaire envoyé — en attente de modération.';
 
-        return back()->with('success', $message);
+        return back()->with('success', $message)->withFragment('comments');
     }
 
     public function reply(Request $request, Post $post, Comment $comment, BlogSettings $settings)

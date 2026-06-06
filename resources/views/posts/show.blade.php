@@ -81,14 +81,11 @@
             @auth
                 <div class="comment-form-card">
                     <h3 class="form-title">Laisser un commentaire</h3>
+                    <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:1rem;">
+                        Commenter en tant que <strong>{{ auth()->user()->name }}</strong>
+                    </p>
                     <form method="POST" action="{{ route('comments.store', $post) }}">
                         @csrf
-                        <div class="form-grid">
-                            <input type="text" name="name" placeholder="Votre nom *"
-                                class="form-input" value="{{ old('name', auth()->user()->name) }}" required>
-                            <input type="email" name="email" placeholder="Email (optionnel)"
-                                class="form-input" value="{{ old('email', auth()->user()->email) }}">
-                        </div>
                         <textarea name="body" rows="4" placeholder="Votre commentaire *"
                             class="form-input" style="margin-bottom:1rem;resize:vertical;" required>{{ old('body') }}</textarea>
                         <button type="submit" class="btn-primary">Publier le commentaire</button>
