@@ -52,12 +52,12 @@ class PostController extends Controller
         $post->load('user')->loadCount('likes');
         $post->increment('views');
 
-        $comments = $post->comments()
+        $allComments = $post->comments()
             ->where('approved', true)
-            ->whereNull('parent_id')
-            ->with(['replies' => fn ($q) => $q->where('approved', true)])
-            ->latest()
+            ->orderBy('created_at')
             ->get();
+
+        $comments = $allComments->whereNull('parent_id')->values();
 
         $likesCount = $post->likes_count;
         $isLiked = false;
@@ -90,7 +90,7 @@ class PostController extends Controller
         }
 
         return view('posts.show', compact(
-            'post', 'comments', 'likesCount', 'isLiked', 'isFavorited', 'relatedPosts'
+            'post', 'comments', 'allComments', 'likesCount', 'isLiked', 'isFavorited', 'relatedPosts'
         ));
     }
 

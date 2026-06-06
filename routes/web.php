@@ -84,6 +84,7 @@ Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show')
 // Utilisateur connecté
 Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::post('/posts/{post}/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
     Route::post('/posts/{post}/favorite', [FavoriteController::class, 'toggle'])->name('posts.favorite');
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');

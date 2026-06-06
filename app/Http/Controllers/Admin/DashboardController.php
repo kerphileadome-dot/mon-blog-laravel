@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Comment;
@@ -77,23 +78,14 @@ class DashboardController extends Controller
         return back()->with('success', 'Commentaire rejeté !');
     }
 
-    // Répondre à un commentaire
+    // Répondre à un commentaire (délègue au contrôleur public)
     public function replyToComment(Request $request, Comment $comment)
     {
-        $request->validate([
-            'body' => 'required|max:1000',
-        ]);
-
-        Comment::create([
-            'post_id' => $comment->post_id,
-            'parent_id' => $comment->id,
-            'user_id' => auth()->id(),
-            'name' => auth()->user()->name,
-            'email' => auth()->user()->email,
-            'body' => $request->body,
-            'approved' => true, // Auto-approuvé car vient de l'admin
-        ]);
-
-        return back()->with('success', 'Réponse publiée avec succès !');
+        return app(CommentController::class)->reply(
+            $request,
+            $comment->post,
+            $comment,
+            app(\App\Services\BlogSettings::class)
+        );
     }
 }

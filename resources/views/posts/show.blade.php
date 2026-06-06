@@ -70,56 +70,10 @@
         </article>
 
         <section class="comments-section" id="comments">
-            <h2 class="comments-title">{{ $comments->count() }} commentaire{{ $comments->count() !== 1 ? 's' : '' }}</h2>
+            <h2 class="comments-title">{{ $allComments->count() }} commentaire{{ $allComments->count() !== 1 ? 's' : '' }}</h2>
 
             @forelse($comments as $comment)
-                <div class="comment-item">
-                    <div class="comment-header">
-                        <div>
-                            <span class="comment-author">{{ $comment->name }}</span>
-                            <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
-                        </div>
-                        @auth
-                            @if(auth()->user()->isAdmin())
-                                <form method="POST" action="{{ route('admin.comments.delete', $comment) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="action-link danger" style="font-size:0.8rem;width:auto;">Supprimer</button>
-                                </form>
-                            @endif
-                        @endauth
-                    </div>
-                    <p class="comment-body">{{ $comment->body }}</p>
-
-                    @auth
-                        @if(auth()->user()->isAdmin())
-                            <button class="reply-btn" onclick="toggleReply({{ $comment->id }})">Répondre</button>
-                            <div class="reply-form" id="reply-{{ $comment->id }}">
-                                <form method="POST" action="{{ route('admin.comments.reply', $comment) }}">
-                                    @csrf
-                                    <textarea name="body" rows="3" placeholder="Votre réponse…"
-                                        class="form-input" style="margin-bottom:0.75rem;resize:vertical;" required></textarea>
-                                    <div style="display:flex;gap:0.5rem;">
-                                        <button type="submit" class="btn-primary" style="padding:0.5rem 1rem;font-size:0.875rem;">Envoyer</button>
-                                        <button type="button" class="btn-ghost" style="padding:0.5rem 1rem;font-size:0.875rem;" onclick="toggleReply({{ $comment->id }})">Annuler</button>
-                                    </div>
-                                </form>
-                            </div>
-                        @endif
-                    @endauth
-
-                    @if($comment->replies->count() > 0)
-                        <div class="comment-replies">
-                            @foreach($comment->replies as $reply)
-                                <div class="comment-reply">
-                                    <span class="comment-reply-author">{{ $reply->name }}</span>
-                                    <span class="comment-reply-time">{{ $reply->created_at->diffForHumans() }}</span>
-                                    <p class="comment-reply-body">{{ $reply->body }}</p>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+                <x-comment-item :comment="$comment" :post="$post" :all-comments="$allComments" />
             @empty
                 <p style="color:var(--ink-faint);font-size:0.9rem;">Aucun commentaire pour l'instant. Soyez le premier à réagir !</p>
             @endforelse
@@ -203,7 +157,7 @@
             </div>
             <div class="sidebar-stat">
                 <span class="sidebar-stat-label">Commentaires</span>
-                <span class="sidebar-stat-value">{{ $comments->count() }}</span>
+                <span class="sidebar-stat-value">{{ $allComments->count() }}</span>
             </div>
             <div class="sidebar-stat">
                 <span class="sidebar-stat-label">Lecture</span>

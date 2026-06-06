@@ -30,6 +30,34 @@ class CommentController extends Controller
         return back()->with('success', $message);
     }
 
+    public function reply(Request $request, Post $post, Comment $comment, BlogSettings $settings)
+    {
+        if ($comment->post_id !== $post->id) {
+            abort(404);
+        }
+
+        $request->validate([
+            'body' => 'required|max:1000',
+        ]);
+
+        $autoApprove = auth()->user()->isAdmin() || $settings->commentsAutoApprove();
+
+        $post->comments()->create([
+            'parent_id' => $comment->id,
+            'user_id'   => auth()->id(),
+            'name'      => auth()->user()->name,
+            'email'     => auth()->user()->email,
+            'body'      => $request->body,
+            'approved'  => $autoApprove,
+        ]);
+
+        $message = $autoApprove
+            ? 'Réponse publiée !'
+            : 'Réponse envoyée — en attente de modération.';
+
+        return back()->with('success', $message)->withFragment('comments');
+    }
+
     public function destroy(Comment $comment)
     {
         if (!auth()->check() || !auth()->user()->isAdmin()) {
