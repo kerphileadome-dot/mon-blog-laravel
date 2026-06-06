@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
         $posts = Post::where('published', true)
             ->where('category', $categoryName)
-            ->with(['user', 'comments', 'likes'])
+            ->forList()
             ->latest()
             ->paginate($settings->postsPerPage());
 

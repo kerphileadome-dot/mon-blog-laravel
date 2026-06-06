@@ -21,7 +21,8 @@ class UserManagementController extends Controller
     // Détails d'un utilisateur
     public function show(User $user)
     {
-        $user->load(['posts', 'comments', 'favorites']);
+        $user->load(['comments', 'favorites']);
+        $user->load(['posts' => fn ($q) => $q->withCount(['comments', 'likes'])]);
 
         return view('admin.users.show', compact('user'));
     }

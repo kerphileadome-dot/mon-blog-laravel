@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Services\BlogSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -14,12 +15,12 @@ class PostController extends Controller
         $perPage = $settings->postsPerPage();
 
         $featured = Post::where('published', true)
-            ->with(['user', 'comments', 'likes'])
+            ->forList()
             ->latest()
             ->first();
 
         $posts = Post::where('published', true)
-            ->with(['user', 'comments', 'likes'])
+            ->forList()
             ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id))
             ->latest()
             ->paginate($perPage);
@@ -32,8 +33,12 @@ class PostController extends Controller
             ->orderByDesc('count')
             ->get();
 
-        $totalPosts = Post::where('published', true)->count();
-        $totalViews = Post::where('published', true)->sum('views');
+        $stats = Post::where('published', true)
+            ->selectRaw('COUNT(*) as total_posts, COALESCE(SUM(views), 0) as total_views')
+            ->first();
+
+        $totalPosts = (int) $stats->total_posts;
+        $totalViews = (int) $stats->total_views;
 
         return view('posts.index', compact('posts', 'featured', 'categories', 'totalPosts', 'totalViews'));
     }
@@ -44,24 +49,33 @@ class PostController extends Controller
             abort(404);
         }
 
-        $post->load('user');
+        $post->load('user')->loadCount('likes');
         $post->increment('views');
 
         $comments = $post->comments()
             ->where('approved', true)
             ->whereNull('parent_id')
-            ->with('replies')
+            ->with(['replies' => fn ($q) => $q->where('approved', true)])
             ->latest()
             ->get();
 
-        $likesCount = $post->likes()->count();
-        $isLiked = auth()->check() ? $post->isLikedBy(auth()->user()) : false;
-        $isFavorited = auth()->check() ? $post->isFavoritedBy(auth()->user()) : false;
+        $likesCount = $post->likes_count;
+        $isLiked = false;
+        $isFavorited = false;
+
+        if (auth()->check()) {
+            $userId = auth()->id();
+            $isLiked = $post->likes()->where('user_id', $userId)->exists();
+            $isFavorited = DB::table('favorites')
+                ->where('user_id', $userId)
+                ->where('post_id', $post->id)
+                ->exists();
+        }
 
         $relatedPosts = Post::where('published', true)
             ->where('id', '!=', $post->id)
             ->when($post->category, fn ($q) => $q->where('category', $post->category))
-            ->with(['user', 'comments', 'likes'])
+            ->forList()
             ->latest()
             ->take(2)
             ->get();
@@ -69,7 +83,7 @@ class PostController extends Controller
         if ($relatedPosts->count() < 2) {
             $relatedPosts = Post::where('published', true)
                 ->where('id', '!=', $post->id)
-                ->with(['user', 'comments', 'likes'])
+                ->forList()
                 ->latest()
                 ->take(2)
                 ->get();

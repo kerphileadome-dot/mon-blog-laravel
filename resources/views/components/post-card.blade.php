@@ -4,14 +4,14 @@
     $grads = ['grad-1', 'grad-2', 'grad-3', 'grad-4', 'grad-5'];
     $grad = $grads[$index % 5];
     $initial = strtoupper(substr($post->user->name ?? 'A', 0, 1));
-    $likesCount = $post->likes->count();
-    $commentsCount = $post->comments->count();
+    $likesCount = $post->likes_count ?? $post->likes()->count();
+    $commentsCount = $post->comments_count ?? $post->comments()->count();
 @endphp
 
 <article class="post-card">
     <div class="card-image">
         @if($post->cover_image)
-            <img src="{{ Storage::url($post->cover_image) }}" alt="{{ $post->title }}" loading="lazy">
+            <img src="{{ Storage::url($post->cover_image) }}" alt="{{ $post->title }}" loading="lazy" decoding="async" width="400" height="225">
         @else
             <div class="card-gradient {{ $grad }}">
                 <span class="card-gradient-icon">{{ strtoupper(substr($post->title, 0, 1)) }}</span>

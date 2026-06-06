@@ -31,7 +31,15 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => [
+                'required', 'string', 'lowercase', 'email', 'max:255',
+                'unique:'.User::class,
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (in_array($value, config('blog.admin_emails', []), true)) {
+                        $fail('Cet email est réservé à l\'administration du blog.');
+                    }
+                },
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

@@ -36,7 +36,7 @@ class TagController extends Controller
                   ->orWhere('tags', 'like', '%,' . $tagName . ',%')
                   ->orWhere('tags', 'like', '%,' . $tagName);
             })
-            ->with(['user', 'comments', 'likes'])
+            ->forList()
             ->latest()
             ->paginate($settings->postsPerPage());
 

@@ -6,6 +6,7 @@
     <meta name="description" content="@yield('meta_description', 'KerpheX — Blog professionnel. Idées, explorations et réflexions.')">
     <meta name="author" content="KerpheX">
     <title>@yield('title', 'KerpheX · Blog professionnel')</title>
+    <x-fonts />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>

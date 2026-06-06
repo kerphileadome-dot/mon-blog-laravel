@@ -23,7 +23,7 @@ class DashboardController extends Controller
             'total_favorites' => \App\Models\Favorite::count(),
         ];
 
-        $recentPosts = Post::with(['comments', 'likes'])
+        $recentPosts = Post::withCount(['comments', 'likes'])
                            ->latest()
                            ->take(5)
                            ->get();
@@ -49,7 +49,7 @@ class DashboardController extends Controller
 
     public function posts()
     {
-        $posts = Post::with(['comments', 'likes'])
+        $posts = Post::withCount(['comments', 'likes'])
                      ->latest()
                      ->paginate(10);
 

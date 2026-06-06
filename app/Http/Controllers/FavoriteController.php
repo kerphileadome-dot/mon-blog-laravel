@@ -27,7 +27,7 @@ class FavoriteController extends Controller
     {
         $posts = auth()->user()->favoritePosts()
                     ->where('published', true)
-                    ->with(['user', 'comments', 'likes'])
+                    ->forList()
                     ->latest('favorites.created_at')
                     ->paginate($settings->postsPerPage());
 

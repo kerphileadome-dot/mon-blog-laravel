@@ -1,35 +1,31 @@
 #!/bin/bash
+set -e
 
-echo "🚀 Initialisation du blog..."
+INIT_FLAG="storage/app/.railway_initialized"
 
-# Créer la base de données SQLite si elle n'existe pas
+echo "🚀 Démarrage KerpheX..."
+
 if [ ! -f database/database.sqlite ]; then
-    echo "📦 Création de la base de données..."
+    echo "📦 Création de la base SQLite..."
     touch database/database.sqlite
 fi
 
-# Vider tous les caches
-echo "🧹 Vidage des caches..."
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-php artisan cache:clear
+if [ ! -f "$INIT_FLAG" ]; then
+    echo "🔧 Première initialisation..."
+    php artisan migrate --force
+    php artisan db:seed --class=AdminUserSeeder --force
+    php artisan db:seed --class=ArticlesSeeder --force
+    php artisan storage:link 2>/dev/null || true
+    touch "$INIT_FLAG"
+else
+    echo "⚡ Démarrage rapide (déjà initialisé)"
+    php artisan migrate --force
+    php artisan db:seed --class=AdminUserSeeder --force
+fi
 
-# Exécuter les migrations
-echo "🔄 Exécution des migrations..."
-php artisan migrate --force
+echo "🗄️ Mise en cache Laravel..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
-# Créer le compte admin s'il n'existe pas
-echo "👤 Vérification du compte admin..."
-php artisan db:seed --class=AdminUserSeeder --force
-
-# Créer les articles si la base est vide
-echo "📝 Vérification des articles..."
-php artisan db:seed --class=ArticlesSeeder --force
-
-# Créer le lien storage
-echo "🔗 Création du lien storage..."
-php artisan storage:link
-
-echo "✅ Initialisation terminée avec succès !"
-echo "✅ Compte admin et articles de démo prêts."
+echo "✅ Prêt."

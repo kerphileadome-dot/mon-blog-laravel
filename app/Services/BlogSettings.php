@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 
 class BlogSettings
@@ -15,11 +16,13 @@ class BlogSettings
 
     public function all(): array
     {
-        if (!File::exists($this->settingsFile)) {
-            return $this->defaults();
-        }
+        return Cache::remember('blog_settings', 3600, function () {
+            if (!File::exists($this->settingsFile)) {
+                return $this->defaults();
+            }
 
-        return array_merge($this->defaults(), json_decode(File::get($this->settingsFile), true) ?? []);
+            return array_merge($this->defaults(), json_decode(File::get($this->settingsFile), true) ?? []);
+        });
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -43,6 +46,7 @@ class BlogSettings
         $data['updated_at'] = now()->toDateTimeString();
 
         File::put($this->settingsFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        Cache::forget('blog_settings');
     }
 
     protected function defaults(): array

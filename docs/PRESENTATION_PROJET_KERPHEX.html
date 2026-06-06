@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Présentation complète — Projet KerpheX Blog</title>
+    <style>
+        @page { margin: 2cm; size: A4; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.55;
+            color: #1a1a1a;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .cover {
+            page-break-after: always;
+            text-align: center;
+            padding-top: 6cm;
+            min-height: 25cm;
+            background: linear-gradient(135deg, #0d7a55 0%, #12110f 100%);
+            color: white;
+            margin: -2cm;
+            padding-left: 2cm;
+            padding-right: 2cm;
+        }
+        .cover h1 { font-size: 32pt; margin-bottom: 0.3em; font-weight: 700; }
+        .cover .subtitle { font-size: 16pt; opacity: 0.9; margin-bottom: 2em; }
+        .cover .meta { font-size: 11pt; opacity: 0.8; line-height: 2; }
+        .cover .logo { font-size: 48pt; font-weight: 800; letter-spacing: -2px; margin-bottom: 1em; }
+        h1 { color: #0d7a55; font-size: 20pt; border-bottom: 3px solid #0d7a55; padding-bottom: 0.3em; margin-top: 1.5em; page-break-after: avoid; }
+        h2 { color: #12110f; font-size: 14pt; margin-top: 1.2em; page-break-after: avoid; }
+        h3 { color: #3d3a35; font-size: 12pt; margin-top: 1em; page-break-after: avoid; }
+        p { margin: 0.6em 0; text-align: justify; }
+        ul, ol { margin: 0.5em 0; padding-left: 1.5em; }
+        li { margin: 0.3em 0; }
+        table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 10pt; page-break-inside: avoid; }
+        th { background: #0d7a55; color: white; padding: 8px 10px; text-align: left; }
+        td { border: 1px solid #d4cdc2; padding: 7px 10px; vertical-align: top; }
+        tr:nth-child(even) td { background: #f7f4ef; }
+        code, .path { font-family: Consolas, monospace; font-size: 9.5pt; background: #efe9df; padding: 1px 5px; border-radius: 3px; }
+        .box { background: #f7f4ef; border-left: 4px solid #0d7a55; padding: 12px 16px; margin: 1em 0; page-break-inside: avoid; }
+        .box-warn { border-left-color: #c9a227; }
+        .toc { page-break-after: always; }
+        .toc ol { line-height: 1.8; }
+        .toc a { color: #0d7a55; text-decoration: none; }
+        .page-break { page-break-before: always; }
+        .footer-note { font-size: 9pt; color: #6b6560; text-align: center; margin-top: 2em; border-top: 1px solid #e5dfd6; padding-top: 1em; }
+        .diagram { font-family: Consolas, monospace; font-size: 9pt; background: #12110f; color: #10b981; padding: 14px; border-radius: 8px; white-space: pre; overflow-x: auto; page-break-inside: avoid; }
+    </style>
+</head>
+<body>
+
+<div class="cover">
+    <div class="logo">KerpheX</div>
+    <h1>Présentation complète du projet</h1>
+    <p class="subtitle">Blog professionnel Laravel 13 — Documentation technique et pédagogique</p>
+    <p class="meta">
+        <strong>Auteur :</strong> Kerphile Saint<br>
+        <strong>Date :</strong> Juin 2026<br>
+        <strong>Environnement local :</strong> Laragon (Windows)<br>
+        <strong>Production :</strong> Railway.app<br>
+        <strong>URL :</strong> https://web-production-c5c2f.up.railway.app
+    </p>
+</div>
+
+<div class="toc">
+    <h1>Table des matières</h1>
+    <ol>
+        <li><a href="#s1">Introduction — Qu'est-ce qu'un blog et pourquoi ce projet ?</a></li>
+        <li><a href="#s2">Technologies et outils utilisés</a></li>
+        <li><a href="#s3">Environnement de développement — Laragon</a></li>
+        <li><a href="#s4">Architecture globale du projet</a></li>
+        <li><a href="#s5">Structure des dossiers — chaque fichier expliqué</a></li>
+        <li><a href="#s6">Base de données et modèles de données</a></li>
+        <li><a href="#s7">Routes et contrôleurs — le cœur de l'application</a></li>
+        <li><a href="#s8">Vues Blade et interface utilisateur</a></li>
+        <li><a href="#s9">Authentification et gestion des rôles</a></li>
+        <li><a href="#s10">Fonctionnalités détaillées</a></li>
+        <li><a href="#s11">Services, middleware et sécurité</a></li>
+        <li><a href="#s12">Assets frontend — CSS, JavaScript, Vite</a></li>
+        <li><a href="#s13">Seeders et données de démonstration</a></li>
+        <li><a href="#s14">Tests automatisés</a></li>
+        <li><a href="#s15">Déploiement — GitHub et Railway</a></li>
+        <li><a href="#s16">Liens utiles et identifiants</a></li>
+        <li><a href="#s17">Conclusion</a></li>
+    </ol>
+</div>
+
+<h1 id="s1">1. Introduction — Qu'est-ce qu'un blog et pourquoi ce projet ?</h1>
+
+<h2>1.1 L'utilité d'un blog</h2>
+<p>Un <strong>blog</strong> (contraction de « web log », journal en ligne) est un site web dont le contenu principal est constitué d'<strong>articles</strong> publiés régulièrement, classés par date, thème ou catégorie. Contrairement à un site vitrine statique, un blog est <em>dynamique</em> : son contenu évolue dans le temps.</p>
+
+<div class="box">
+    <strong>Pourquoi créer un blog ?</strong>
+    <ul>
+        <li><strong>Partager des connaissances</strong> — Tutoriels, analyses, retours d'expérience.</li>
+        <li><strong>Construire une identité professionnelle</strong> — Portfolio éditorial, expertise visible.</li>
+        <li><strong>Créer une communauté</strong> — Commentaires, likes, favoris, échanges avec les lecteurs.</li>
+        <li><strong>Améliorer le référencement (SEO)</strong> — Contenu frais indexé par les moteurs de recherche.</li>
+        <li><strong>Centraliser ses idées</strong> — Carnet de réflexions structuré et accessible partout.</li>
+    </ul>
+</div>
+
+<h2>1.2 Le projet KerpheX Blog</h2>
+<p><strong>KerpheX</strong> est un blog personnel professionnel développé avec le framework <strong>Laravel 13</strong>. Il répond à un besoin précis :</p>
+<ul>
+    <li>Seul l'<strong>administrateur</strong> peut publier, modifier et supprimer des articles.</li>
+    <li>Les <strong>visiteurs</strong> peuvent lire, commenter, liker et ajouter des articles en favoris.</li>
+    <li>L'interface est moderne, responsive et entièrement en français.</li>
+    <li>Le site fonctionne en local (Laragon) et en production (Railway).</li>
+</ul>
+<p>Ce projet démontre la maîtrise d'une stack web complète : backend PHP, base de données, authentification, interface utilisateur, déploiement cloud et bonnes pratiques de développement.</p>
+
+<h1 id="s2" class="page-break">2. Technologies et outils utilisés</h1>
+
+<table>
+    <tr><th>Technologie</th><th>Rôle dans le projet</th><th>Pourquoi ce choix ?</th></tr>
+    <tr><td><strong>PHP 8.3</strong></td><td>Langage serveur</td><td>Standard du web, performant, compatible Laragon et Railway</td></tr>
+    <tr><td><strong>Laravel 13</strong></td><td>Framework MVC</td><td>Routing, ORM Eloquent, Blade, auth, migrations — productivité maximale</td></tr>
+    <tr><td><strong>SQLite</strong></td><td>Base de données</td><td>Fichier unique, zéro configuration, idéal dev local + petit déploiement</td></tr>
+    <tr><td><strong>Laravel Breeze</strong></td><td>Authentification</td><td>Scaffolding login/register/reset password prêt à l'emploi</td></tr>
+    <tr><td><strong>Laravel Socialite</strong></td><td>OAuth Google</td><td>Connexion rapide via compte Google</td></tr>
+    <tr><td><strong>Blade</strong></td><td>Moteur de templates</td><td>Syntaxe PHP simplifiée pour les vues HTML</td></tr>
+    <tr><td><strong>Vite 7</strong></td><td>Build frontend</td><td>Compilation rapide CSS/JS pour la production</td></tr>
+    <tr><td><strong>CSS custom</strong></td><td>Design KerpheX</td><td>Identité visuelle unique (polices Fraunces + Source Sans 3)</td></tr>
+    <tr><td><strong>Composer</strong></td><td>Gestionnaire PHP</td><td>Installe Laravel et ses dépendances</td></tr>
+    <tr><td><strong>npm / Node.js</strong></td><td>Gestionnaire JS</td><td>Compile les assets via Vite</td></tr>
+    <tr><td><strong>Git + GitHub</strong></td><td>Versionnement</td><td>Historique du code, déclenchement du déploiement</td></tr>
+    <tr><td><strong>Railway</strong></td><td>Hébergement cloud</td><td>Déploiement automatique à chaque push GitHub</td></tr>
+    <tr><td><strong>Nixpacks</strong></td><td>Build Railway</td><td>Détecte PHP, installe Composer, lance l'app</td></tr>
+    <tr><td><strong>PHPUnit</strong></td><td>Tests</td><td>Vérifie que l'authentification et les pages fonctionnent</td></tr>
+    <tr><td><strong>Laragon</strong></td><td>Environnement local</td><td>Apache/Nginx + PHP + MySQL/SQLite sur Windows</td></tr>
+</table>
+
+<h1 id="s3">3. Environnement de développement — Laragon</h1>
+
+<p><strong>Laragon</strong> est un environnement de développement web tout-en-un pour Windows. Il fournit :</p>
+<ul>
+    <li><strong>Apache</strong> (serveur web) — sert les fichiers PHP</li>
+    <li><strong>PHP 8.3</strong> — interprète le code Laravel</li>
+    <li><strong>Composer</strong> — installe les packages PHP</li>
+    <li><strong>Node.js</strong> — pour Vite et npm</li>
+    <li><strong>Création automatique de virtual hosts</strong> — <code>http://mon-blog.test</code></li>
+</ul>
+
+<h2>3.1 Installation locale — étapes réalisées</h2>
+<ol>
+    <li>Placer le projet dans <code>C:\laragon\www\mon-blog</code></li>
+    <li><code>composer install</code> — télécharge Laravel et dépendances dans <code>vendor/</code></li>
+    <li><code>copy .env.example .env</code> — fichier de configuration locale</li>
+    <li><code>php artisan key:generate</code> — clé de chiffrement unique (<code>APP_KEY</code>)</li>
+    <li>Créer <code>database/database.sqlite</code> — base SQLite vide</li>
+    <li><code>php artisan migrate</code> — crée les tables (users, posts, comments…)</li>
+    <li><code>php artisan db:seed</code> — insère le compte admin et les articles démo</li>
+    <li><code>php artisan storage:link</code> — lien symbolique pour les images uploadées</li>
+    <li><code>npm install && npm run build</code> — compile CSS/JS dans <code>public/build/</code></li>
+    <li><code>php artisan serve</code> — serveur dev sur <code>http://127.0.0.1:8000</code></li>
+</ol>
+
+<div class="box">
+    <strong>Pourquoi <code>php artisan serve</code> en plus de Laragon ?</strong><br>
+    Artisan serve utilise le serveur PHP intégré — pratique pour le développement rapide sans configurer Apache. Laragon reste disponible pour un environnement plus proche de la production.
+</div>
+
+<h1 id="s4" class="page-break">4. Architecture globale du projet</h1>
+
+<p>Laravel suit le pattern <strong>MVC</strong> (Modèle — Vue — Contrôleur) :</p>
+
+<div class="diagram">┌─────────────┐     Requête HTTP      ┌──────────────────┐
+│  Navigateur │ ──────────────────► │  routes/web.php  │
+│  (Visiteur) │                     │  (Routeur)       │
+└─────────────┘                     └────────┬─────────┘
+                                             │
+                    ┌────────────────────────┼────────────────────────┐
+                    ▼                        ▼                        ▼
+           ┌──────────────┐        ┌──────────────┐        ┌──────────────┐
+           │ Contrôleur   │        │  Middleware  │        │   Policy     │
+           │ (logique)    │◄───────│ (auth, admin)│        │ (autorisat.) │
+           └──────┬───────┘        └──────────────┘        └──────────────┘
+                  │
+         ┌────────┼────────┐
+         ▼        ▼        ▼
+    ┌────────┐ ┌──────┐ ┌──────────┐
+    │ Modèle │ │Service│ │   Vue    │
+    │Eloquent│ │BlogSet│ │  Blade   │
+    └────┬───┘ └──────┘ └────┬─────┘
+         │                   │
+         ▼                   ▼
+    ┌──────────┐      ┌─────────────┐
+    │  SQLite  │      │ HTML + CSS  │
+    │ database │      │  (réponse)  │
+    └──────────┘      └─────────────┘</div>
+
+<p><strong>Flux simplifié :</strong> L'utilisateur visite une URL → Laravel trouve la route correspondante → le middleware vérifie les permissions → le contrôleur exécute la logique (lit/écrit en base) → une vue Blade est rendue en HTML → le navigateur affiche la page.</p>
+
+<h1 id="s5">5. Structure des dossiers — chaque partie expliquée</h1>
+
+<h2>5.1 Dossier <code>app/</code> — Le code métier PHP</h2>
+<table>
+    <tr><th>Fichier / Dossier</th><th>Pourquoi il existe</th></tr>
+    <tr><td><code>Http/Controllers/PostController.php</code></td><td>Gère l'accueil, l'affichage, la création, l'édition et la suppression des articles. C'est le contrôleur le plus important du blog.</td></tr>
+    <tr><td><code>Http/Controllers/CommentController.php</code></td><td>Permet aux visiteurs connectés de poster des commentaires ; l'admin peut les supprimer.</td></tr>
+    <tr><td><code>Http/Controllers/LikeController.php</code></td><td>Ajoute ou retire un « j'aime » sur un article (1 par utilisateur).</td></tr>
+    <tr><td><code>Http/Controllers/FavoriteController.php</code></td><td>Gère les favoris : marquer/démarquer un article + page « Mes favoris ».</td></tr>
+    <tr><td><code>Http/Controllers/SearchController.php</code></td><td>Recherche dans titre, contenu, catégories et tags.</td></tr>
+    <tr><td><code>Http/Controllers/CategoryController.php</code></td><td>Liste et filtre les articles par catégorie (Sport, Santé, Tech…).</td></tr>
+    <tr><td><code>Http/Controllers/TagController.php</code></td><td>Affiche le nuage de tags et filtre par mot-clé.</td></tr>
+    <tr><td><code>Http/Controllers/PageController.php</code></td><td>Page statique « À propos » avec statistiques du blog.</td></tr>
+    <tr><td><code>Http/Controllers/ProfileController.php</code></td><td>Permet au visiteur de modifier son profil ou supprimer son compte.</td></tr>
+    <tr><td><code>Http/Controllers/Admin/DashboardController.php</code></td><td>Tableau de bord admin : stats, modération commentaires, liste articles.</td></tr>
+    <tr><td><code>Http/Controllers/Admin/AdminLoginController.php</code></td><td>Connexion admin séparée — refuse les comptes visiteur.</td></tr>
+    <tr><td><code>Http/Controllers/Admin/UserManagementController.php</code></td><td>Bloquer, débloquer ou supprimer des utilisateurs.</td></tr>
+    <tr><td><code>Http/Controllers/Admin/SettingsController.php</code></td><td>Paramètres du blog + export CSV utilisateurs/stats.</td></tr>
+    <tr><td><code>Http/Controllers/Admin/MediaController.php</code></td><td>Bibliothèque d'images de couverture (upload, suppression).</td></tr>
+    <tr><td><code>Http/Controllers/Auth/*</code></td><td>Contrôleurs Breeze : login, register, reset password, Google OAuth.</td></tr>
+    <tr><td><code>Models/User.php</code></td><td>Représente un utilisateur (admin ou visiteur), avec rôle et statut bloqué.</td></tr>
+    <tr><td><code>Models/Post.php</code></td><td>Représente un article : slug auto, tags, compteur vues, temps de lecture.</td></tr>
+    <tr><td><code>Models/Comment.php</code></td><td>Commentaire avec modération (approved) et réponses imbriquées (parent_id).</td></tr>
+    <tr><td><code>Models/Like.php</code></td><td>Enregistre un like user ↔ article (contrainte unique).</td></tr>
+    <tr><td><code>Models/Favorite.php</code></td><td>Enregistre un favori user ↔ article.</td></tr>
+    <tr><td><code>Policies/PostPolicy.php</code></td><td>Règle : seul l'admin peut créer/modifier/supprimer des articles.</td></tr>
+    <tr><td><code>Services/BlogSettings.php</code></td><td>Lit/écrit les paramètres du blog dans un fichier JSON (pagination, modération…).</td></tr>
+    <tr><td><code>Middleware/AdminMiddleware.php</code></td><td>Bloque l'accès aux routes /admin/* si l'utilisateur n'est pas admin.</td></tr>
+    <tr><td><code>Middleware/CheckBlocked.php</code></td><td>Déconnecte automatiquement un utilisateur bloqué par l'admin.</td></tr>
+    <tr><td><code>Providers/AppServiceProvider.php</code></td><td>Force HTTPS en production + enregistre PostPolicy.</td></tr>
+</table>
+
+<h2>5.2 Dossier <code>routes/</code></h2>
+<p><code>web.php</code> définit toutes les URLs du site (accueil, articles, admin, recherche…). <code>auth.php</code> contient les routes d'authentification générées par Breeze (login, register, forgot password). <code>console.php</code> définit les commandes Artisan personnalisées.</p>
+
+<h2>5.3 Dossier <code>resources/</code></h2>
+<table>
+    <tr><th>Élément</th><th>Rôle</th></tr>
+    <tr><td><code>css/app.css</code></td><td>~2000 lignes de CSS custom : variables de couleur, typographie, cartes articles, navigation, admin. Design éditorial unique KerpheX.</td></tr>
+    <tr><td><code>js/app.js</code></td><td>Point d'entrée Vite — importe Axios pour requêtes HTTP.</td></tr>
+    <tr><td><code>views/layouts/app.blade.php</code></td><td>Layout public : navbar, recherche, menu mobile, footer, barre de progression.</td></tr>
+    <tr><td><code>views/layouts/admin.blade.php</code></td><td>Layout panneau d'administration.</td></tr>
+    <tr><td><code>views/layouts/auth.blade.php</code></td><td>Layout pages connexion/inscription.</td></tr>
+    <tr><td><code>views/components/post-card.blade.php</code></td><td>Carte article réutilisable (image, titre, catégorie, icônes like/commentaire).</td></tr>
+    <tr><td><code>views/components/kerphex-logo.blade.php</code></td><td>Logo SVG KerpheX.</td></tr>
+    <tr><td><code>views/posts/</code></td><td>Pages accueil, détail article, création et édition.</td></tr>
+    <tr><td><code>views/admin/</code></td><td>Toutes les pages du panneau admin.</td></tr>
+    <tr><td><code>lang/fr/</code></td><td>Messages d'erreur et validation en français.</td></tr>
+</table>
+
+<h2>5.4 Autres dossiers importants</h2>
+<ul>
+    <li><code>database/migrations/</code> — Scripts qui créent/modifient les tables SQLite (versionnés, rejouables).</li>
+    <li><code>database/seeders/</code> — Données initiales (admin, articles démo).</li>
+    <li><code>public/index.php</code> — Point d'entrée unique de toute requête HTTP.</li>
+    <li><code>public/build/</code> — CSS/JS compilés par Vite (versionnés pour Railway).</li>
+    <li><code>storage/app/public/covers/</code> — Images de couverture des articles.</li>
+    <li><code>config/</code> — Configuration Laravel (app, auth, database, blog.php…).</li>
+    <li><code>tests/</code> — 25 tests PHPUnit (auth + pages).</li>
+</ul>
+
+<h1 id="s6" class="page-break">6. Base de données et modèles de données</h1>
+
+<h2>6.1 Pourquoi SQLite ?</h2>
+<p>SQLite stocke toute la base dans un seul fichier (<code>database/database.sqlite</code>). Pas de serveur MySQL à installer — parfait pour Laragon en dev et Railway en production (petit trafic).</p>
+
+<h2>6.2 Tables principales</h2>
+<table>
+    <tr><th>Table</th><th>Colonnes clés</th><th>Utilité</th></tr>
+    <tr><td><code>users</code></td><td>name, email, password, role, blocked</td><td>Comptes admin et visiteurs</td></tr>
+    <tr><td><code>posts</code></td><td>title, slug, content, category, tags, cover_image, views, published</td><td>Articles du blog</td></tr>
+    <tr><td><code>comments</code></td><td>post_id, user_id, body, approved, parent_id</td><td>Commentaires modérés avec réponses</td></tr>
+    <tr><td><code>likes</code></td><td>post_id, user_id (unique)</td><td>J'aime par utilisateur</td></tr>
+    <tr><td><code>favorites</code></td><td>user_id, post_id (unique)</td><td>Articles favoris</td></tr>
+    <tr><td><code>sessions</code></td><td>id, user_id, payload</td><td>Sessions utilisateur (driver database)</td></tr>
+    <tr><td><code>cache</code></td><td>key, value</td><td>Cache Laravel (driver database)</td></tr>
+</table>
+
+<h2>6.3 Relations Eloquent</h2>
+<p>Un <strong>User</strong> possède plusieurs <strong>Posts</strong>. Un <strong>Post</strong> a plusieurs <strong>Comments</strong>, <strong>Likes</strong> et <strong>Favorites</strong>. Les favoris lient User et Post en many-to-many. Les commentaires peuvent avoir un <code>parent_id</code> pour les réponses de l'admin.</p>
+
+<h2>6.4 Migrations — pourquoi chaque migration existe</h2>
+<ol>
+    <li><code>create_users_table</code> — Table utilisateurs + sessions + reset password (base Laravel).</li>
+    <li><code>create_posts_table</code> — Structure des articles avec slug unique.</li>
+    <li><code>create_comments_table</code> — Commentaires liés aux articles.</li>
+    <li><code>create_likes_table</code> — Système de likes (initialement par IP, puis par user).</li>
+    <li><code>add_role_to_users</code> — Distinction admin / visitor.</li>
+    <li><code>create_favorites_table</code> — Système de favoris.</li>
+    <li><code>add_blocked_to_users</code> — Permet à l'admin de bloquer un visiteur.</li>
+    <li><code>add_parent_id_to_comments</code> — Réponses imbriquées aux commentaires.</li>
+    <li><code>add_user_id_to_likes</code> — Likes par utilisateur connecté.</li>
+    <li><code>add_unique_constraint_to_likes</code> — 1 seul like par user/article.</li>
+    <li><code>add_tags_to_posts</code> — Mots-clés CSV sur les articles.</li>
+</ol>
+
+<h1 id="s7" class="page-break">7. Routes et contrôleurs</h1>
+
+<h2>7.1 Routes publiques (sans connexion)</h2>
+<table>
+    <tr><th>URL</th><th>Action</th></tr>
+    <tr><td><code>/</code></td><td>Page d'accueil — articles publiés, article à la une, catégories</td></tr>
+    <tr><td><code>/posts/{slug}</code></td><td>Détail d'un article (incrémente les vues)</td></tr>
+    <tr><td><code>/categories</code></td><td>Liste des catégories</td></tr>
+    <tr><td><code>/tags</code></td><td>Nuage de tags</td></tr>
+    <tr><td><code>/search?q=...</code></td><td>Recherche full-text</td></tr>
+    <tr><td><code>/about</code></td><td>Page À propos</td></tr>
+    <tr><td><code>/login</code> et <code>/register</code></td><td>Connexion et inscription visiteur</td></tr>
+    <tr><td><code>/admin/login</code></td><td>Connexion administrateur (séparée)</td></tr>
+</table>
+
+<h2>7.2 Routes authentifiées visiteur</h2>
+<p>Commenter, liker, favoriser, gérer son profil — nécessitent une session active (<code>middleware auth</code>).</p>
+
+<h2>7.3 Routes admin</h2>
+<p>Préfixe <code>/admin/*</code>, protégées par <code>middleware auth + admin</code> : dashboard, CRUD articles, modération, utilisateurs, médias, paramètres, exports CSV.</p>
+
+<h1 id="s8">8. Vues Blade et interface utilisateur</h1>
+
+<p><strong>Blade</strong> est le moteur de templates Laravel. Il permet d'écrire du HTML avec des directives PHP simplifiées :</p>
+<ul>
+    <li><code>@extends('layouts.app')</code> — hérite d'un layout parent</li>
+    <li><code>@section('content')</code> — définit le contenu injecté dans le layout</li>
+    <li><code>@auth / @guest</code> — affiche du contenu selon l'état de connexion</li>
+    <li><code>{{ $variable }}</code> — affiche une variable échappée (sécurité XSS)</li>
+    <li><code>&lt;x-post-card :post="$post" /&gt;</code> — composant Blade réutilisable</li>
+</ul>
+
+<p>Le design KerpheX utilise une palette vert forêt (#0d7a55), fond crème (#f7f4ef), typographie serif Fraunces pour les titres et sans-serif Source Sans 3 pour le corps. L'interface est entièrement responsive (menu hamburger mobile, grilles adaptatives).</p>
+
+<h1 id="s9" class="page-break">9. Authentification et gestion des rôles</h1>
+
+<h2>9.1 Deux portes d'entrée</h2>
+<table>
+    <tr><th>Portail</th><th>URL</th><th>Qui peut entrer ?</th></tr>
+    <tr><td>Visiteur</td><td><code>/login</code></td><td>Tout le monde (inscription ouverte)</td></tr>
+    <tr><td>Administrateur</td><td><code>/admin/login</code></td><td>Uniquement les comptes <code>role=admin</code></td></tr>
+</table>
+
+<h2>9.2 Rôles</h2>
+<ul>
+    <li><strong>admin</strong> — Publie des articles, modère, gère les utilisateurs, accède au panneau.</li>
+    <li><strong>visitor</strong> — Lit, commente, like, favorise. Ne peut pas publier.</li>
+</ul>
+
+<h2>9.3 Google OAuth</h2>
+<p>Via Laravel Socialite, un visiteur peut se connecter avec Google. Si son email figure dans <code>ADMIN_EMAILS</code> (.env), il est automatiquement promu administrateur.</p>
+
+<h2>9.4 Sécurité</h2>
+<ul>
+    <li>Mots de passe hashés avec <strong>bcrypt</strong> (jamais stockés en clair).</li>
+    <li>Protection <strong>CSRF</strong> sur tous les formulaires (<code>@csrf</code>).</li>
+    <li>Rate limiting sur le login (5 tentatives max).</li>
+    <li>Middleware <code>CheckBlocked</code> — déconnexion si compte bloqué.</li>
+    <li><code>PostPolicy</code> — double vérification avant toute action sur un article.</li>
+    <li>HTTPS forcé en production.</li>
+</ul>
+
+<h1 id="s10">10. Fonctionnalités détaillées</h1>
+
+<h2>10.1 Articles</h2>
+<p>L'admin crée un article avec titre, extrait, contenu, catégorie, tags et image de couverture. Un <strong>slug</strong> URL-friendly est généré automatiquement (ex: <code>coupe-du-monde-2026-tout-ce-quil-faut-savoir</code>). L'article peut être publié ou en brouillon. Chaque lecture incrémente le compteur de vues.</p>
+
+<h2>10.2 Commentaires</h2>
+<p>Les visiteurs connectés postent des commentaires. L'admin peut les approuver, rejeter, répondre ou supprimer. L'auto-approbation est configurable dans les paramètres du blog.</p>
+
+<h2>10.3 Likes et favoris</h2>
+<p>Like = réaction rapide (cœur). Favori = marque-page personnel. Les deux nécessitent une connexion. Les icônes sur les cartes articles redirigent vers <code>/login</code> si non connecté.</p>
+
+<h2>10.4 Recherche, catégories et tags</h2>
+<p>La recherche parcourt titre, extrait, contenu, catégorie et tags. Les catégories et tags sont des champs texte sur les articles (pas de tables séparées — simplicité volontaire pour un blog de taille modeste).</p>
+
+<h2>10.5 Panneau admin</h2>
+<p>Dashboard avec 9 indicateurs (articles, vues, commentaires en attente, utilisateurs, likes, favoris…). Gestion complète du contenu, des utilisateurs, des médias et export CSV pour analyse.</p>
+
+<h1 id="s11" class="page-break">11. Services, middleware et sécurité</h1>
+
+<h2>11.1 BlogSettings — pourquoi un fichier JSON ?</h2>
+<p>Plutôt que de modifier la base de données pour chaque paramètre (nom du blog, pagination, modération auto), <code>BlogSettings</code> lit/écrit <code>storage/app/blog_settings.json</code>. L'admin modifie ces valeurs depuis le panneau sans toucher au code.</p>
+
+<h2>11.2 config/blog.php</h2>
+<p>Centralise la liste des emails administrateurs (<code>ADMIN_EMAILS</code>) utilisée par le seeder et Google OAuth.</p>
+
+<h1 id="s12">12. Assets frontend — CSS, JavaScript, Vite</h1>
+
+<p><strong>Vite</strong> compile <code>resources/css/app.css</code> et <code>resources/js/app.js</code> en fichiers optimisés dans <code>public/build/</code>. En développement, <code>npm run dev</code> recharge automatiquement les changements (HMR). En production, <code>npm run build</code> génère des fichiers minifiés avec hash dans le nom (cache busting).</p>
+
+<p>Le layout utilise <code>@vite(['resources/css/app.css', 'resources/js/app.js'])</code> pour charger les bons fichiers selon l'environnement.</p>
+
+<h1 id="s13">13. Seeders et données de démonstration</h1>
+<table>
+    <tr><th>Seeder</th><th>Contenu créé</th><th>Quand ?</th></tr>
+    <tr><td><code>AdminUserSeeder</code></td><td>Compte admin principal</td><td>Migration + railway-init.sh</td></tr>
+    <tr><td><code>ArticlesSeeder</code></td><td>4 articles : Coupe du Monde, Santé, IA, Wadagni</td><td>Si base vide (Railway)</td></tr>
+    <tr><td><code>UsersSeeder</code></td><td>3 visiteurs de test (dev local uniquement)</td><td>Manuel</td></tr>
+</table>
+
+<h1 id="s14">14. Tests automatisés</h1>
+<p><strong>25 tests PHPUnit</strong> couvrent : rendu des pages login/register, authentification, reset password, vérification email, profil, et réponse HTTP 200 de l'accueil. Commande : <code>php artisan test</code>.</p>
+
+<h1 id="s15" class="page-break">15. Déploiement — GitHub et Railway</h1>
+
+<h2>15.1 Pipeline de déploiement</h2>
+<div class="diagram">Développeur (Laragon)
+    │
+    ├─ npm run build  (compile CSS/JS)
+    ├─ git add / commit / push
+    │
+    ▼
+GitHub (mon-blog-laravel)
+    │
+    ▼  webhook automatique
+Railway.app
+    │
+    ├─ Nixpacks : PHP 8.3 + composer install
+    ├─ Build : cache config/routes/views
+    ├─ Start : railway-init.sh
+    │     ├─ Crée database.sqlite
+    │     ├─ php artisan migrate
+    │     ├─ Seed admin + articles
+    │     └─ php artisan storage:link
+    └─ Serveur PHP sur $PORT
+    │
+    ▼
+https://web-production-c5c2f.up.railway.app</div>
+
+<h2>15.2 Fichiers de déploiement</h2>
+<ul>
+    <li><code>nixpacks.toml</code> — Indique à Railway comment builder l'app (PHP 8.3, Composer, caches).</li>
+    <li><code>railway-init.sh</code> — Script bash exécuté à chaque démarrage du conteneur.</li>
+    <li><code>Procfile</code> — Commande alternative de démarrage.</li>
+    <li><code>public/build/</code> — Assets versionnés (Railway n'a pas besoin de Node.js).</li>
+    <li><code>storage/app/public/covers/</code> — Images de couverture versionnées.</li>
+</ul>
+
+<h2>15.3 Variables d'environnement Railway</h2>
+<table>
+    <tr><th>Variable</th><th>Rôle</th></tr>
+    <tr><td><code>APP_KEY</code></td><td>Chiffrement sessions et cookies (obligatoire)</td></tr>
+    <tr><td><code>APP_URL</code></td><td>URL production pour les liens absolus</td></tr>
+    <tr><td><code>APP_ENV=production</code></td><td>Active HTTPS forcé, désactive le debug</td></tr>
+    <tr><td><code>DB_CONNECTION=sqlite</code></td><td>Base SQLite embarquée</td></tr>
+    <tr><td><code>ADMIN_EMAILS</code></td><td>Emails promus administrateur</td></tr>
+</table>
+
+<h1 id="s16">16. Liens utiles et identifiants</h1>
+<table>
+    <tr><th>Environnement</th><th>Page</th><th>URL</th></tr>
+    <tr><td>Production</td><td>Accueil</td><td>https://web-production-c5c2f.up.railway.app</td></tr>
+    <tr><td>Production</td><td>Connexion visiteur</td><td>https://web-production-c5c2f.up.railway.app/login</td></tr>
+    <tr><td>Production</td><td>Connexion admin</td><td>https://web-production-c5c2f.up.railway.app/admin/login</td></tr>
+    <tr><td>Local Laragon</td><td>Accueil</td><td>http://127.0.0.1:8000 ou http://mon-blog.test</td></tr>
+    <tr><td>GitHub</td><td>Code source</td><td>https://github.com/kerphileadome-dot/mon-blog-laravel</td></tr>
+</table>
+
+<div class="box box-warn">
+    <strong>Compte administrateur :</strong><br>
+    Email : kerphilesaint@gmail.com<br>
+    Connexion via /admin/login
+</div>
+
+<h1 id="s17">17. Conclusion</h1>
+
+<p>Le projet <strong>KerpheX Blog</strong> est une application web complète qui illustre le cycle de vie d'un produit numérique moderne :</p>
+<ol>
+    <li><strong>Conception</strong> — Blog éditorial avec rôles admin/visiteur.</li>
+    <li><strong>Développement</strong> — Laravel 13, PHP 8.3, SQLite, Blade, CSS custom.</li>
+    <li><strong>Environnement local</strong> — Laragon sur Windows pour développer et tester.</li>
+    <li><strong>Qualité</strong> — Tests PHPUnit, middleware de sécurité, policies d'autorisation.</li>
+    <li><strong>Déploiement</strong> — GitHub + Railway avec pipeline automatisé.</li>
+    <li><strong>Production</strong> — Site accessible mondialement avec HTTPS.</li>
+</ol>
+
+<p>Chaque fichier du projet a une raison d'exister : les <em>contrôleurs</em> traitent les requêtes, les <em>modèles</em> représentent les données, les <em>vues</em> affichent l'interface, les <em>migrations</em> structurent la base, les <em>seeders</em> peuplent les données initiales, et les <em>scripts de déploiement</em> assurent que le site démarre correctement en production.</p>
+
+<p>Ce document constitue la présentation complète du projet KerpheX, réalisé par Kerphile Saint — Juin 2026.</p>
+
+<div class="footer-note">
+    KerpheX Blog — Présentation technique et pédagogique — Document généré pour le projet mon-blog-laravel
+</div>
+
+</body>
+</html>

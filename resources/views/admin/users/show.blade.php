@@ -92,8 +92,8 @@
                                 @endif
                             </td>
                             <td>{{ $post->views }}</td>
-                            <td>{{ $post->likes->count() }}</td>
-                            <td>{{ $post->comments->count() }}</td>
+                            <td>{{ $post->likes_count }}</td>
+                            <td>{{ $post->comments_count }}</td>
                             <td>{{ $post->created_at->format('d/m/Y') }}</td>
                         </tr>
                     @endforeach

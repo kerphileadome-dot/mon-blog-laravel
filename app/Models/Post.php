@@ -30,6 +30,11 @@ class Post extends Model
         return 'slug';
     }
 
+    public function scopeForList($query)
+    {
+        return $query->with('user')->withCount(['comments', 'likes']);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

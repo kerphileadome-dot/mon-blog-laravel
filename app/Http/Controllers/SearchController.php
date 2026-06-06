@@ -22,7 +22,7 @@ class SearchController extends Controller
                       ->orWhere('category', 'like', "%{$query}%")
                       ->orWhere('tags', 'like', "%{$query}%");
                 })
-                ->with(['user', 'comments', 'likes'])
+                ->forList()
                 ->latest()
                 ->paginate($settings->postsPerPage())
                 ->withQueryString();
