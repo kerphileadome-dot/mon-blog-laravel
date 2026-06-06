@@ -3,47 +3,93 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Services\BlogSettings;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(BlogSettings $settings)
     {
+        $perPage = $settings->postsPerPage();
+
+        $featured = Post::where('published', true)
+            ->with(['user', 'comments', 'likes'])
+            ->latest()
+            ->first();
+
         $posts = Post::where('published', true)
-                     ->with(['user', 'comments', 'likes'])
-                     ->latest()
-                     ->paginate(6);
-        return view('posts.index', compact('posts'));
+            ->with(['user', 'comments', 'likes'])
+            ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id))
+            ->latest()
+            ->paginate($perPage);
+
+        $categories = Post::where('published', true)
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->selectRaw('category, COUNT(*) as count')
+            ->groupBy('category')
+            ->orderByDesc('count')
+            ->get();
+
+        $totalPosts = Post::where('published', true)->count();
+        $totalViews = Post::where('published', true)->sum('views');
+
+        return view('posts.index', compact('posts', 'featured', 'categories', 'totalPosts', 'totalViews'));
     }
 
     public function show(Post $post)
     {
-        // Seuls les utilisateurs connectés peuvent lire les articles
-        if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Vous devez créer un compte ou vous connecter pour lire les articles.');
+        if (!$post->published && !auth()->user()?->isAdmin()) {
+            abort(404);
         }
 
+        $post->load('user');
         $post->increment('views');
-        $comments = $post->comments()->where('approved', true)->whereNull('parent_id')->with('replies')->latest()->get();
-        $likesCount = $post->likes()->count();
-        $isLiked = $post->isLikedBy(auth()->user());
-        $isFavorited = $post->isFavoritedBy(auth()->user());
 
-        return view('posts.show', compact('post', 'comments', 'likesCount', 'isLiked', 'isFavorited'));
+        $comments = $post->comments()
+            ->where('approved', true)
+            ->whereNull('parent_id')
+            ->with('replies')
+            ->latest()
+            ->get();
+
+        $likesCount = $post->likes()->count();
+        $isLiked = auth()->check() ? $post->isLikedBy(auth()->user()) : false;
+        $isFavorited = auth()->check() ? $post->isFavoritedBy(auth()->user()) : false;
+
+        $relatedPosts = Post::where('published', true)
+            ->where('id', '!=', $post->id)
+            ->when($post->category, fn ($q) => $q->where('category', $post->category))
+            ->with(['user', 'comments', 'likes'])
+            ->latest()
+            ->take(2)
+            ->get();
+
+        if ($relatedPosts->count() < 2) {
+            $relatedPosts = Post::where('published', true)
+                ->where('id', '!=', $post->id)
+                ->with(['user', 'comments', 'likes'])
+                ->latest()
+                ->take(2)
+                ->get();
+        }
+
+        return view('posts.show', compact(
+            'post', 'comments', 'likesCount', 'isLiked', 'isFavorited', 'relatedPosts'
+        ));
     }
 
     public function create()
     {
-        // Pas d'autorisation ici, déjà géré par le middleware admin
+        $this->authorize('create', Post::class);
+
         return view('posts.create');
     }
 
     public function store(Request $request)
     {
-        // Pas d'autorisation ici, déjà géré par le middleware admin
-
+        $this->authorize('create', Post::class);
         $request->validate([
             'title'       => 'required|max:255',
             'content'     => 'required',
@@ -59,10 +105,10 @@ class PostController extends Controller
         Post::create([
             'user_id'     => auth()->id(),
             'title'       => $request->title,
-            'slug'        => Str::slug($request->title) . '-' . time(),
             'excerpt'     => $request->excerpt,
             'content'     => $request->content,
             'category'    => $request->category,
+            'tags'        => $request->tags,
             'cover_image' => $coverImagePath,
             'published'   => $request->has('published'),
         ]);
@@ -72,14 +118,14 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        // Pas d'autorisation ici, déjà géré par le middleware admin
+        $this->authorize('update', $post);
+
         return view('posts.edit', compact('post'));
     }
 
     public function update(Request $request, Post $post)
     {
-        // Pas d'autorisation ici, déjà géré par le middleware admin
-
+        $this->authorize('update', $post);
         $request->validate([
             'title'       => 'required|max:255',
             'content'     => 'required',
@@ -96,10 +142,10 @@ class PostController extends Controller
 
         $post->update([
             'title'       => $request->title,
-            'slug'        => Str::slug($request->title) . '-' . time(),
             'excerpt'     => $request->excerpt,
             'content'     => $request->content,
             'category'    => $request->category,
+            'tags'        => $request->tags,
             'cover_image' => $coverImagePath,
             'published'   => $request->has('published'),
         ]);
@@ -109,7 +155,7 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        // Pas d'autorisation ici, déjà géré par le middleware admin
+        $this->authorize('delete', $post);
 
         if ($post->cover_image) {
             Storage::disk('public')->delete($post->cover_image);

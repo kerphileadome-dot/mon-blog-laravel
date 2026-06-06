@@ -1,85 +1,104 @@
 @extends('layouts.app')
 
+@section('title', config('app.name') . ' · Accueil')
+
 @section('content')
 
-<div class="hero">
-    <span class="hero-label">✦ Blog Personnel</span>
-    <h1 class="hero-title">Mes <em>pensées</em><br>& explorations</h1>
-    <p class="hero-subtitle">Tutoriels, expériences et réflexions partagés avec le monde.</p>
-</div>
+<section class="home-hero">
+    <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        KerpheX · Blog professionnel
+    </div>
+    <h1 class="hero-title">Des idées qui <em>inspirent</em><br>des histoires qui <em>comptent</em></h1>
+    <p class="hero-subtitle">
+        Tutoriels, expériences et réflexions — un blog moderne pour explorer, apprendre et partager.
+    </p>
+    @if($totalPosts > 0)
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">{{ $totalPosts }}</div>
+                <div class="hero-stat-label">Articles</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{{ $categories->count() }}</div>
+                <div class="hero-stat-label">Catégories</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{{ number_format($totalViews) }}</div>
+                <div class="hero-stat-label">Lectures</div>
+            </div>
+        </div>
+    @endif
+</section>
+
+@if($featured)
+    @php $grads = ['grad-1','grad-2','grad-3','grad-4','grad-5']; @endphp
+    <a href="{{ route('posts.show', $featured) }}" class="featured-post">
+        <div class="featured-post-image">
+            @if($featured->cover_image)
+                <img src="{{ Storage::url($featured->cover_image) }}" alt="{{ $featured->title }}">
+            @else
+                <div class="featured-post-gradient {{ $grads[$featured->id % 5] }}"></div>
+            @endif
+        </div>
+        <div class="featured-post-body">
+            <span class="featured-label">✦ Article à la une</span>
+            @if($featured->category)
+                <span class="featured-label" style="color:var(--accent-bright);margin-left:0.5rem;">{{ $featured->category }}</span>
+            @endif
+            <h2 class="featured-title">{{ $featured->title }}</h2>
+            <p class="featured-excerpt">
+                {{ $featured->excerpt ?? Str::limit(strip_tags($featured->content), 180) }}
+            </p>
+            <div class="featured-meta">
+                <span>{{ $featured->user->name }}</span>
+                <span>{{ $featured->created_at->format('d M Y') }}</span>
+                <span>{{ $featured->readingTime() }} min de lecture</span>
+            </div>
+            <span class="featured-read">Lire l'article →</span>
+        </div>
+    </a>
+@endif
+
+@if($categories->count() > 0)
+    <div class="category-bar">
+        <a href="{{ route('posts.index') }}" class="category-pill active">Tous</a>
+        @foreach($categories as $cat)
+            <a href="{{ route('categories.show', $cat->category) }}" class="category-pill">
+                {{ $cat->category }}
+                <span class="category-pill-count">{{ $cat->count }}</span>
+            </a>
+        @endforeach
+        <a href="{{ route('categories.index') }}" class="category-pill">Voir tout →</a>
+    </div>
+@endif
 
 @if($posts->count() > 0)
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Derniers articles</h2>
+            <p class="section-subtitle">Les publications les plus récentes</p>
+        </div>
+    </div>
+
     <div class="posts-grid">
         @foreach($posts as $index => $post)
-            @php
-                $grads = ['grad-1','grad-2','grad-3','grad-4','grad-5'];
-                $grad = $grads[$index % 5];
-            @endphp
-            <article class="post-card">
-                <div class="card-image">
-                    @if($post->cover_image)
-                        <img src="{{ Storage::url($post->cover_image) }}" alt="{{ $post->title }}">
-                    @else
-                        <div class="card-gradient {{ $grad }}">📝</div>
-                    @endif
-                    @guest
-                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;border-radius:1rem 1rem 0 0;">
-                            <div style="text-align:center;color:white;">
-                                <div style="font-size:3rem;margin-bottom:0.5rem;">🔒</div>
-                                <p style="font-size:0.9rem;font-weight:500;">Connexion requise</p>
-                            </div>
-                        </div>
-                    @endguest
-                </div>
-                <div class="card-body">
-                    @if($post->category)
-                        <div class="card-category">{{ $post->category }}</div>
-                    @endif
-                    @auth
-                        <a href="{{ route('posts.show', $post) }}" class="card-title">
-                            {{ $post->title }}
-                        </a>
-                    @else
-                        <div class="card-title" style="cursor:not-allowed;opacity:0.6;">
-                            {{ $post->title }}
-                        </div>
-                    @endauth
-                    <p class="card-excerpt">
-                        {{ $post->excerpt ?? Str::limit(strip_tags($post->content), 100) }}
-                    </p>
-                    <div class="card-meta">
-                        <span class="card-date">{{ $post->created_at->diffForHumans() }}</span>
-                        <div class="card-stats">
-                            <span>👁 {{ $post->views }}</span>
-                            <span>❤️ {{ $post->likes->count() }}</span>
-                            <span>💬 {{ $post->comments->count() }}</span>
-                        </div>
-                    </div>
-                    @guest
-                        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);">
-                            <a href="{{ route('register') }}" class="btn-primary" style="width:100%;text-align:center;display:block;font-size:0.875rem;">
-                                Créer un compte pour lire
-                            </a>
-                        </div>
-                    @endguest
-                </div>
-            </article>
+            <x-post-card :post="$post" :index="$index" />
         @endforeach
     </div>
 
-    <div style="margin-top:2.5rem;">
-        {{ $posts->links() }}
+    <div class="pagination-wrap">
+        {{ $posts->links('vendor.pagination.blog') }}
     </div>
 
-@else
+@elseif(!$featured)
     <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <p class="empty-title">Aucun article pour l'instant.</p>
+        <div class="empty-icon">✍️</div>
+        <h2 class="empty-title">Le blog prend vie bientôt</h2>
+        <p class="empty-desc">Aucun article publié pour l'instant. Revenez très prochainement pour découvrir du contenu inspirant.</p>
         @auth
             @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.posts.create') }}" class="btn-primary" style="margin-top:1rem;">
-                    + Écrire le premier article
-                </a>
+                <a href="{{ route('admin.posts.create') }}" class="btn-primary btn-accent">Écrire le premier article</a>
             @endif
         @endauth
     </div>

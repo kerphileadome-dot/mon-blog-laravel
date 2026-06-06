@@ -42,7 +42,7 @@ class GoogleAuthController extends Controller
                 $user->name = $googleUser->getName();
                 $user->email = $googleUser->getEmail();
                 $user->password = bcrypt(uniqid()); // Mot de passe aléatoire (non utilisé)
-                $user->role = $googleUser->getEmail() === 'kerphileadome@gmail.com' ? 'admin' : 'visitor';
+                $user->role = $this->isAdminEmail($googleUser->getEmail()) ? 'admin' : 'visitor';
                 $user->email_verified_at = now();
                 $user->blocked = false;
                 $user->save();
@@ -60,5 +60,11 @@ class GoogleAuthController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
         }
+    }
+
+    protected function isAdminEmail(string $email): bool
+    {
+        return in_array($email, config('blog.admin_emails', []), true)
+            || User::where('email', $email)->where('role', 'admin')->exists();
     }
 }

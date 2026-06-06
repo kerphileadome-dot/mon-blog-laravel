@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Ne PAS rediriger automatiquement - laisser Laravel gérer avec intended()
-        return redirect()->intended(route('posts.index', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Notifications\WelcomeNotification;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +46,7 @@ class RegisteredUserController extends Controller
 
             Auth::login($user);
 
-            return redirect()->route('posts.index')->with('success', 'Bienvenue sur le blog !');
+            return redirect(route('dashboard', absolute: false))->with('success', 'Bienvenue sur KerpheX !');
         } catch (\Exception $e) {
             \Log::error('Erreur inscription: ' . $e->getMessage());
             return back()->withInput()->withErrors(['email' => 'Une erreur est survenue. Réessayez.']);

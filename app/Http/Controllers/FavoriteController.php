@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Services\BlogSettings;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
@@ -22,13 +23,13 @@ class FavoriteController extends Controller
     }
 
     // Page des favoris
-    public function index()
+    public function index(BlogSettings $settings)
     {
         $posts = auth()->user()->favoritePosts()
                     ->where('published', true)
                     ->with(['user', 'comments', 'likes'])
                     ->latest('favorites.created_at')
-                    ->paginate(6);
+                    ->paginate($settings->postsPerPage());
 
         return view('favorites.index', compact('posts'));
     }

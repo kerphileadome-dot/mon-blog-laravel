@@ -4,32 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Services\BlogSettings;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    // Ajouter un commentaire
-    public function store(Request $request, Post $post)
+    public function store(Request $request, Post $post, BlogSettings $settings)
     {
         $request->validate([
             'body' => 'required|max:1000',
         ]);
 
         $post->comments()->create([
-            'user_id' => auth()->id(),
-            'name'  => auth()->user()->name,
-            'email' => auth()->user()->email,
-            'body'  => $request->body,
-            'approved' => true, // Auto-approuvé pour les utilisateurs connectés
+            'user_id'  => auth()->id(),
+            'name'     => auth()->user()->name,
+            'email'    => auth()->user()->email,
+            'body'     => $request->body,
+            'approved' => $settings->commentsAutoApprove(),
         ]);
 
-        return back()->with('success', 'Commentaire ajouté !');
+        $message = $settings->commentsAutoApprove()
+            ? 'Commentaire publié !'
+            : 'Commentaire envoyé — en attente de modération.';
+
+        return back()->with('success', $message);
     }
 
-    // Supprimer un commentaire
     public function destroy(Comment $comment)
     {
-        // Seul l'admin peut supprimer
         if (!auth()->check() || !auth()->user()->isAdmin()) {
             abort(403, 'Accès non autorisé.');
         }

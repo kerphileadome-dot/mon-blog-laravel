@@ -4,7 +4,7 @@
 
 ![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-Custom-38B2AC?style=for-the-badge)
 ![SQLite](https://img.shields.io/badge/SQLite-3.x-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
 **Blog personnel moderne et sécurisé développé avec Laravel 13**
@@ -27,7 +27,7 @@ Ce projet est un **blog personnel professionnel** où seul l'administrateur peut
 - ✍️ **CRUD complet** pour les articles avec éditeur riche
 - 🖼️ **Upload d'images** de couverture
 - 💬 **Système de commentaires** avec modération
-- ❤️ **Système de likes** basé sur IP
+- ❤️ **Système de likes et favoris** par utilisateur connecté
 - 👁️ **Compteur de vues** par article
 - 📱 **Interface responsive** et moderne
 - 🚀 **Déploiement automatisé** sur Railway
@@ -44,7 +44,7 @@ Ce projet est un **blog personnel professionnel** où seul l'administrateur peut
 - **ORM** : Eloquent
 
 ### Frontend
-- **CSS Framework** : Tailwind CSS 3.x
+- **CSS** : Feuille de style éditoriale custom (`resources/css/app.css`)
 - **Template Engine** : Blade
 - **Build Tool** : Vite
 - **JavaScript** : Vanilla JS

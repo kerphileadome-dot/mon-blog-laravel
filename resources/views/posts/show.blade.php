@@ -1,126 +1,129 @@
 @extends('layouts.app')
 
+@section('title', $post->title . ' · ' . config('app.name'))
+@section('meta_description', $post->excerpt ?? Str::limit(strip_tags($post->content), 160))
+@section('main_class', 'blog-main--article')
+
 @section('content')
 
 @php
     $grads = ['grad-1','grad-2','grad-3','grad-4','grad-5'];
     $grad = $grads[$post->id % 5];
+    $initial = strtoupper(substr($post->user->name, 0, 1));
 @endphp
 
-{{-- En-tête de l'article --}}
-<div class="article-header">
+<div class="article-hero">
     @if($post->cover_image)
         <img src="{{ Storage::url($post->cover_image) }}" alt="{{ $post->title }}">
     @else
-        <div class="article-header-gradient {{ $grad }}">📝</div>
+        <div class="article-hero-gradient {{ $grad }}"></div>
     @endif
-    <div class="article-header-overlay">
-        <div class="article-header-content">
+    <div class="article-hero-overlay">
+        <div class="article-hero-content">
+            <nav class="article-breadcrumb">
+                <a href="{{ route('posts.index') }}">Accueil</a>
+                <span>›</span>
+                @if($post->category)
+                    <a href="{{ route('categories.show', $post->category) }}">{{ $post->category }}</a>
+                    <span>›</span>
+                @endif
+                <span>Article</span>
+            </nav>
             @if($post->category)
-                <span class="article-category">{{ $post->category }}</span>
+                <a href="{{ route('categories.show', $post->category) }}" class="article-category">
+                    {{ $post->category }}
+                </a>
             @endif
             <h1 class="article-title">{{ $post->title }}</h1>
             <div class="article-meta">
-                <span>✍️ {{ $post->user->name }}</span>
-                <span>📅 {{ $post->created_at->format('d M Y') }}</span>
-                <span>👁 {{ $post->views }} vues</span>
-                <span>⏱ {{ max(1, (int)(str_word_count(strip_tags($post->content)) / 200)) }} min de lecture</span>
+                <span class="article-meta-item">
+                    <span class="card-avatar" style="width:32px;height:32px;font-size:0.75rem;">{{ $initial }}</span>
+                    {{ $post->user->name }}
+                </span>
+                <span class="article-meta-item">{{ $post->created_at->format('d M Y') }}</span>
+                <span class="article-meta-item">{{ $post->views }} vues</span>
+                <span class="article-meta-item">{{ $post->readingTime() }} min de lecture</span>
             </div>
+            @if(count($post->tags_list) > 0)
+                <div class="article-tags">
+                    @foreach($post->tags_list as $tag)
+                        <a href="{{ route('tags.show', $tag) }}" class="article-tag">#{{ $tag }}</a>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 </div>
 
-{{-- Layout deux colonnes --}}
 <div class="article-layout">
+    <div class="article-main">
+        <article class="article-prose">
+            <div class="article-body">{{ $post->content }}</div>
 
-    {{-- Colonne principale --}}
-    <div>
-        <div class="article-content">
-            <div class="article-body" style="white-space: pre-line; color: #1a1a1a; font-size: 1.05rem; line-height: 1.8;">
-                {{ $post->content }}
+            <div class="author-card">
+                <div class="author-avatar">{{ $initial }}</div>
+                <div class="author-info">
+                    <div class="author-name">Écrit par {{ $post->user->name }}</div>
+                    <div class="author-role">Publié le {{ $post->created_at->format('d F Y') }}</div>
+                </div>
             </div>
-        </div>
+        </article>
 
-        {{-- Commentaires --}}
-        <div class="comments-section">
-            <h2 class="comments-title">💬 {{ $comments->count() }} Commentaire(s)</h2>
+        <section class="comments-section" id="comments">
+            <h2 class="comments-title">{{ $comments->count() }} commentaire{{ $comments->count() !== 1 ? 's' : '' }}</h2>
 
             @forelse($comments as $comment)
                 <div class="comment-item">
                     <div class="comment-header">
                         <div>
                             <span class="comment-author">{{ $comment->name }}</span>
-                            <span class="comment-time" style="margin-left:0.75rem;">
-                                {{ $comment->created_at->diffForHumans() }}
-                            </span>
+                            <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
                         @auth
-                            @if(auth()->user()->role === 'admin')
-                            <form method="POST" action="{{ route('admin.comments.delete', $comment) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button class="action-link danger" style="font-size:0.8rem;">✕</button>
-                            </form>
+                            @if(auth()->user()->isAdmin())
+                                <form method="POST" action="{{ route('admin.comments.delete', $comment) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="action-link danger" style="font-size:0.8rem;width:auto;">Supprimer</button>
+                                </form>
                             @endif
                         @endauth
                     </div>
-                    <p class="comment-body" style="color: #2d2d2d; font-size: 0.95rem;">{{ $comment->body }}</p>
+                    <p class="comment-body">{{ $comment->body }}</p>
 
-                    {{-- Bouton répondre pour admin --}}
                     @auth
-                        @if(auth()->user()->role === 'admin')
-                        <button onclick="toggleReplyForm{{ $comment->id }}()"
-                                style="color:var(--accent);background:none;border:none;cursor:pointer;font-size:0.85rem;margin-top:0.5rem;">
-                            💬 Répondre
-                        </button>
-                        <div id="replyForm{{ $comment->id }}" style="display:none;margin-top:1rem;padding:1rem;background:#f9fafb;border-radius:8px;">
-                            <form method="POST" action="{{ route('admin.comments.reply', $comment) }}">
-                                @csrf
-                                <textarea name="body" rows="3" placeholder="Votre réponse *"
-                                    class="form-input" style="margin-bottom:0.75rem;resize:vertical;"
-                                    required></textarea>
-                                <div style="display:flex;gap:0.5rem;">
-                                    <button type="submit" class="btn-primary" style="padding:0.5rem 1rem;font-size:0.875rem;">
-                                        Envoyer
-                                    </button>
-                                    <button type="button" onclick="toggleReplyForm{{ $comment->id }}()"
-                                            class="btn-ghost" style="padding:0.5rem 1rem;font-size:0.875rem;">
-                                        Annuler
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <script>
-                            function toggleReplyForm{{ $comment->id }}() {
-                                const form = document.getElementById('replyForm{{ $comment->id }}');
-                                form.style.display = form.style.display === 'none' ? 'block' : 'none';
-                            }
-                        </script>
+                        @if(auth()->user()->isAdmin())
+                            <button class="reply-btn" onclick="toggleReply({{ $comment->id }})">Répondre</button>
+                            <div class="reply-form" id="reply-{{ $comment->id }}">
+                                <form method="POST" action="{{ route('admin.comments.reply', $comment) }}">
+                                    @csrf
+                                    <textarea name="body" rows="3" placeholder="Votre réponse…"
+                                        class="form-input" style="margin-bottom:0.75rem;resize:vertical;" required></textarea>
+                                    <div style="display:flex;gap:0.5rem;">
+                                        <button type="submit" class="btn-primary" style="padding:0.5rem 1rem;font-size:0.875rem;">Envoyer</button>
+                                        <button type="button" class="btn-ghost" style="padding:0.5rem 1rem;font-size:0.875rem;" onclick="toggleReply({{ $comment->id }})">Annuler</button>
+                                    </div>
+                                </form>
+                            </div>
                         @endif
                     @endauth
 
-                    {{-- Afficher les réponses --}}
                     @if($comment->replies->count() > 0)
-                        <div style="margin-left:2rem;margin-top:1rem;padding-left:1rem;border-left:3px solid var(--border);">
+                        <div class="comment-replies">
                             @foreach($comment->replies as $reply)
-                                <div style="margin-bottom:1rem;">
-                                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
-                                        <span style="font-weight:600;color:var(--accent);font-size:0.875rem;">{{ $reply->name }}</span>
-                                        <span style="color:var(--text-dim);font-size:0.75rem;">{{ $reply->created_at->diffForHumans() }}</span>
-                                    </div>
-                                    <p style="color:#2d2d2d;font-size:0.875rem;">{{ $reply->body }}</p>
+                                <div class="comment-reply">
+                                    <span class="comment-reply-author">{{ $reply->name }}</span>
+                                    <span class="comment-reply-time">{{ $reply->created_at->diffForHumans() }}</span>
+                                    <p class="comment-reply-body">{{ $reply->body }}</p>
                                 </div>
                             @endforeach
                         </div>
                     @endif
                 </div>
             @empty
-                <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1.5rem;">
-                    Aucun commentaire pour l'instant. Soyez le premier !
-                </p>
+                <p style="color:var(--ink-faint);font-size:0.9rem;">Aucun commentaire pour l'instant. Soyez le premier à réagir !</p>
             @endforelse
 
-            {{-- Formulaire commentaire --}}
             @auth
                 <div class="comment-form-card">
                     <h3 class="form-title">Laisser un commentaire</h3>
@@ -133,102 +136,107 @@
                                 class="form-input" value="{{ old('email', auth()->user()->email) }}">
                         </div>
                         <textarea name="body" rows="4" placeholder="Votre commentaire *"
-                            class="form-input" style="margin-bottom:1rem;resize:vertical;"
-                            required>{{ old('body') }}</textarea>
-                        <button type="submit" class="btn-primary">
-                            Publier le commentaire
-                        </button>
+                            class="form-input" style="margin-bottom:1rem;resize:vertical;" required>{{ old('body') }}</textarea>
+                        <button type="submit" class="btn-primary">Publier le commentaire</button>
                     </form>
                 </div>
             @else
-                <div style="text-align:center;padding:2rem;background:var(--card);border-radius:0.75rem;border:1px solid var(--border);">
-                    <div style="font-size:2rem;margin-bottom:1rem;">💬</div>
-                    <p style="color:var(--text-muted);margin-bottom:1.5rem;">Connectez-vous pour laisser un commentaire</p>
+                <div class="comment-cta">
+                    <p>Connectez-vous pour rejoindre la conversation</p>
                     <a href="{{ route('login') }}" class="btn-primary">Se connecter</a>
                 </div>
             @endauth
-        </div>
+        </section>
+
+        @if($relatedPosts->count() > 0)
+            <section class="related-posts">
+                <div class="section-header">
+                    <h2 class="section-title">Articles similaires</h2>
+                </div>
+                <div class="posts-grid">
+                    @foreach($relatedPosts as $index => $related)
+                        <x-post-card :post="$related" :index="$index" />
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
 
-    {{-- Sidebar --}}
     <aside class="article-sidebar">
-
-        {{-- Favoris --}}
         @auth
             <div class="sidebar-card">
                 <p class="sidebar-title">Favoris</p>
                 <form method="POST" action="{{ route('posts.favorite', $post) }}">
                     @csrf
-                    <button class="like-btn" style="background:{{ $isFavorited ? 'var(--accent)' : 'var(--card)' }};">
-                        {{ $isFavorited ? '⭐ Retiré des favoris' : '☆ Ajouter aux favoris' }}
+                    <button class="like-btn fav-btn {{ $isFavorited ? 'active' : '' }}">
+                        {{ $isFavorited ? '★ Retirer des favoris' : '☆ Ajouter aux favoris' }}
                     </button>
                 </form>
             </div>
         @endauth
 
-        {{-- Like --}}
         <div class="sidebar-card">
-            <p class="sidebar-title">Vous avez aimé ?</p>
+            <p class="sidebar-title">Réactions</p>
             @auth
                 <form method="POST" action="{{ route('posts.like', $post) }}">
                     @csrf
-                    <button class="like-btn">
-                        ❤️ J'aime &nbsp;·&nbsp; {{ $likesCount }}
+                    <button class="like-btn {{ $isLiked ? 'active' : '' }}">
+                        ♥ J'aime · {{ $likesCount }}
                     </button>
                 </form>
             @else
-                <div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.875rem;">
-                    <a href="{{ route('login') }}" style="color:var(--accent);">Connectez-vous</a> pour liker
-                </div>
+                <p style="font-size:0.85rem;color:var(--ink-muted);text-align:center;">
+                    <a href="{{ route('login') }}" style="color:var(--accent);font-weight:600;">Connectez-vous</a> pour liker
+                </p>
             @endauth
         </div>
 
-        {{-- Stats (admin uniquement) --}}
+        <div class="sidebar-card">
+            <p class="sidebar-title">À propos de cet article</p>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Vues</span>
+                <span class="sidebar-stat-value">{{ $post->views }}</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Likes</span>
+                <span class="sidebar-stat-value">{{ $likesCount }}</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Commentaires</span>
+                <span class="sidebar-stat-value">{{ $comments->count() }}</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Lecture</span>
+                <span class="sidebar-stat-value">{{ $post->readingTime() }} min</span>
+            </div>
+        </div>
+
         @auth
-            @if(auth()->user()->role === 'admin')
-            <div class="sidebar-card">
-                <p class="sidebar-title">Statistiques</p>
-                <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                    <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
-                        <span style="color:var(--text-muted);">👁 Vues</span>
-                        <span style="color:var(--text);font-weight:600;">{{ $post->views }}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
-                        <span style="color:var(--text-muted);">❤️ Likes</span>
-                        <span style="color:var(--text);font-weight:600;">{{ $likesCount }}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-size:0.875rem;">
-                        <span style="color:var(--text-muted);">💬 Commentaires</span>
-                        <span style="color:var(--text);font-weight:600;">{{ $comments->count() }}</span>
-                    </div>
+            @if(auth()->user()->isAdmin())
+                <div class="sidebar-card">
+                    <p class="sidebar-title">Administration</p>
+                    <a href="{{ route('admin.posts.edit', $post) }}" class="action-link">Modifier l'article</a>
+                    <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button class="action-link danger" onclick="return confirm('Supprimer cet article définitivement ?')">
+                            Supprimer l'article
+                        </button>
+                    </form>
                 </div>
-            </div>
             @endif
         @endauth
-
-        {{-- Actions admin --}}
-        @auth
-            @if(auth()->user()->role === 'admin')
-            <div class="sidebar-card">
-                <p class="sidebar-title">Administration</p>
-                <a href="{{ route('admin.posts.edit', $post) }}" class="action-link">
-                    ✏️ Modifier l'article
-                </a>
-                <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
-                    @csrf
-                    @method('DELETE')
-                    <button class="action-link danger"
-                        onclick="return confirm('Supprimer cet article définitivement ?')">
-                        🗑️ Supprimer l'article
-                    </button>
-                </form>
-            </div>
-            @endif
-        @endauth
-
     </aside>
 </div>
 
 <a href="{{ route('posts.index') }}" class="back-link">← Retour aux articles</a>
 
 @endsection
+
+@push('scripts')
+<script>
+function toggleReply(id) {
+    document.getElementById('reply-' + id).classList.toggle('open');
+}
+</script>
+@endpush

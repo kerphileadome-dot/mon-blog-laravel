@@ -3,27 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\BlogSettings;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 
 class SettingsController extends Controller
 {
-    protected $settingsFile;
-
-    public function __construct()
+    public function index(BlogSettings $settings)
     {
-        $this->settingsFile = storage_path('app/blog_settings.json');
+        return view('admin.settings.index', ['settings' => $settings->all()]);
     }
 
-    // Afficher les paramètres
-    public function index()
-    {
-        $settings = $this->getSettings();
-        return view('admin.settings.index', compact('settings'));
-    }
-
-    // Sauvegarder les paramètres
-    public function update(Request $request)
+    public function update(Request $request, BlogSettings $settings)
     {
         $request->validate([
             'blog_name' => 'required|max:255',
@@ -34,39 +24,18 @@ class SettingsController extends Controller
             'email_notifications' => 'boolean',
         ]);
 
-        $settings = [
+        $settings->update([
             'blog_name' => $request->blog_name,
             'blog_description' => $request->blog_description,
             'blog_keywords' => $request->blog_keywords,
             'comments_auto_approve' => $request->has('comments_auto_approve'),
-            'posts_per_page' => $request->posts_per_page,
+            'posts_per_page' => (int) $request->posts_per_page,
             'email_notifications' => $request->has('email_notifications'),
-            'updated_at' => now()->toDateTimeString(),
-        ];
-
-        File::put($this->settingsFile, json_encode($settings, JSON_PRETTY_PRINT));
+        ]);
 
         return back()->with('success', 'Paramètres mis à jour avec succès !');
     }
 
-    // Obtenir les paramètres
-    protected function getSettings()
-    {
-        if (!File::exists($this->settingsFile)) {
-            return [
-                'blog_name' => config('app.name'),
-                'blog_description' => 'Mon blog personnel',
-                'blog_keywords' => 'blog, articles, tutoriels',
-                'comments_auto_approve' => false,
-                'posts_per_page' => 6,
-                'email_notifications' => true,
-            ];
-        }
-
-        return json_decode(File::get($this->settingsFile), true);
-    }
-
-    // Export des utilisateurs en CSV
     public function exportUsers()
     {
         $users = \App\Models\User::where('role', 'visitor')
@@ -80,13 +49,10 @@ class SettingsController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $callback = function() use ($users) {
+        $callback = function () use ($users) {
             $file = fopen('php://output', 'w');
-
-            // En-têtes
             fputcsv($file, ['Nom', 'Email', 'Articles', 'Commentaires', 'Favoris', 'Inscrit le']);
 
-            // Données
             foreach ($users as $user) {
                 fputcsv($file, [
                     $user->name,
@@ -104,7 +70,6 @@ class SettingsController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    // Export des statistiques en CSV
     public function exportStats()
     {
         $posts = \App\Models\Post::with(['likes', 'comments'])
@@ -119,13 +84,10 @@ class SettingsController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $callback = function() use ($posts) {
+        $callback = function () use ($posts) {
             $file = fopen('php://output', 'w');
-
-            // En-têtes
             fputcsv($file, ['Titre', 'Statut', 'Vues', 'Likes', 'Commentaires', 'Publié le']);
 
-            // Données
             foreach ($posts as $post) {
                 fputcsv($file, [
                     $post->title,

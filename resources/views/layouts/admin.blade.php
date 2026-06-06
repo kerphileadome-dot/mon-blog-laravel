@@ -10,56 +10,56 @@
 
     <div class="noise-overlay"></div>
 
-    <nav class="blog-nav" style="border-bottom:1px solid var(--border);">
-        <div class="nav-inner" style="max-width:100%;padding:0 2rem;">
-            <!-- Logo professionnel séparé -->
-            <div style="display:flex;align-items:center;gap:3rem;">
-                <a href="{{ route('admin.dashboard') }}" style="display:flex;align-items:center;gap:0.75rem;text-decoration:none;">
-                    <div style="width:40px;height:40px;background:linear-gradient(135deg, #00bf72 0%, #00a862 100%);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1.25rem;box-shadow:0 4px 6px rgba(0,191,114,0.3);">
-                        K
-                    </div>
-                    <div>
-                        <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary);line-height:1.2;">{{ config('app.name') }}</div>
-                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Admin Panel</div>
-                    </div>
-                </a>
+    <nav class="blog-nav">
+        <div class="nav-inner" style="max-width:100%;">
+            <a href="{{ route('admin.dashboard') }}" class="blog-logo">
+                <x-kerphex-logo size="sm" />
+            </a>
 
-                <!-- Menu admin - caché sur mobile -->
-                <div style="display:flex;align-items:center;gap:0.5rem;" class="desktop-menu">
-                    <a href="{{ route('admin.dashboard') }}" class="btn-ghost">📊 Dashboard</a>
-                    <a href="{{ route('admin.posts') }}" class="btn-ghost">📝 Articles</a>
-                    <a href="{{ route('admin.comments') }}" class="btn-ghost">💬 Commentaires</a>
-                    <a href="{{ route('admin.users.index') }}" class="btn-ghost">👥 Utilisateurs</a>
-                    <a href="{{ route('admin.media.index') }}" class="btn-ghost">🖼️ Médias</a>
-                    <a href="{{ route('admin.settings.index') }}" class="btn-ghost">⚙️ Paramètres</a>
-                </div>
+            <div class="nav-center desktop-menu">
+                <a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ route('admin.posts') }}" class="nav-link">Articles</a>
+                <a href="{{ route('admin.comments') }}" class="nav-link">Commentaires</a>
+                <a href="{{ route('admin.users.index') }}" class="nav-link">Utilisateurs</a>
+                <a href="{{ route('admin.media.index') }}" class="nav-link">Médias</a>
+                <a href="{{ route('admin.settings.index') }}" class="nav-link">Paramètres</a>
             </div>
 
-            <!-- Actions droite -->
-            <div style="display:flex;align-items:center;gap:1rem;">
-                <a href="{{ route('admin.posts.create') }}" class="btn-primary">+ Nouvel article</a>
-                <form method="POST" action="{{ route('admin.logout') }}" class="inline">
+            <div class="nav-links">
+                <a href="{{ route('posts.index') }}" class="btn-ghost nav-desktop-only">Voir le blog</a>
+                <a href="{{ route('admin.posts.create') }}" class="btn-primary btn-accent nav-desktop-only">Écrire</a>
+                <form method="POST" action="{{ route('admin.logout') }}" class="inline nav-desktop-only">
                     @csrf
                     <button class="btn-ghost">Déconnexion</button>
                 </form>
+                <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <style>
-        @media (max-width: 1024px) {
-            .desktop-menu { display: none !important; }
-        }
-    </style>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ route('admin.posts') }}">Articles</a>
+        <a href="{{ route('admin.comments') }}">Commentaires</a>
+        <a href="{{ route('admin.users.index') }}">Utilisateurs</a>
+        <a href="{{ route('admin.media.index') }}">Médias</a>
+        <a href="{{ route('admin.settings.index') }}">Paramètres</a>
+        <a href="{{ route('admin.posts.create') }}">Nouvel article</a>
+        <a href="{{ route('posts.index') }}">Voir le blog</a>
+        <form method="POST" action="{{ route('admin.logout') }}">
+            @csrf
+            <button type="submit">Déconnexion</button>
+        </form>
+    </div>
 
     @if(session('success'))
-        <div class="flash-msg">
-            ✓ {{ session('success') }}
-        </div>
+        <div class="flash-msg">✓ {{ session('success') }}</div>
     @endif
 
     @if(session('error'))
-        <div style="position:fixed;top:5rem;right:2rem;background:#ef4444;color:white;padding:1rem 1.5rem;border-radius:12px;box-shadow:0 4px 12px rgba(239,68,68,0.3);z-index:1000;animation:slideIn 0.3s ease;">
+        <div class="flash-msg" style="background:rgba(220,38,38,0.08);border-color:rgba(220,38,38,0.25);color:#dc2626;">
             ✕ {{ session('error') }}
         </div>
     @endif
@@ -70,10 +70,24 @@
 
     <footer class="blog-footer">
         <div class="footer-inner">
-            <p class="footer-brand">{{ config('app.name') }} Admin</p>
-            <p class="footer-copy">© {{ date('Y') }} · Panneau d'administration</p>
+            <div>
+                <p class="footer-brand">{{ config('app.name') }} Admin</p>
+                <p class="footer-desc">Panneau d'administration du blog.</p>
+            </div>
+            <div class="footer-copy">
+                <span>© {{ date('Y') }} · Administration</span>
+                <a href="{{ route('posts.index') }}" style="color:rgba(255,255,255,0.5);text-decoration:none;">Retour au blog →</a>
+            </div>
         </div>
     </footer>
+
+    <script>
+        const navToggle = document.getElementById('navToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (navToggle && mobileMenu) {
+            navToggle.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+        }
+    </script>
 
 </body>
 </html>

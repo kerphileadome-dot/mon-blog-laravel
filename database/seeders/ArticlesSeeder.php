@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Post;
-use Illuminate\Support\Str;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class ArticlesSeeder extends Seeder
 {
@@ -14,184 +13,180 @@ class ArticlesSeeder extends Seeder
         $admin = User::where('email', 'kerphilesaint@gmail.com')->first();
 
         if (!$admin) {
-            $this->command->error('Admin user not found!');
+            $this->command->error('Compte admin introuvable. Lancez AdminUserSeeder d\'abord.');
             return;
         }
 
-        // Vérifier si les articles existent déjà
         if (Post::count() > 0) {
-            $this->command->info('Articles déjà existants, skip.');
+            $this->command->info('Articles déjà présents — ignoré.');
             return;
         }
 
-        // Article 1: Coupe du Monde 2026
-        Post::create([
-            'user_id' => $admin->id,
-            'title' => 'Coupe du Monde 2026 : Tout ce qu\'il faut savoir',
-            'slug' => Str::slug('Coupe du Monde 2026') . '-' . time(),
-            'category' => 'Sport',
-            'excerpt' => 'La Coupe du Monde 2026 se prépare avec des innovations majeures et un format élargi.',
-            'content' => "La Coupe du Monde de football 2026 sera la première édition à réunir 48 équipes nationales, contre 32 auparavant. Organisée conjointement par les États-Unis, le Canada et le Mexique, cette compétition historique marquera un tournant dans l'histoire du football mondial.
+        // Images de couverture (sources web) : storage/app/public/covers/
+        // coupe-monde → Wikimedia (Mbappé, Griezmann, Fekir, Giroud + trophée, CC BY-SA 4.0)
+        // sante → Pexels #1640770 | ia → Unsplash | wadagni → Wikimedia skyline Cotonou (CC BY-SA 4.0)
+        $articles = [
+            [
+                'title' => 'Coupe du Monde 2026 : tout ce qu\'il faut savoir',
+                'cover_image' => 'covers/coupe-monde-2026.jpg',
+                'category' => 'Sport',
+                'tags' => 'football, coupe du monde, FIFA, 2026',
+                'excerpt' => 'Du 11 juin au 19 juillet 2026, le Mondial réunit pour la première fois 48 équipes au Canada, au Mexique et aux États-Unis.',
+                'content' => <<<'TEXT'
+La Coupe du Monde de la FIFA 2026 s'annonce comme la plus grande édition de l'histoire du football. Pour la première fois, le tournoi se déroulera dans trois pays — le Canada, le Mexique et les États-Unis — et accueillera 48 sélections nationales, contre 32 auparavant.
 
-Un format révolutionnaire
+Dates et calendrier
 
-Le nouveau format comprendra 16 groupes de 3 équipes, avec les deux premiers de chaque groupe qualifiés pour les phases à élimination directe. Cette structure garantira plus de matchs et plus de spectacle pour les fans du monde entier.
+Le coup d'envoi est fixé au jeudi 11 juin 2026. Le match d'ouverture opposera le Mexique à l'Afrique du Sud au mythique Stade Azteca de Mexico. La compétition s'achèvera le dimanche 19 juillet 2026 avec la finale au MetLife Stadium, dans la région de New York / New Jersey.
 
-Trois pays hôtes
+Au total, 104 matchs seront disputés sur environ cinq semaines, avec une phase de groupes du 11 au 28 juin, puis des phases à élimination directe jusqu'à la finale.
 
-Pour la première fois, trois nations accueilleront simultanément la Coupe du Monde. Les États-Unis accueilleront la majorité des matchs, tandis que le Canada et le Mexique organiseront respectivement 10 et 13 rencontres.
+Un format inédit
 
-Des stades ultramodernes
+Le Conseil de la FIFA a validé un format à 12 groupes de quatre équipes. Les deux premiers de chaque groupe, ainsi que les huit meilleurs troisièmes, se qualifieront pour les seizièmes de finale. Ce nouveau système offre plus de matchs, plus de suspense et une place accrue aux nations émergentes.
 
-Les stades sélectionnés sont parmi les plus modernes au monde, avec des capacités allant de 60 000 à 80 000 places. Des villes emblématiques comme New York, Los Angeles, Mexico et Toronto accueilleront les plus grandes rencontres.
+Les villes hôtes
 
-L'impact économique
+Seize villes accueilleront la compétition :
+- Canada : Toronto et Vancouver
+- Mexique : Mexico, Guadalajara et Monterrey
+- États-Unis : Atlanta, Boston, Dallas, Houston, Kansas City, Los Angeles, Miami, New York/New Jersey, Philadelphie, San Francisco et Seattle
 
-Cette Coupe du Monde générera des milliards de dollars de retombées économiques pour les trois pays hôtes, créant des milliers d'emplois et attirant des millions de touristes.
+Des enceintes ultramodernes, capables d'accueillir des dizaines de milliers de spectateurs, seront au cœur du spectacle.
 
-Les favoris
+Pourquoi ce Mondial est historique
 
-Le Brésil, l'Argentine, la France et l'Allemagne sont déjà considérés comme les favoris, mais le nouveau format pourrait réserver de belles surprises avec la participation de nouvelles nations qualifiées.
+Au-delà du sport, la Coupe du Monde 2026 représente un projet continental unique : trois nations unies pour célébrer le football mondial. Les retombées économiques, touristiques et culturelles s'annoncent considérables pour l'Amérique du Nord.
 
-Un événement historique
+Côté sportif, des favoris comme le Brésil, l'Argentine, la France ou l'Allemagne seront attendus au tournant, mais le format élargi laisse la porte ouverte aux surprises. Une chose est sûre : en juin 2026, le monde entier aura les yeux rivés sur ce rendez-vous planétaire.
+TEXT,
+            ],
+            [
+                'title' => 'Les habitudes santé essentielles en 2026',
+                'cover_image' => 'covers/sante-2026.jpg',
+                'category' => 'Santé',
+                'tags' => 'santé, bien-être, nutrition, sport',
+                'excerpt' => 'Sommeil, alimentation, activité physique et équilibre mental : les piliers d\'une vie saine selon les recommandations actuelles.',
+                'content' => <<<'TEXT'
+Prendre soin de sa santé n'a jamais été aussi important. En 2026, les recommandations des professionnels convergent vers des habitudes simples, accessibles et scientifiquement éprouvées.
 
-La Coupe du Monde 2026 promet d'être l'événement sportif le plus regardé de l'histoire, avec une audience mondiale estimée à plus de 5 milliards de téléspectateurs.",
-            'published' => true,
-            'views' => 45,
-        ]);
+1. Prioriser le sommeil
 
-        // Article 2: Intelligence Artificielle
-        Post::create([
-            'user_id' => $admin->id,
-            'title' => 'L\'Intelligence Artificielle en 2026 : Révolution ou Évolution ?',
-            'slug' => Str::slug('Intelligence Artificielle 2026') . '-' . time(),
-            'category' => 'Tech',
-            'excerpt' => 'L\'IA transforme notre quotidien à une vitesse sans précédent. Décryptage des tendances 2026.',
-            'content' => "L'intelligence artificielle n'est plus une technologie futuriste, elle fait désormais partie intégrante de notre vie quotidienne en 2026.
+Dormir 7 à 8 heures par nuit reste la base d'une bonne santé. Le sommeil régule l'humeur, renforce le système immunitaire, améliore la concentration et favorise la récupération musculaire. Évitez les écrans une heure avant le coucher et maintenez des horaires réguliers.
+
+2. Bouger chaque jour
+
+La marche rapide, la natation ou simplement 30 minutes d'activité modérée par jour réduisent les risques cardiovasculaires, le stress et le surpoids. L'OMS recommande au moins 150 minutes d'activité physique par semaine.
+
+3. Manger plus de végétaux
+
+Une alimentation riche en fruits, légumes, céréales complètes et protéines maigres protège contre les maladies chroniques. Réduire le sucre ajouté, les boissons sucrées et les aliments ultra-transformés fait une réelle différence sur le long terme.
+
+4. S'hydrater correctement
+
+Boire environ 1,5 à 2 litres d'eau par jour aide le corps à fonctionner optimalement : digestion, circulation, peau et énergie. En climat chaud ou lors d'efforts physiques, les besoins augmentent.
+
+5. Gérer le stress
+
+Méditation, respiration profonde, promenades dans la nature ou quelques minutes de pause sans écran permettent de réduire l'anxiété. La santé mentale est indissociable de la santé physique.
+
+6. Cultiver les liens sociaux
+
+Maintenir des relations de qualité avec sa famille, ses amis ou sa communauté protège contre l'isolement et la dépression. Le soutien social est un pilier souvent sous-estimé du bien-être.
+
+7. Faire des bilans de santé
+
+Un suivi médical régulier permet de détecter tôt hypertension, diabète ou autres troubles silencieux. La prévention reste le meilleur investissement santé.
+
+En adoptant progressivement ces habitudes, vous construisez une base solide pour une vie plus longue, plus énergique et plus équilibrée. Pas besoin de tout changer en une semaine : commencez par un geste, puis un autre.
+TEXT,
+            ],
+            [
+                'title' => 'L\'intelligence artificielle en 2026 : révolution ou évolution ?',
+                'cover_image' => 'covers/ia-2026.jpg',
+                'category' => 'Tech',
+                'tags' => 'IA, intelligence artificielle, ChatGPT, technologie',
+                'excerpt' => 'Assistants conversationnels, IA générative, médecine, éducation : où en est l\'IA aujourd\'hui et que nous réserve-t-elle ?',
+                'content' => <<<'TEXT'
+L'intelligence artificielle n'est plus un concept de science-fiction. En 2026, elle est entrée dans le quotidien de millions de personnes, transformant la façon dont nous travaillons, apprenons et créons.
 
 L'IA générative partout
 
-Les outils comme ChatGPT, Midjourney et autres ont démocratisé l'accès à l'IA générative. En 2026, ces technologies sont utilisées dans tous les secteurs : éducation, santé, création de contenu, programmation.
+Depuis l'essor de ChatGPT et d'autres modèles de langage, l'IA générative s'est imposée dans la rédaction, le code, le design, le marketing et l'éducation. Des outils capables de produire texte, images, code ou vidéos en quelques secondes sont désormais accessibles au grand public.
 
-L'IA dans le monde du travail
+Au travail : transformation, pas seulement remplacement
 
-L'IA ne remplace pas les emplois, elle les transforme. Les professionnels qui maîtrisent l'IA sont devenus indispensables. De nouveaux métiers ont émergé : prompt engineers, AI trainers, ethics officers.
+L'IA automatise les tâches répétitives — tri d'e-mails, synthèses, traductions, analyse de données — mais elle crée aussi de nouveaux métiers : ingénieur prompt, spécialiste en éthique de l'IA, formateur IA. Les profils qui savent collaborer avec l'IA gagnent en employabilité.
 
-Santé et diagnostic
+Santé et recherche
 
-Dans le domaine médical, l'IA permet des diagnostics plus précis et plus rapides. Elle analyse des millions de données médicales pour détecter précocement des maladies comme le cancer.
+En médecine, l'IA aide au diagnostic précoce, à l'analyse d'imagerie médicale et à la découverte de molécules thérapeutiques. Elle ne remplace pas le médecin, mais lui donne des outils plus rapides et plus précis.
 
 Éducation personnalisée
 
-L'IA révolutionne l'apprentissage en proposant des parcours personnalisés pour chaque étudiant, s'adaptant à son rythme et à son style d'apprentissage.
+Les plateformes d'apprentissage s'appuient sur l'IA pour adapter les exercices au niveau de chaque élève, identifier les lacunes et proposer des parcours sur mesure.
 
-Les défis éthiques
+Les défis à relever
 
-Avec la puissance croissante de l'IA viennent des questions éthiques majeures : vie privée, biais algorithmiques, responsabilité, impact environnemental des serveurs.
+Avec cette puissance viennent des questions majeures : protection des données personnelles, biais algorithmiques, deepfakes, impact environnemental des centres de données et cadre légal. L'Union européenne et d'autres régions travaillent sur des régulations pour encadrer l'usage de l'IA sans freiner l'innovation.
 
-Régulation et gouvernance
+Vers quoi allons-nous ?
 
-Les gouvernements du monde entier travaillent sur des cadres réglementaires pour encadrer l'utilisation de l'IA, tout en favorisant l'innovation.
+En 2026, nous sommes dans une phase d'adoption massive. Les prochaines années verront probablement l'intégration de l'IA dans les voitures, les maisons connectées, les services publics et la recherche scientifique. L'enjeu n'est plus de savoir si l'IA va changer le monde, mais comment nous allons l'utiliser de manière responsable.
+TEXT,
+            ],
+            [
+                'title' => 'Romuald Wadagni : le parcours du nouveau Président du Bénin',
+                'cover_image' => 'covers/wadagni-benin.jpg',
+                'category' => 'Politique',
+                'tags' => 'Bénin, Romuald Wadagni, politique, Afrique',
+                'excerpt' => 'De Lokossa à la présidence : retour sur le parcours de Romuald Wadagni, investi Président de la République du Bénin en mai 2026.',
+                'content' => <<<'TEXT'
+Romuald Wadagni, de son nom complet Kossi Mbueke Romuald Wadagni, est devenu une figure centrale de la vie politique béninoise. Né le 20 juin 1976 à Lokossa, dans le département du Mono, il incarne un parcours mêlant excellence académique, carrière internationale et engagement au service de l'État.
 
-L'avenir de l'IA
+Une formation d'excellence
 
-En 2026, nous ne sommes qu'au début de la révolution IA. Les experts prévoient des avancées encore plus spectaculaires dans les années à venir, notamment dans l'IA quantique et l'IA consciente.",
-            'published' => true,
-            'views' => 67,
-        ]);
+Après son baccalauréat scientifique au Bénin, il poursuit ses études en France à l'École supérieure des affaires de Grenoble (aujourd'hui IAE Grenoble), où il obtient un master en finance, major de promotion. Il complète son parcours avec une formation à Harvard, consolidant une expertise reconnue en gestion et finance.
 
-        // Article 3: Santé
-        Post::create([
-            'user_id' => $admin->id,
-            'title' => 'Les 10 Habitudes Santé à Adopter en 2026',
-            'slug' => Str::slug('10 Habitudes Santé 2026') . '-' . time(),
-            'category' => 'Santé',
-            'excerpt' => 'Découvrez les meilleures pratiques pour une vie saine et équilibrée selon les dernières recherches scientifiques.',
-            'content' => "La santé est notre bien le plus précieux. Voici 10 habitudes scientifiquement prouvées pour améliorer votre bien-être en 2026.
+Une carrière chez Deloitte
 
-1. Marcher 10 000 pas par jour
+Romuald Wadagni rejoint le cabinet international Deloitte, où il évolue pendant près de vingt ans entre l'Europe, l'Amérique du Nord et l'Afrique. Il gravit les échelons jusqu'à devenir l'un des plus jeunes associés du cabinet et supervise une large part des opérations africaines du groupe.
 
-La marche reste l'exercice le plus accessible et le plus bénéfique. Elle améliore la santé cardiovasculaire, réduit le stress et maintient un poids santé.
+Ministre de l'Économie et des Finances
 
-2. Dormir 7-8 heures par nuit
-
-Le sommeil est essentiel pour la récupération physique et mentale. Un sommeil de qualité améliore la mémoire, l'humeur et le système immunitaire.
-
-3. Boire 2 litres d'eau par jour
-
-L'hydratation est cruciale pour toutes les fonctions corporelles. L'eau aide à éliminer les toxines et maintient la peau en bonne santé.
-
-4. Manger 5 fruits et légumes
-
-Une alimentation riche en fruits et légumes fournit les vitamines et minéraux essentiels, réduit les risques de maladies chroniques.
-
-5. Pratiquer la méditation
-
-10 minutes de méditation quotidienne réduisent le stress, améliorent la concentration et favorisent le bien-être mental.
-
-6. Limiter les écrans
-
-Réduire le temps d'écran, surtout avant le coucher, améliore la qualité du sommeil et réduit la fatigue oculaire.
-
-7. Faire du sport 3 fois par semaine
-
-L'exercice régulier renforce le cœur, les muscles et les os, tout en libérant des endorphines pour le bien-être mental.
-
-8. Maintenir des relations sociales
-
-Les connexions humaines sont essentielles pour la santé mentale. Cultiver des amitiés solides réduit la dépression et l'anxiété.
-
-9. Prendre des pauses régulières
-
-Se lever toutes les heures, s'étirer et faire des micro-pauses améliore la productivité et réduit les douleurs.
-
-10. Rire chaque jour
-
-Le rire est un excellent remède naturel. Il réduit le stress, renforce le système immunitaire et améliore l'humeur.
-
-Conclusion
-
-Ces habitudes simples, pratiquées régulièrement, transformeront votre vie. Commencez par en adopter une ou deux, puis ajoutez-en progressivement.",
-            'published' => true,
-            'views' => 89,
-        ]);
-
-        // Article 4: Président WADAGNI (brouillon)
-        Post::create([
-            'user_id' => $admin->id,
-            'title' => 'Romuald WADAGNI : De Harvard au Palais Présidentiel',
-            'slug' => Str::slug('Romuald WADAGNI Président Bénin') . '-' . time(),
-            'category' => 'Politique',
-            'excerpt' => 'De l\'Excellence académique à la plus haute fonction : découvrez le parcours remarquable de Son Excellence Romuald WADAGNI, 9ème Président du Bénin.',
-            'content' => "Un parcours académique d'exception
-
-Né le 20 juin 1976, Kossi Mbueke Romuald WADAGNI incarne aujourd'hui la réussite d'un parcours académique exemplaire conjugué à un engagement politique au service du Bénin. Après ses études secondaires au Bénin, le jeune Romuald part en France pour poursuivre des études supérieures.
-
-De 1995 à 1999, il étudie à l'École Supérieure des Affaires (ESA) de Grenoble, France, où il décroche un Master en Finance avec la distinction de major de promotion. Cette excellence académique n'était que le début d'une brillante trajectoire.
-
-La consécration à Harvard
-
-En 2007, Romuald WADAGNI franchit une nouvelle étape en intégrant la prestigieuse Harvard Business School aux États-Unis. Il y complète une formation spécialisée en private equity et venture capital, consolidant ainsi son expertise en finance internationale.
-
-Son passage à Harvard ne s'arrête pas là : en 2017, il participe au Harvard Ministerial Leadership Program, un programme d'excellence destiné aux leaders gouvernementaux du monde entier.
-
-Une carrière professionnelle internationale
-
-Diplômé et certifié comme Expert-Comptable en France et Certified Public Accountant (CPA) aux États-Unis, WADAGNI rejoint le cabinet international Deloitte où il gravit rapidement les échelons pour devenir Partner et superviser les opérations africaines du groupe.
-
-L'entrée en politique
-
-C'est en avril 2016 que Romuald WADAGNI fait son entrée remarquée dans la vie politique béninoise en tant que Ministre d'État chargé de l'Économie et des Finances sous la présidence de Patrice TALON. Pendant dix ans, il mène des réformes économiques majeures qui transforment l'économie béninoise.
+En avril 2016, il répond à l'appel du président Patrice Talon et devient ministre de l'Économie et des Finances, puis ministre d'État. Pendant dix ans, il conduit des réformes budgétaires, améliore la transparence des finances publiques et participe à la redynamisation de l'économie béninoise. Il est régulièrement salué sur la scène africaine pour son rigueur et son professionnalisme.
 
 L'élection présidentielle de 2026
 
-Le 12 avril 2026, désigné candidat de la coalition au pouvoir avec Mariam Tchabi Talata comme colistière, Romuald WADAGNI remporte l'élection présidentielle avec un score impressionnant de 94,05% des voix.
+En septembre 2025, la coalition au pouvoir le désigne candidat à la présidentielle. Patrice Talon, qui ne se représente pas pour un troisième mandat, lui passe le relais. Le 12 avril 2026, Romuald Wadagni remporte l'élection avec environ 94 % des voix, aux côtés de sa colistière Mariam Chabi Talata.
 
-Le 24 mai 2026, il prête serment et devient officiellement le 9ème Président de la République du Bénin, formant un gouvernement de 25 membres et ouvrant une nouvelle ère pour le pays.",
-            'published' => false,
-            'views' => 12,
-        ]);
+Investiture et nouvelle ère
 
-        $this->command->info('4 articles créés avec succès!');
+Le 24 mai 2026, il prête serment au Palais des Congrès de Cotonou et devient le 9e président de la République du Bénin. Le même jour, il forme son gouvernement et ouvre une nouvelle séquence politique pour le pays.
+
+Les défis qui l'attendent
+
+Sécurité dans le nord du pays, coût de la vie, emploi des jeunes, relations régionales avec les pays du Sahel et consolidation des libertés : le mandat de Romuald Wadagni s'ouvre sur des enjeux majeurs. Héritier d'une décennie de réformes économiques, il doit à présent construire sa propre vision et sa marque présidentielle.
+
+Du cabinet Deloitte aux finances publiques, de la rigueur budgétaire au palais présidentiel, le parcours de Romuald Wadagni reste l'une des trajectoires les plus remarquables de la politique béninoise contemporaine.
+TEXT,
+            ],
+        ];
+
+        foreach ($articles as $article) {
+            Post::create([
+                'user_id' => $admin->id,
+                'title' => $article['title'],
+                'cover_image' => $article['cover_image'] ?? null,
+                'category' => $article['category'],
+                'tags' => $article['tags'],
+                'excerpt' => $article['excerpt'],
+                'content' => $article['content'],
+                'published' => true,
+                'views' => 0,
+            ]);
+        }
+
+        $this->command->info('4 articles créés avec succès !');
     }
 }

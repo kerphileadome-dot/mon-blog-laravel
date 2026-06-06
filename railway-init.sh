@@ -27,15 +27,9 @@ php artisan db:seed --class=AdminUserSeeder --force
 echo "📝 Vérification des articles..."
 php artisan db:seed --class=ArticlesSeeder --force
 
-# Créer les utilisateurs de test
-echo "👥 Vérification des utilisateurs..."
-php artisan db:seed --class=UsersSeeder --force
-
 # Créer le lien storage
 echo "🔗 Création du lien storage..."
 php artisan storage:link
 
 echo "✅ Initialisation terminée avec succès !"
-echo "✅ Admin: kerphilesaint@gmail.com / Franklinblog20?"
-echo "✅ 4 articles créés"
-echo "✅ 3 utilisateurs de test créés"
+echo "✅ Compte admin et articles de démo prêts."
