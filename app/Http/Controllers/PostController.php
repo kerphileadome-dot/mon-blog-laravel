@@ -45,7 +45,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        if (!$post->published && !auth()->user()?->isAdmin()) {
+        if (!$post->published && !\Illuminate\Support\Facades\Auth::guard('admin')->check()) {
             abort(404);
         }
 
@@ -63,8 +63,8 @@ class PostController extends Controller
         $isLiked = false;
         $isFavorited = false;
 
-        if (auth()->check()) {
-            $userId = auth()->id();
+        if (\Illuminate\Support\Facades\Auth::guard('web')->check()) {
+            $userId = \Illuminate\Support\Facades\Auth::guard('web')->id();
             $isLiked = $post->likes()->where('user_id', $userId)->exists();
             $isFavorited = DB::table('favorites')
                 ->where('user_id', $userId)

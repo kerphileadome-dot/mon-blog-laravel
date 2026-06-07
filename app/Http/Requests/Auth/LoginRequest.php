@@ -42,7 +42,7 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (! Auth::guard('web')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -50,9 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // Vérifier si l'utilisateur est bloqué
-        if (Auth::user()->blocked) {
-            Auth::logout();
+        if (Auth::guard('web')->user()->isAdmin()) {
+            Auth::guard('web')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Compte administrateur : connectez-vous via la page admin.',
+            ]);
+        }
+
+        if (Auth::guard('web')->user()->blocked) {
+            Auth::guard('web')->logout();
 
             throw ValidationException::withMessages([
                 'email' => 'Votre compte a été bloqué. Contactez l\'administrateur.',

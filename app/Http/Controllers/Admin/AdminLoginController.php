@@ -9,13 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class AdminLoginController extends Controller
 {
-    // Afficher le formulaire de connexion admin
     public function showLoginForm()
     {
         return view('admin.login');
     }
 
-    // Traiter la connexion admin
     public function login(Request $request)
     {
         $request->validate([
@@ -23,26 +21,25 @@ class AdminLoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
-            $user = Auth::user();
+        if (Auth::guard('admin')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+            $user = Auth::guard('admin')->user();
 
-            // Vérifier si bloqué
             if ($user->blocked) {
-                Auth::logout();
+                Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
                     'email' => 'Votre compte a été bloqué.',
                 ]);
             }
 
-            // Vérifier si admin
             if (!$user->isAdmin()) {
-                Auth::logout();
+                Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
-                    'email' => 'Accès administrateur uniquement. Connectez-vous sur la page visiteur.',
+                    'email' => 'Accès administrateur uniquement.',
                 ]);
             }
 
             $request->session()->regenerate();
+
             return redirect()->intended(route('admin.dashboard'));
         }
 
@@ -51,12 +48,11 @@ class AdminLoginController extends Controller
         ]);
     }
 
-    // Déconnexion admin
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
+        Auth::guard('admin')->logout();
         $request->session()->regenerateToken();
+
         return redirect()->route('admin.login');
     }
 }

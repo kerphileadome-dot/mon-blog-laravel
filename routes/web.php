@@ -30,16 +30,12 @@ Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
 // Pages statiques
 Route::get('/about', [PageController::class, 'about'])->name('about');
 
-// Dashboard (redirection intelligente)
-Route::middleware('auth')->get('/dashboard', function () {
-    return auth()->user()->isAdmin()
-        ? redirect()->route('admin.dashboard')
-        : redirect()->route('posts.index');
-})->name('dashboard');
+// Dashboard visiteur uniquement
+Route::middleware('auth:web')->get('/dashboard', fn () => redirect()->route('posts.index'))->name('dashboard');
 
-// Routes de connexion Admin séparées
-Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login')->middleware('guest');
-Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit')->middleware('guest');
+// Connexion admin (session séparée du guard « admin »)
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login')->middleware('guest:admin');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit')->middleware('guest:admin');
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
 // Routes Google OAuth
@@ -47,7 +43,7 @@ Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->n
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Routes Admin (protégées)
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/posts', [DashboardController::class, 'posts'])->name('posts');
     Route::get('/comments', [DashboardController::class, 'comments'])->name('comments');
@@ -82,7 +78,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
 // Utilisateur connecté
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:web')->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::post('/posts/{post}/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');

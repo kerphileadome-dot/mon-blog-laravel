@@ -34,14 +34,9 @@
             </div>
 
             <div class="nav-links">
-                @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="btn-ghost nav-desktop-only">Admin</a>
-                        <a href="{{ route('admin.posts.create') }}" class="btn-primary btn-accent nav-desktop-only">Écrire</a>
-                    @else
-                        <a href="{{ route('favorites.index') }}" class="btn-ghost nav-desktop-only">Favoris</a>
-                        <a href="{{ route('profile.edit') }}" class="btn-ghost nav-desktop-only">Profil</a>
-                    @endif
+                @auth('web')
+                    <a href="{{ route('favorites.index') }}" class="btn-ghost nav-desktop-only">Favoris</a>
+                    <a href="{{ route('profile.edit') }}" class="btn-ghost nav-desktop-only">Profil</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline nav-desktop-only">
                         @csrf
                         <button class="btn-ghost">Déconnexion</button>
@@ -49,6 +44,9 @@
                 @else
                     <a href="{{ route('login') }}" class="btn-ghost nav-desktop-only">Connexion</a>
                     <a href="{{ route('register') }}" class="btn-primary btn-accent nav-desktop-only">S'inscrire</a>
+                @endauth
+                @auth('admin')
+                    <a href="{{ route('admin.dashboard') }}" class="btn-ghost nav-desktop-only">Administration</a>
                 @endauth
                 <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
             </div>
@@ -64,18 +62,16 @@
         <a href="{{ route('categories.index') }}">Catégories</a>
         <a href="{{ route('tags.index') }}">Tags</a>
         <a href="{{ route('about') }}">À propos</a>
-        @auth
-            @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.dashboard') }}">Administration</a>
-                <a href="{{ route('admin.posts.create') }}">Nouvel article</a>
-            @else
-                <a href="{{ route('favorites.index') }}">Mes favoris</a>
-                <a href="{{ route('profile.edit') }}">Mon profil</a>
-            @endif
+        @auth('web')
+            <a href="{{ route('favorites.index') }}">Mes favoris</a>
+            <a href="{{ route('profile.edit') }}">Mon profil</a>
             <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">Déconnexion</button></form>
         @else
             <a href="{{ route('login') }}">Connexion</a>
             <a href="{{ route('register') }}">S'inscrire</a>
+        @endauth
+        @auth('admin')
+            <a href="{{ route('admin.dashboard') }}">Administration</a>
         @endauth
     </div>
 
@@ -102,10 +98,8 @@
                 <a href="{{ route('tags.index') }}">Tags</a>
                 <a href="{{ route('search') }}">Recherche</a>
                 <a href="{{ route('about') }}">À propos</a>
-                @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}">Administration</a>
-                    @endif
+                @auth('admin')
+                    <a href="{{ route('admin.dashboard') }}">Administration</a>
                 @endauth
             </div>
             <div class="footer-copy">

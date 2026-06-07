@@ -102,7 +102,7 @@
         </div>
         @endif
 
-        @if($user->id !== auth()->id())
+        @if($user->id !== auth('admin')->id())
         <div style="display:flex;gap:1rem;margin-top:2rem;">
             <form method="POST" action="{{ route('admin.users.toggle-block', $user) }}">
                 @csrf

@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
             $user->blocked = false;
             $user->save();
 
-            Auth::login($user);
+            Auth::guard('web')->login($user);
 
             return redirect(route('posts.index', absolute: false))->with('success', 'Bienvenue sur KerpheX !');
         } catch (\Exception $e) {

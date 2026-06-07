@@ -48,7 +48,7 @@
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td class="action-buttons">
                                 <a href="{{ route('admin.users.show', $user) }}" class="action-btn" title="Voir">👁️</a>
-                                @if($user->id !== auth()->id())
+                                @if($user->id !== auth('admin')->id())
                                     <form method="POST" action="{{ route('admin.users.toggle-block', $user) }}" class="inline">
                                         @csrf
                                         @if($user->blocked)

@@ -31,7 +31,7 @@ class UserManagementController extends Controller
     public function toggleBlock(User $user)
     {
         // Empêcher de se bloquer soi-même
-        if ($user->id === auth()->id()) {
+        if ($user->id === \Illuminate\Support\Facades\Auth::guard('admin')->id()) {
             return back()->with('error', 'Vous ne pouvez pas vous bloquer vous-même !');
         }
 
@@ -47,7 +47,7 @@ class UserManagementController extends Controller
     public function destroy(User $user)
     {
         // Empêcher de se supprimer soi-même
-        if ($user->id === auth()->id()) {
+        if ($user->id === \Illuminate\Support\Facades\Auth::guard('admin')->id()) {
             return back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte !');
         }
 

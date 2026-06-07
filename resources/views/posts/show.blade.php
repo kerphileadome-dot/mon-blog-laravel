@@ -78,11 +78,11 @@
                 <p style="color:var(--ink-faint);font-size:0.9rem;">Aucun commentaire pour l'instant. Soyez le premier à réagir !</p>
             @endforelse
 
-            @auth
+            @auth('web')
                 <div class="comment-form-card">
                     <h3 class="form-title">Laisser un commentaire</h3>
                     <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:1rem;">
-                        Commenter en tant que <strong>{{ auth()->user()->name }}</strong>
+                        Commenter en tant que <strong>{{ auth('web')->user()->name }}</strong>
                     </p>
                     <form method="POST" action="{{ route('comments.store', $post) }}">
                         @csrf
@@ -114,7 +114,7 @@
     </div>
 
     <aside class="article-sidebar">
-        @auth
+        @auth('web')
             <div class="sidebar-card">
                 <p class="sidebar-title">Favoris</p>
                 <form method="POST" action="{{ route('posts.favorite', $post) }}">
@@ -128,7 +128,7 @@
 
         <div class="sidebar-card">
             <p class="sidebar-title">Réactions</p>
-            @auth
+            @auth('web')
                 <form method="POST" action="{{ route('posts.like', $post) }}">
                     @csrf
                     <button class="like-btn {{ $isLiked ? 'active' : '' }}">
@@ -162,20 +162,18 @@
             </div>
         </div>
 
-        @auth
-            @if(auth()->user()->isAdmin())
-                <div class="sidebar-card">
-                    <p class="sidebar-title">Administration</p>
-                    <a href="{{ route('admin.posts.edit', $post) }}" class="action-link">Modifier l'article</a>
-                    <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button class="action-link danger" onclick="return confirm('Supprimer cet article définitivement ?')">
-                            Supprimer l'article
-                        </button>
-                    </form>
-                </div>
-            @endif
+        @auth('admin')
+            <div class="sidebar-card">
+                <p class="sidebar-title">Administration</p>
+                <a href="{{ route('admin.posts.edit', $post) }}" class="action-link">Modifier l'article</a>
+                <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
+                    @csrf
+                    @method('DELETE')
+                    <button class="action-link danger" onclick="return confirm('Supprimer cet article définitivement ?')">
+                        Supprimer l'article
+                    </button>
+                </form>
+            </div>
         @endauth
     </aside>
 </div>

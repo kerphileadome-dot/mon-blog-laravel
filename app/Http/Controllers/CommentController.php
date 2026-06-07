@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Services\BlogSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -16,9 +17,9 @@ class CommentController extends Controller
         ]);
 
         $post->comments()->create([
-            'user_id'  => auth()->id(),
-            'name'     => auth()->user()->name,
-            'email'    => auth()->user()->email,
+            'user_id'  => Auth::guard('web')->id(),
+            'name'     => Auth::guard('web')->user()->name,
+            'email'    => Auth::guard('web')->user()->email,
             'body'     => $request->body,
             'approved' => $settings->commentsAutoApprove(),
         ]);
@@ -40,13 +41,13 @@ class CommentController extends Controller
             'body' => 'required|max:1000',
         ]);
 
-        $autoApprove = auth()->user()->isAdmin() || $settings->commentsAutoApprove();
+        $autoApprove = Auth::guard('admin')->check() || $settings->commentsAutoApprove();
 
         $post->comments()->create([
             'parent_id' => $comment->id,
-            'user_id'   => auth()->id(),
-            'name'      => auth()->user()->name,
-            'email'     => auth()->user()->email,
+            'user_id'   => Auth::guard('web')->id(),
+            'name'      => Auth::guard('web')->user()->name,
+            'email'     => Auth::guard('web')->user()->email,
             'body'      => $request->body,
             'approved'  => $autoApprove,
         ]);
@@ -60,7 +61,7 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
+        if (!Auth::guard('admin')->check()) {
             abort(403, 'Accès non autorisé.');
         }
 

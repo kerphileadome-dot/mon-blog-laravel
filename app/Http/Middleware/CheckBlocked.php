@@ -9,15 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckBlocked
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->blocked) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        if (Auth::guard('web')->check() && Auth::guard('web')->user()->blocked) {
+            Auth::guard('web')->logout();
 
             return redirect()->route('login')->with('error', 'Votre compte a été bloqué. Contactez l\'administrateur.');
         }

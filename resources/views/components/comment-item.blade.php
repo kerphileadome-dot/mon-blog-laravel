@@ -6,19 +6,17 @@
             <span class="{{ $depth > 0 ? 'comment-reply-author' : 'comment-author' }}">{{ $comment->name }}</span>
             <span class="{{ $depth > 0 ? 'comment-reply-time' : 'comment-time' }}">{{ $comment->created_at->diffForHumans() }}</span>
         </div>
-        @auth
-            @if(auth()->user()->isAdmin())
-                <form method="POST" action="{{ route('admin.comments.delete', $comment) }}">
-                    @csrf
-                    @method('DELETE')
-                    <button class="action-link danger" style="font-size:0.8rem;width:auto;">Supprimer</button>
-                </form>
-            @endif
+        @auth('admin')
+            <form method="POST" action="{{ route('admin.comments.delete', $comment) }}">
+                @csrf
+                @method('DELETE')
+                <button class="action-link danger" style="font-size:0.8rem;width:auto;">Supprimer</button>
+            </form>
         @endauth
     </div>
     <p class="{{ $depth > 0 ? 'comment-reply-body' : 'comment-body' }}">{{ $comment->body }}</p>
 
-    @auth
+    @auth('web')
         <button type="button" class="reply-btn" onclick="toggleReply({{ $comment->id }})">Répondre</button>
         <div class="reply-form" id="reply-{{ $comment->id }}">
             <form method="POST" action="{{ route('comments.reply', [$post, $comment]) }}">

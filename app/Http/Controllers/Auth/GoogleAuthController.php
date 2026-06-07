@@ -9,54 +9,45 @@ use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
-    /**
-     * Rediriger vers Google pour l'authentification
-     */
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
     }
 
-    /**
-     * Gérer le callback de Google
-     */
     public function handleGoogleCallback()
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-
-            // Chercher ou créer l'utilisateur
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
-                // Vérifier si l'utilisateur est bloqué
                 if ($user->blocked) {
                     return redirect()->route('login')->with('error', 'Votre compte a été bloqué. Contactez l\'administrateur.');
                 }
 
-                // L'utilisateur existe déjà
-                Auth::login($user);
-            } else {
-                // Créer un nouveau compte visiteur via Google
-                $user = new User();
-                $user->name = $googleUser->getName();
-                $user->email = $googleUser->getEmail();
-                $user->password = bcrypt(uniqid()); // Mot de passe aléatoire (non utilisé)
-                $user->role = $this->isAdminEmail($googleUser->getEmail()) ? 'admin' : 'visitor';
-                $user->email_verified_at = now();
-                $user->blocked = false;
-                $user->save();
+                if ($user->isAdmin()) {
+                    return redirect()->route('admin.login')->with('error', 'Compte administrateur : utilisez la connexion admin.');
+                }
 
-                Auth::login($user);
+                Auth::guard('web')->login($user);
+            } else {
+                if ($this->isAdminEmail($googleUser->getEmail())) {
+                    return redirect()->route('admin.login')->with('error', 'Compte administrateur : utilisez la connexion admin.');
+                }
+
+                $user = User::create([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'password' => bcrypt(uniqid()),
+                    'role' => 'visitor',
+                    'email_verified_at' => now(),
+                    'blocked' => false,
+                ]);
+
+                Auth::guard('web')->login($user);
             }
 
-            // Rediriger selon le rôle
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('posts.index')->with('success', 'Bienvenue sur le blog !');
-            }
-
+            return redirect()->route('posts.index')->with('success', 'Bienvenue sur le blog !');
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
         }
