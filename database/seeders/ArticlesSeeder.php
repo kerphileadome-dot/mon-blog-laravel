@@ -25,7 +25,7 @@ class ArticlesSeeder extends Seeder
 
         // Images de couverture (sources web) : storage/app/public/covers/
         // coupe-monde → Wikimedia (Mbappé, Griezmann, Fekir, Giroud + trophée, CC BY-SA 4.0)
-        // sante → Pexels #1640770 | ia → Unsplash | wadagni → Wikimedia skyline Cotonou (CC BY-SA 4.0)
+        // sante → Pexels #1640770 | ia → Unsplash | wadagni → Wikimedia portrait officiel mars 2026 (CC BY-SA 4.0)
         $articles = [
             [
                 'title' => 'Coupe du Monde 2026 : tout ce qu\'il faut savoir',
