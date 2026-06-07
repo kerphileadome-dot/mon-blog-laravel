@@ -4,6 +4,7 @@
 .env.backup
 .env.production
 mail.secret.env
+google.local.env
 .phpactor.json
 .phpunit.result.cache
 /.fleet

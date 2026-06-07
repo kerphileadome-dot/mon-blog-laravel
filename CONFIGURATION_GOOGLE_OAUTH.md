@@ -137,26 +137,22 @@ GOOGLE_REDIRECT_URI=https://web-production-c5c2f.up.railway.app/auth/google/call
 
 Si tu veux tester en local d'abord :
 
-1. **Ajoute un URI de redirection local dans Google Console :**
+1. **Ajoute les URI locaux dans Google Console** (mêmes identifiants que Railway) :
    ```
-   http://127.0.0.1:8000/auth/google/callback
-   ```
-
-2. **Dans ton fichier .env local :**
-   ```
-   GOOGLE_CLIENT_ID=ton_client_id
-   GOOGLE_CLIENT_SECRET=ton_client_secret
-   GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/auth/google/callback
+   Origine JavaScript : http://mon-blog.test:8080
+   URI de redirection : http://mon-blog.test:8080/auth/google/callback
    ```
 
-3. **Lance le serveur :**
-   ```bash
-   php artisan serve
+2. **Copie `google.local.env.example` → `google.local.env`** et colle ton Client ID / Secret (depuis Railway ou Google Console).
+
+3. **Lance la configuration locale :**
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts/setup-local-env.ps1
    ```
 
 4. **Teste :**
-   - Va sur http://127.0.0.1:8000/login
-   - Clique sur "Se connecter avec Google"
+   - Va sur http://mon-blog.test:8080/login
+   - Clique sur « Se connecter avec Google »
 
 ---
 
