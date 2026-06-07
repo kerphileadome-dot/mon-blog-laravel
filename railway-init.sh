@@ -24,7 +24,8 @@ else
     php artisan db:seed --class=AdminUserSeeder --force
 fi
 
-echo "🗄️ Mise en cache Laravel..."
+echo "🗄️ Mise en cache Laravel (après chargement des variables Railway)..."
+php artisan config:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

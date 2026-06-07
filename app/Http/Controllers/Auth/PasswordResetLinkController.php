@@ -37,7 +37,15 @@ class PasswordResetLinkController extends Controller
             ]);
         }
 
-        $status = Password::sendResetLink(['email' => $email]);
+        try {
+            $status = Password::sendResetLink(['email' => $email]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            throw ValidationException::withMessages([
+                'email' => 'Impossible d\'envoyer l\'email pour le moment. Réessayez dans quelques minutes ou contactez l\'administrateur.',
+            ]);
+        }
 
         return $status == Password::RESET_LINK_SENT
             ? back()->with('status', __($status))

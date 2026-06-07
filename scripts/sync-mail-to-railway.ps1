@@ -40,11 +40,18 @@ if (-not [string]::IsNullOrWhiteSpace($mailPassword)) {
     $vars["MAIL_PASSWORD"] = $mailPassword
 }
 
-Write-Host ">> Vérification connexion Railway..." -ForegroundColor Cyan
-npm exec --yes @railway/cli -- whoami 2>&1 | Out-Null
+$railway = Join-Path $projectRoot "node_modules\.bin\railway.cmd"
+if (-not (Test-Path $railway)) {
+    Write-Host "Railway CLI local introuvable. Lancez : npm.cmd install" -ForegroundColor Yellow
+    exit 1
+}
+
+Write-Host ">> Verification connexion Railway..." -ForegroundColor Cyan
+& $railway whoami 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Non connecté. Lancez d'abord :" -ForegroundColor Yellow
-    Write-Host "  npm exec --yes @railway/cli -- login" -ForegroundColor Yellow
+    Write-Host "Non connecte. Lancez :" -ForegroundColor Yellow
+    Write-Host "  node_modules\.bin\railway.cmd login --browserless" -ForegroundColor Yellow
+    Write-Host "  node_modules\.bin\railway.cmd link" -ForegroundColor Yellow
     exit 1
 }
 
@@ -52,7 +59,7 @@ foreach ($key in $vars.Keys) {
     $value = $vars[$key]
     $display = if ($key -eq "MAIL_PASSWORD") { "********" } else { $value }
     Write-Host ">> $key = $display" -ForegroundColor Cyan
-    npm exec --yes @railway/cli -- variables set "${key}=${value}" --skip-deploys 2>&1 | Out-Null
+    & $railway variables set "${key}=${value}" --skip-deploys 2>&1 | Out-Null
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Échec pour $key. Vérifiez que le projet est lié : railway link"
     }

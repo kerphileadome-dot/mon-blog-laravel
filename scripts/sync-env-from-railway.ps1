@@ -49,7 +49,12 @@ function Set-DotEnvValue($file, $key, $value) {
 
 Write-Host ">> Sync Railway -> local (.env + google.local.env)" -ForegroundColor Cyan
 
-$json = npm exec --yes @railway/cli -- variables --json 2>&1
+$railway = Join-Path $projectRoot "node_modules\.bin\railway.cmd"
+if (-not (Test-Path $railway)) {
+    Write-Host "Railway CLI local introuvable. Lancez : npm.cmd install" -ForegroundColor Yellow
+    exit 1
+}
+$json = & $railway variables --json 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Echec Railway CLI. Lancez :" -ForegroundColor Yellow
     Write-Host "  npm exec --yes @railway/cli -- login" -ForegroundColor Yellow

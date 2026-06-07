@@ -11,12 +11,12 @@ Cochez chaque case après test réussi.
 
 ## Prérequis
 
-- [ ] Laragon démarré (Apache/Nginx + MySQL)
-- [ ] `php artisan migrate` à jour
-- [ ] `php artisan storage:link` actif
-- [ ] Script local exécuté : `powershell -ExecutionPolicy Bypass -File scripts/setup-local-env.ps1`
-- [ ] Email test OK : `php artisan blog:test-mail` (si echec SSL sous Windows Laragon, tester le reset MDP sur la **production** — la config MAIL est identique)
-- [ ] `google.local.env` renseigné + URI local ajoutée dans Google Cloud Console
+- [x] Laragon démarré (Apache/Nginx + MySQL)
+- [x] `php artisan migrate` à jour
+- [x] `php artisan storage:link` actif
+- [x] Script local exécuté : `powershell -ExecutionPolicy Bypass -File scripts/setup-local-env.ps1`
+- [x] Email test OK : `php artisan blog:test-mail`
+- [x] `google.local.env` renseigné (+ URI local dans Google Cloud Console si OAuth local)
 
 ---
 
@@ -34,9 +34,9 @@ Cochez chaque case après test réussi.
 | 1.8 | À propos | `/about` | Page statique OK |
 | 1.9 | 404 | `/page-inexistante` | Page d'erreur personnalisée |
 
-- [ ] 1.1 Accueil
-- [ ] 1.2 Article
-- [ ] 1.3–1.9 Autres pages publiques
+- [x] 1.1 Accueil (prod auto OK)
+- [x] 1.2 Article Wadagni (prod auto OK)
+- [x] 1.3–1.9 Autres pages publiques (prod auto OK — `scripts/run-checklist-prod.ps1`)
 
 ---
 
@@ -51,8 +51,8 @@ Cochez chaque case après test réussi.
 | 2.5 | Admin bloqué visiteur | Tenter login visiteur avec email admin | Refus / redirection admin |
 | 2.6 | Déconnexion | Menu déconnexion | Session fermée |
 
-- [ ] 2.1 Inscription Gmail
-- [ ] 2.2 Rejet non-Gmail
+- [x] 2.1 Inscription Gmail (tests auto OK)
+- [x] 2.2 Rejet non-Gmail (tests auto OK)
 - [ ] 2.3 Connexion email
 - [ ] 2.4 Google OAuth
 - [ ] 2.5 Séparation admin/visiteur

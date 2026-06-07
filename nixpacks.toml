@@ -6,7 +6,7 @@ MAIL_PORT = "587"
 MAIL_USERNAME = "kerphilesaint@gmail.com"
 MAIL_ENCRYPTION = "tls"
 MAIL_FROM_ADDRESS = "kerphilesaint@gmail.com"
-MAIL_FROM_NAME = "KerpheX Blog"
+MAIL_FROM_NAME = "KerpheX"
 
 [phases.setup]
 nixPkgs = ['php83', 'php83Packages.composer']
@@ -18,7 +18,6 @@ cmds = [
 
 [phases.build]
 cmds = [
-    'php artisan config:cache',
     'php artisan route:cache',
     'php artisan view:cache'
 ]
