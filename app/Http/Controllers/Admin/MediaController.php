@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\CoverImageProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
+    public function __construct(private CoverImageProcessor $coverImages) {}
+
     // Afficher la bibliothèque
     public function index(Request $request)
     {
@@ -53,7 +56,7 @@ class MediaController extends Controller
 
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
-                $file->store('covers', 'public');
+                $this->coverImages->store($file);
                 $uploadedCount++;
             }
         }

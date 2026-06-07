@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Services\BlogSettings;
+use App\Services\CoverImageProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
+    public function __construct(private CoverImageProcessor $coverImages) {}
+
     public function index(BlogSettings $settings)
     {
         $perPage = $settings->postsPerPage();
@@ -113,7 +116,7 @@ class PostController extends Controller
 
         $coverImagePath = null;
         if ($request->hasFile('cover_image')) {
-            $coverImagePath = $request->file('cover_image')->store('covers', 'public');
+            $coverImagePath = $this->coverImages->store($request->file('cover_image'));
         }
 
         Post::create([
@@ -151,7 +154,7 @@ class PostController extends Controller
             if ($post->cover_image) {
                 Storage::disk('public')->delete($post->cover_image);
             }
-            $coverImagePath = $request->file('cover_image')->store('covers', 'public');
+            $coverImagePath = $this->coverImages->store($request->file('cover_image'));
         }
 
         $post->update([

@@ -41,7 +41,7 @@
                 <div id="uploadPrompt">
                     <p style="font-size:1.5rem;margin-bottom:0.5rem;color:var(--ink-faint);">+</p>
                     <p style="color:var(--ink-muted);font-size:0.9rem;">Cliquez pour choisir une image</p>
-                    <p style="color:var(--ink-faint);font-size:0.8rem;margin-top:0.25rem;">JPG, PNG, GIF, WEBP · Max 4 Mo</p>
+                    <p style="color:var(--ink-faint);font-size:0.8rem;margin-top:0.25rem;">JPG, PNG, WEBP · Max 4 Mo · Idéal : 1920×1080 px ou plus pour une netteté optimale</p>
                 </div>
                 <input type="file" id="cover_image" name="cover_image" accept="image/*" style="display:none;" onchange="previewImage(this)">
             </div>

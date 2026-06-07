@@ -17,4 +17,21 @@ return [
         explode(',', env('ADMIN_EMAILS', 'kerphilesaint@gmail.com,kerphileadome@gmail.com'))
     ))),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Images de couverture
+    |--------------------------------------------------------------------------
+    |
+    | Les fichiers plus grands que max_edge sont redimensionnés à l'upload.
+    | Les images déjà adaptées sont conservées telles quelles (qualité maximale).
+    |
+    */
+
+    'cover' => [
+        'max_edge' => 1920,
+        'jpeg_quality' => 92,
+        'webp_quality' => 90,
+        'png_compression' => 6,
+    ],
+
 ];
