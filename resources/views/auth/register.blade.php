@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('title', 'Inscription · KerpheX')
-@section('subtitle', 'Rejoignez la communauté pour commenter et sauvegarder vos lectures.')
+@section('subtitle', 'Inscription réservée aux adresses Gmail (@gmail.com).')
 
 @section('content')
     <form method="POST" action="{{ route('register') }}" class="auth-form">
@@ -13,7 +13,7 @@
         </div>
         <div class="form-group">
             <label class="field-label">Email</label>
-            <input type="email" name="email" class="form-input" value="{{ old('email') }}" required>
+            <input type="email" name="email" class="form-input" value="{{ old('email') }}" placeholder="votre@gmail.com" required>
             @error('email') <p class="field-error">{{ $message }}</p> @enderror
         </div>
         <div class="form-group">

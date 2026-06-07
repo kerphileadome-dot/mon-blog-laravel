@@ -35,6 +35,10 @@ class GoogleAuthController extends Controller
                     return redirect()->route('admin.login')->with('error', 'Compte administrateur : utilisez la connexion admin.');
                 }
 
+                if (!$this->isGmailAddress($googleUser->getEmail())) {
+                    return redirect()->route('login')->with('error', 'Seules les adresses Gmail (@gmail.com) peuvent créer un compte.');
+                }
+
                 $user = User::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
@@ -57,5 +61,10 @@ class GoogleAuthController extends Controller
     {
         return in_array($email, config('blog.admin_emails', []), true)
             || User::where('email', $email)->where('role', 'admin')->exists();
+    }
+
+    protected function isGmailAddress(string $email): bool
+    {
+        return str_ends_with(strtolower($email), '@gmail.com');
     }
 }

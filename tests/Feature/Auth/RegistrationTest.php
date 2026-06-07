@@ -20,12 +20,25 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test.user@gmail.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('posts.index', absolute: false));
+    }
+
+    public function test_registration_rejects_non_gmail_addresses(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@yahoo.fr',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
     }
 }

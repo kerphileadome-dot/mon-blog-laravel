@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\GmailEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,7 @@ class RegisteredUserController extends Controller
             'email' => [
                 'required', 'string', 'lowercase', 'email', 'max:255',
                 'unique:'.User::class,
+                new GmailEmail(),
                 function (string $attribute, mixed $value, \Closure $fail): void {
                     if (in_array($value, config('blog.admin_emails', []), true)) {
                         $fail('Cet email est réservé à l\'administration du blog.');

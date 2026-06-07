@@ -25,6 +25,7 @@ php artisan migrate --force
 Write-Host ">> Seeders (admin + articles)..." -ForegroundColor Cyan
 php artisan db:seed --class=AdminUserSeeder --force
 php artisan db:seed --class=ArticlesSeeder --force
+php artisan db:seed --class=InfrastructureDataSeeder --force
 
 Write-Host ""
 Write-Host "Terminé. Ouvrez phpMyAdmin Laragon -> base '$dbName'." -ForegroundColor Green
