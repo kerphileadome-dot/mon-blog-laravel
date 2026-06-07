@@ -5,6 +5,41 @@
 <div class="admin-container">
     <div class="admin-header">
         <h1 class="admin-title">💬 Gestion des commentaires</h1>
+        <p class="admin-subtitle">
+            Tous les commentaires du blog — du plus récent au plus ancien.
+            Cette vue est réservée à l'administration.
+        </p>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:2rem;">
+        <div class="stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $commentStats['total'] }}</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $commentStats['approved'] }}</div>
+                <div class="stat-label">Approuvés</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $commentStats['pending'] }}</div>
+                <div class="stat-label">En attente</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">↳</div>
+            <div class="stat-content">
+                <div class="stat-value">{{ $commentStats['replies'] }}</div>
+                <div class="stat-label">Réponses</div>
+            </div>
+        </div>
     </div>
 
     <div class="admin-section">

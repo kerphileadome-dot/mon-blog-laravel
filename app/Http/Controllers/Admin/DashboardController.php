@@ -63,7 +63,14 @@ class DashboardController extends Controller
                            ->latest()
                            ->paginate(20);
 
-        return view('admin.comments', compact('comments'));
+        $commentStats = [
+            'total' => Comment::count(),
+            'approved' => Comment::where('approved', true)->count(),
+            'pending' => Comment::where('approved', false)->count(),
+            'replies' => Comment::whereNotNull('parent_id')->count(),
+        ];
+
+        return view('admin.comments', compact('comments', 'commentStats'));
     }
 
     public function approveComment(Comment $comment)

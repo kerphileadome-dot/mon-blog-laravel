@@ -4,6 +4,7 @@ set -e
 INIT_FLAG="storage/app/.railway_initialized"
 
 echo "🚀 Démarrage KerpheX..."
+echo "ℹ️  Emails (reset mot de passe) : configurez MAIL_MAILER=smtp et les variables MAIL_* sur Railway."
 
 if [ ! -f database/database.sqlite ]; then
     echo "📦 Création de la base SQLite..."
