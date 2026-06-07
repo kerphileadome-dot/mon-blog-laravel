@@ -14,7 +14,7 @@
 
 <div class="article-hero">
     @if($post->cover_image)
-        <img src="{{ Storage::url($post->cover_image) }}" alt="{{ $post->title }}">
+        <img src="{{ Storage::url($post->cover_image) }}" alt="{{ $post->title }}" fetchpriority="high" decoding="async">
     @else
         <div class="article-hero-gradient {{ $grad }}"></div>
     @endif

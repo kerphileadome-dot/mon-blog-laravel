@@ -36,7 +36,7 @@
             <label class="field-label">Image de couverture</label>
             <div class="drop-zone" onclick="document.getElementById('cover_image').click()" id="dropZone">
                 <div id="preview" style="display:none;margin-bottom:1rem;">
-                    <img id="previewImg" src="" alt="Aperçu" style="max-height:200px;border-radius:8px;object-fit:cover;">
+                    <img id="previewImg" src="" alt="Aperçu" style="max-height:220px;max-width:100%;border-radius:8px;object-fit:contain;object-position:center;background:var(--dark);">
                 </div>
                 <div id="uploadPrompt">
                     <p style="font-size:1.5rem;margin-bottom:0.5rem;color:var(--ink-faint);">+</p>

@@ -37,13 +37,13 @@
             @if($post->cover_image)
                 <div style="margin-bottom:1rem;">
                     <img src="{{ Storage::url($post->cover_image) }}" alt="Image actuelle"
-                        style="max-height:200px;border-radius:12px;object-fit:cover;">
+                        style="max-height:220px;max-width:100%;border-radius:12px;object-fit:contain;object-position:center;background:var(--dark);">
                     <p style="color:var(--ink-faint);font-size:0.8rem;margin-top:0.5rem;">Image actuelle — choisissez-en une nouvelle pour la remplacer</p>
                 </div>
             @endif
             <div class="drop-zone" onclick="document.getElementById('cover_image').click()" id="dropZone">
                 <div id="preview" style="display:none;margin-bottom:1rem;">
-                    <img id="previewImg" src="" alt="Aperçu" style="max-height:200px;border-radius:8px;object-fit:cover;">
+                    <img id="previewImg" src="" alt="Aperçu" style="max-height:220px;max-width:100%;border-radius:8px;object-fit:contain;object-position:center;background:var(--dark);">
                 </div>
                 <div id="uploadPrompt">
                     <p style="color:var(--ink-muted);font-size:0.9rem;">Cliquez pour choisir une nouvelle image</p>
