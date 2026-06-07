@@ -138,7 +138,7 @@ TEXT,
             ],
             [
                 'title' => 'Romuald Wadagni : le parcours du nouveau Président du Bénin',
-                'cover_image' => 'covers/wadagni-benin.jpg',
+                'cover_image' => 'covers/wadagni-portrait-2026.jpg',
                 'category' => 'Politique',
                 'tags' => 'Bénin, Romuald Wadagni, politique, Afrique',
                 'excerpt' => 'De Lokossa à la présidence : retour sur le parcours de Romuald Wadagni, investi Président de la République du Bénin en mai 2026.',
