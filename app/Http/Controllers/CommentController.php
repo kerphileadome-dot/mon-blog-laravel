@@ -41,13 +41,23 @@ class CommentController extends Controller
             'body' => 'required|max:1000',
         ]);
 
-        $autoApprove = Auth::guard('admin')->check() || $settings->commentsAutoApprove();
+        $fromAdmin = Auth::guard('admin')->check();
+
+        if (!$fromAdmin && !Auth::guard('web')->check()) {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        $author = $fromAdmin
+            ? Auth::guard('admin')->user()
+            : Auth::guard('web')->user();
+
+        $autoApprove = $fromAdmin || $settings->commentsAutoApprove();
 
         $post->comments()->create([
             'parent_id' => $comment->id,
-            'user_id'   => Auth::guard('web')->id(),
-            'name'      => Auth::guard('web')->user()->name,
-            'email'     => Auth::guard('web')->user()->email,
+            'user_id'   => $author->id,
+            'name'      => $author->name,
+            'email'     => $author->email,
             'body'      => $request->body,
             'approved'  => $autoApprove,
         ]);
@@ -56,7 +66,9 @@ class CommentController extends Controller
             ? 'Réponse publiée !'
             : 'Réponse envoyée — en attente de modération.';
 
-        return back()->with('success', $message)->withFragment('comments');
+        $redirect = back()->with('success', $message);
+
+        return $fromAdmin ? $redirect : $redirect->withFragment('comments');
     }
 
     public function destroy(Comment $comment)

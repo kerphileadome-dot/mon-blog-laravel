@@ -59,7 +59,7 @@ class DashboardController extends Controller
 
     public function comments()
     {
-        $comments = Comment::with('post')
+        $comments = Comment::with(['post', 'parent'])
                            ->latest()
                            ->paginate(20);
 
