@@ -19,38 +19,40 @@ class PasswordResetLinkController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ]);
-
-        $email = strtolower($request->email);
-
-        if ($this->isAdminEmail($email)) {
-            throw ValidationException::withMessages([
-                'email' => 'Compte administrateur : la réinitialisation se fait via l\'accès admin ou contactez le propriétaire du blog.',
-            ]);
-        }
-
-        if ($this->mailNotConfigured()) {
-            throw ValidationException::withMessages([
-                'email' => 'L\'envoi d\'emails n\'est pas configuré sur le serveur. Contactez l\'administrateur du blog.',
-            ]);
-        }
-
         try {
+            $request->validate([
+                'email' => ['required', 'email'],
+            ]);
+
+            $email = strtolower($request->email);
+
+            if ($this->isAdminEmail($email)) {
+                throw ValidationException::withMessages([
+                    'email' => 'Compte administrateur : la réinitialisation se fait via l\'accès admin ou contactez le propriétaire du blog.',
+                ]);
+            }
+
+            if ($this->mailNotConfigured()) {
+                throw ValidationException::withMessages([
+                    'email' => 'L\'envoi d\'emails n\'est pas configuré sur le serveur. Mettez à jour MAIL_PASSWORD sur Railway.',
+                ]);
+            }
+
             $status = Password::sendResetLink(['email' => $email]);
+
+            return $status == Password::RESET_LINK_SENT
+                ? back()->with('status', __($status))
+                : back()->withInput($request->only('email'))
+                    ->withErrors(['email' => __($status)]);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (\Throwable $e) {
-            report($e);
+            logger()->error('password.reset.failed', ['message' => $e->getMessage()]);
 
             throw ValidationException::withMessages([
-                'email' => 'Impossible d\'envoyer l\'email pour le moment. Réessayez dans quelques minutes ou contactez l\'administrateur.',
+                'email' => 'Impossible d\'envoyer l\'email pour le moment. Vérifiez que MAIL_PASSWORD est à jour sur Railway.',
             ]);
         }
-
-        return $status == Password::RESET_LINK_SENT
-            ? back()->with('status', __($status))
-            : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __($status)]);
     }
 
     protected function isAdminEmail(string $email): bool

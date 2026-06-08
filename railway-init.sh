@@ -4,7 +4,17 @@ set -e
 INIT_FLAG="storage/app/.railway_initialized"
 
 echo "🚀 Démarrage KerpheX..."
-echo "ℹ️  Emails (reset mot de passe) : configurez MAIL_MAILER=smtp et les variables MAIL_* sur Railway."
+
+if [ -z "$APP_URL" ] && [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
+    export APP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
+    echo "ℹ️  APP_URL défini depuis Railway : $APP_URL"
+fi
+
+if [ -z "$MAIL_PASSWORD" ]; then
+    echo "⚠️  MAIL_PASSWORD manquant — les emails (reset MDP) ne fonctionneront pas."
+else
+    echo "ℹ️  MAIL_PASSWORD configuré."
+fi
 
 if [ ! -f database/database.sqlite ]; then
     echo "📦 Création de la base SQLite..."
