@@ -34,4 +34,14 @@ return [
         'png_compression' => 6,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Synchronisation production → local
+    |--------------------------------------------------------------------------
+    */
+
+    'production_url' => env('PRODUCTION_URL', 'https://web-production-c5c2f.up.railway.app'),
+
+    'sync_export_token' => env('SYNC_EXPORT_TOKEN'),
+
 ];

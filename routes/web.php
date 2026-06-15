@@ -15,7 +15,16 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\SyncExportController;
 use Illuminate\Support\Facades\Route;
+
+// Export lecture seule prod → local (actif si SYNC_EXPORT_TOKEN est défini)
+Route::middleware('sync.export')->prefix('internal/sync')->group(function () {
+    Route::get('/database', [SyncExportController::class, 'database'])->name('sync.database');
+    Route::get('/settings', [SyncExportController::class, 'settings'])->name('sync.settings');
+    Route::get('/storage-manifest', [SyncExportController::class, 'storageManifest'])->name('sync.storage-manifest');
+    Route::get('/storage/{path}', [SyncExportController::class, 'storageFile'])->where('path', '.*')->name('sync.storage-file');
+});
 
 // Page d'accueil
 Route::get('/', [PostController::class, 'index'])->name('posts.index');
