@@ -42,9 +42,11 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 // Dashboard visiteur uniquement
 Route::middleware('auth:web')->get('/dashboard', fn () => redirect()->route('posts.index'))->name('dashboard');
 
-// Connexion admin (session séparée du guard « admin »)
-Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login')->middleware('guest:admin');
-Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit')->middleware('guest:admin');
+// Connexion admin (URL secrète : /admin/login?key=ADMIN_LOGIN_KEY)
+Route::middleware(['guest:admin', 'admin.login.key'])->group(function () {
+    Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit');
+});
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
 // Routes Google OAuth

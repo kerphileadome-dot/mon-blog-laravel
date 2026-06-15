@@ -154,6 +154,8 @@ Ce projet inclut une documentation complète :
 | **[INSTRUCTIONS_INSTALLATION.md](INSTRUCTIONS_INSTALLATION.md)** | 📦 Guide complet d'installation locale |
 | **[AUDIT_COMPLET.md](AUDIT_COMPLET.md)** | 🔍 Analyse détaillée du projet |
 | **[DEPLOIEMENT.md](DEPLOIEMENT.md)** | 🚀 Guide de déploiement sur Railway |
+| **[docs/MYSQL_RAILWAY.md](docs/MYSQL_RAILWAY.md)** | 🐬 Passer Railway en MySQL |
+| **[CONFIGURATION_GOOGLE_OAUTH.md](CONFIGURATION_GOOGLE_OAUTH.md)** | 🔐 Connexion Google |
 | **[GUIDE_PRESENTATION.md](GUIDE_PRESENTATION.md)** | 🎤 Guide pour présenter le projet |
 | **[RESUME_MODIFICATIONS.md](RESUME_MODIFICATIONS.md)** | 📝 Historique des modifications |
 | **[AMELIORATIONS_FUTURES.md](AMELIORATIONS_FUTURES.md)** | 💡 Idées d'évolutions futures |

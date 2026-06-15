@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\AdminSession;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -26,13 +27,15 @@ class GoogleAuthController extends Controller
                 }
 
                 if ($user->isAdmin()) {
-                    return redirect()->route('admin.login')->with('error', 'Compte administrateur : utilisez la connexion admin.');
+                    return redirect()->to($this->adminLoginUrl())
+                        ->with('error', 'Compte administrateur : utilisez la connexion admin.');
                 }
 
                 Auth::guard('web')->login($user);
             } else {
                 if ($this->isAdminEmail($googleUser->getEmail())) {
-                    return redirect()->route('admin.login')->with('error', 'Compte administrateur : utilisez la connexion admin.');
+                    return redirect()->to($this->adminLoginUrl())
+                        ->with('error', 'Compte administrateur : utilisez la connexion admin.');
                 }
 
                 if (!$this->isGmailAddress($googleUser->getEmail())) {
@@ -51,6 +54,8 @@ class GoogleAuthController extends Controller
                 Auth::guard('web')->login($user);
             }
 
+            AdminSession::clearUnlessAdminEmail($googleUser->getEmail());
+
             return redirect()->route('posts.index')->with('success', 'Bienvenue sur le blog !');
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
@@ -66,5 +71,14 @@ class GoogleAuthController extends Controller
     protected function isGmailAddress(string $email): bool
     {
         return str_ends_with(strtolower($email), '@gmail.com');
+    }
+
+    protected function adminLoginUrl(): string
+    {
+        $key = config('blog.admin_login_key');
+
+        return blank($key)
+            ? route('admin.login')
+            : route('admin.login', ['key' => $key]);
     }
 }

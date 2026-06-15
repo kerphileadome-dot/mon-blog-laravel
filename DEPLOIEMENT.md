@@ -110,15 +110,7 @@ APP_DEBUG=false
 APP_KEY=base64:VOTRE_CLE_GENEREE
 APP_URL=https://VOTRE-DOMAINE.up.railway.app
 
-DB_CONNECTION=mysql
-DB_HOST=${{MySQL.MYSQLHOST}}
-DB_PORT=${{MySQL.MYSQLPORT}}
-DB_DATABASE=${{MySQL.MYSQLDATABASE}}
-DB_USERNAME=${{MySQL.MYSQLUSER}}
-DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
-
-# Ancien (SQLite) — à supprimer après migration MySQL :
-# DB_CONNECTION=sqlite
+DB_CONNECTION=sqlite
 
 LOG_CHANNEL=stack
 LOG_LEVEL=error
@@ -129,6 +121,10 @@ QUEUE_CONNECTION=database
 
 MAIL_MAILER=log
 ```
+
+> **Local vs prod :** Laragon utilise **MySQL** (`.env` local). Railway utilise **SQLite** — ne définissez pas `DB_HOST` / `DB_DATABASE` MySQL sur Railway.
+>
+> MySQL sur Railway est optionnel : voir [docs/MYSQL_RAILWAY.md](docs/MYSQL_RAILWAY.md).
 
 ### Générer APP_KEY
 

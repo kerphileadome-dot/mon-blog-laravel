@@ -45,9 +45,9 @@
                     <a href="{{ route('login') }}" class="btn-ghost nav-desktop-only">Connexion</a>
                     <a href="{{ route('register') }}" class="btn-primary btn-accent nav-desktop-only">S'inscrire</a>
                 @endauth
-                @auth('admin')
+                @adminSession
                     <a href="{{ route('admin.dashboard') }}" class="btn-ghost nav-desktop-only">Administration</a>
-                @endauth
+                @endadminSession
                 <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
             </div>
         </div>
@@ -70,9 +70,9 @@
             <a href="{{ route('login') }}">Connexion</a>
             <a href="{{ route('register') }}">S'inscrire</a>
         @endauth
-        @auth('admin')
+        @adminSession
             <a href="{{ route('admin.dashboard') }}">Administration</a>
-        @endauth
+        @endadminSession
     </div>
 
     @if(session('success'))
@@ -98,9 +98,9 @@
                 <a href="{{ route('tags.index') }}">Tags</a>
                 <a href="{{ route('search') }}">Recherche</a>
                 <a href="{{ route('about') }}">À propos</a>
-                @auth('admin')
+                @adminSession
                     <a href="{{ route('admin.dashboard') }}">Administration</a>
-                @endauth
+                @endadminSession
             </div>
             <div class="footer-copy">
                 <span>© {{ date('Y') }} KerpheX · Tous droits réservés</span>

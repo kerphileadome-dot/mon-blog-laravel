@@ -97,4 +97,5 @@ if ($updated -eq 0) {
 }
 
 powershell -ExecutionPolicy Bypass -File scripts/setup-local-env.ps1
+powershell -ExecutionPolicy Bypass -File scripts/setup-google-oauth.ps1 2>$null
 Write-Host "Sync terminee." -ForegroundColor Green

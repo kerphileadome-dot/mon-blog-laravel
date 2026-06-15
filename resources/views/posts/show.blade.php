@@ -162,7 +162,7 @@
             </div>
         </div>
 
-        @auth('admin')
+        @adminSession
             <div class="sidebar-card">
                 <p class="sidebar-title">Administration</p>
                 <a href="{{ route('admin.posts.edit', $post) }}" class="action-link">Modifier l'article</a>
@@ -174,7 +174,7 @@
                     </button>
                 </form>
             </div>
-        @endauth
+        @endadminSession
     </aside>
 </div>
 

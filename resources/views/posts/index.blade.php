@@ -96,9 +96,9 @@
         <div class="empty-icon">✍️</div>
         <h2 class="empty-title">Le blog prend vie bientôt</h2>
         <p class="empty-desc">Aucun article publié pour l'instant. Revenez très prochainement pour découvrir du contenu inspirant.</p>
-        @auth('admin')
+        @adminSession
             <a href="{{ route('admin.posts.create') }}" class="btn-primary btn-accent">Écrire le premier article</a>
-        @endauth
+        @endadminSession
     </div>
 @endif
 

@@ -44,6 +44,7 @@ if [ "$DB_DRIVER" = "mysql" ]; then
         sleep 2
     done
 else
+    echo "📦 Base de données : SQLite (database/database.sqlite)"
     if [ ! -f database/database.sqlite ]; then
         echo "📦 Création de la base SQLite..."
         touch database/database.sqlite

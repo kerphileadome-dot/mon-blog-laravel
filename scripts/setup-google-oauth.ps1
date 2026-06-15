@@ -50,7 +50,7 @@ Write-Host ">> Configuration Google OAuth (local)" -ForegroundColor Cyan
 if (-not (Test-Path "google.local.env")) {
     if (Test-Path "google.local.env.example") {
         Copy-Item "google.local.env.example" "google.local.env"
-        Write-Host ">> google.local.env cree — renseignez GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET" -ForegroundColor Yellow
+        Write-Host ">> google.local.env cree" -ForegroundColor Yellow
     } else {
         Write-Error "google.local.env.example introuvable."
     }
@@ -64,31 +64,44 @@ if ([string]::IsNullOrWhiteSpace($appUrl)) {
 }
 $appUrl = $appUrl.TrimEnd('/')
 
+# Google n'accepte pas mon-blog.test : URI OAuth locale via 127.0.0.1
+$googleRedirectUri = "$appUrl/auth/google/callback"
+if ($appUrl -match "mon-blog\.test") {
+    $googleRedirectUri = "http://127.0.0.1/mon_blog/public/auth/google/callback"
+}
+
 if ([string]::IsNullOrWhiteSpace($clientId) -or $clientId -match "votre-id") {
+    Write-Host "GOOGLE_CLIENT_ID manquant dans google.local.env" -ForegroundColor Red
+    exit 1
+}
+
+if ([string]::IsNullOrWhiteSpace($clientSecret) -or $clientSecret -match "votre-secret") {
     Write-Host ""
-    Write-Host "Etapes manuelles requises :" -ForegroundColor Yellow
-    Write-Host "  1. https://console.cloud.google.com → Identifiants OAuth" -ForegroundColor Cyan
-    Write-Host "  2. Editez google.local.env avec Client ID et Secret" -ForegroundColor Cyan
-    Write-Host "  3. Ajoutez dans Google Console :" -ForegroundColor Cyan
-    Write-Host "     Origine JS      : $appUrl" -ForegroundColor Gray
-    Write-Host "     URI redirection : $appUrl/auth/google/callback" -ForegroundColor Gray
-    Write-Host "     + prod          : https://web-production-c5c2f.up.railway.app/auth/google/callback" -ForegroundColor Gray
-    Write-Host "  4. Relancez ce script" -ForegroundColor Cyan
+    Write-Host "GOOGLE_CLIENT_SECRET manquant dans google.local.env" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "Guide complet : CONFIGURATION_GOOGLE_OAUTH.md" -ForegroundColor Gray
+    Write-Host "  Option A - Copier depuis Railway :" -ForegroundColor Cyan
+    Write-Host "    1. railway.app -> service web -> Variables -> GOOGLE_CLIENT_SECRET" -ForegroundColor Gray
+    Write-Host "    2. Collez dans google.local.env" -ForegroundColor Gray
+    Write-Host "    3. Relancez ce script" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "  Option B - Railway CLI : scripts\railway-login.cmd" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  Google Cloud Console - URI locaux :" -ForegroundColor Cyan
+    Write-Host "    Origine JS      : $appUrl" -ForegroundColor Gray
+    Write-Host "    URI redirection : $appUrl/auth/google/callback" -ForegroundColor Gray
+    Write-Host ""
     exit 1
 }
 
 Set-DotEnvValue ".env" "GOOGLE_CLIENT_ID" $clientId
 Set-DotEnvValue ".env" "GOOGLE_CLIENT_SECRET" $clientSecret
-Set-DotEnvValue ".env" "GOOGLE_REDIRECT_URI" "$appUrl/auth/google/callback"
+Set-DotEnvValue ".env" "GOOGLE_REDIRECT_URI" $googleRedirectUri
 
 php artisan config:clear | Out-Null
 
 Write-Host ""
 Write-Host "Google OAuth local configure." -ForegroundColor Green
-Write-Host "  GOOGLE_REDIRECT_URI = $appUrl/auth/google/callback" -ForegroundColor Gray
+Write-Host "  GOOGLE_REDIRECT_URI = $googleRedirectUri" -ForegroundColor Gray
 Write-Host ""
-Write-Host "Test : ouvrez $appUrl/login et cliquez « Se connecter avec Google »" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Pour Railway : ajoutez les memes GOOGLE_* dans Variables du service web." -ForegroundColor Yellow
+Write-Host "Test local : http://127.0.0.1/mon_blog/public/login" -ForegroundColor Cyan
+Write-Host "Admin unique : kerphilesaint@gmail.com (utiliser /admin/login pour admin)" -ForegroundColor Gray

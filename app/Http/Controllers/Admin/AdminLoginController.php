@@ -53,6 +53,6 @@ class AdminLoginController extends Controller
         Auth::guard('admin')->logout();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login');
+        return redirect()->route('posts.index');
     }
 }

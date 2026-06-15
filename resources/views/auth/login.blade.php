@@ -40,5 +40,4 @@
 
 @section('footer')
     <p>Pas encore de compte ? <a href="{{ route('register') }}" class="auth-link">Créer un compte</a></p>
-    <p style="margin-top:0.5rem;font-size:0.8rem;"><a href="{{ route('admin.login') }}" class="auth-link-muted">Accès administrateur</a></p>
 @endsection
