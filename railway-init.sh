@@ -2,6 +2,7 @@
 set -e
 
 INIT_FLAG="storage/app/.railway_initialized"
+DRIVER_FLAG="storage/app/.railway_db_driver"
 
 echo "🚀 Démarrage KerpheX..."
 
@@ -16,13 +17,41 @@ else
     echo "ℹ️  MAIL_PASSWORD configuré."
 fi
 
-if [ ! -f database/database.sqlite ]; then
-    echo "📦 Création de la base SQLite..."
-    touch database/database.sqlite
+DB_DRIVER="${DB_CONNECTION:-sqlite}"
+PREVIOUS_DRIVER=""
+if [ -f "$DRIVER_FLAG" ]; then
+    PREVIOUS_DRIVER="$(cat "$DRIVER_FLAG")"
+fi
+
+if [ -n "$PREVIOUS_DRIVER" ] && [ "$PREVIOUS_DRIVER" != "$DB_DRIVER" ]; then
+    echo "🔄 Changement de base : ${PREVIOUS_DRIVER} → ${DB_DRIVER}"
+    rm -f "$INIT_FLAG"
+fi
+
+if [ "$DB_DRIVER" = "mysql" ]; then
+    echo "📦 Base de données : MySQL (${DB_HOST:-?}:${DB_PORT:-3306}/${DB_DATABASE:-?})"
+
+    echo "⏳ Attente MySQL..."
+    for i in $(seq 1 30); do
+        if php artisan migrate:status >/dev/null 2>&1; then
+            echo "✅ MySQL accessible."
+            break
+        fi
+        if [ "$i" -eq 30 ]; then
+            echo "❌ MySQL inaccessible après 30 tentatives."
+            exit 1
+        fi
+        sleep 2
+    done
+else
+    if [ ! -f database/database.sqlite ]; then
+        echo "📦 Création de la base SQLite..."
+        touch database/database.sqlite
+    fi
 fi
 
 if [ ! -f "$INIT_FLAG" ]; then
-    echo "🔧 Première initialisation..."
+    echo "🔧 Première initialisation (${DB_DRIVER})..."
     php artisan migrate --force
     php artisan db:seed --class=AdminUserSeeder --force
     php artisan db:seed --class=ArticlesSeeder --force
@@ -34,7 +63,9 @@ else
     php artisan db:seed --class=AdminUserSeeder --force
 fi
 
-echo "🗄️ Mise en cache Laravel (après chargement des variables Railway)..."
+echo "$DB_DRIVER" > "$DRIVER_FLAG"
+
+echo "🗄️ Mise en cache Laravel..."
 php artisan config:clear
 php artisan config:cache
 php artisan route:cache
