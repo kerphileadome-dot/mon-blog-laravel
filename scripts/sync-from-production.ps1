@@ -55,7 +55,12 @@ Write-Host ""
 # 1. Aligner l'environnement local sur la prod (sauf APP_URL)
 $prodUrl = "https://web-production-c5c2f.up.railway.app"
 Set-DotEnvValue ".env" "PRODUCTION_URL" $prodUrl
-Set-DotEnvValue ".env" "DB_CONNECTION" "sqlite"
+Set-DotEnvValue ".env" "DB_CONNECTION" "mysql"
+Set-DotEnvValue ".env" "DB_HOST" "127.0.0.1"
+Set-DotEnvValue ".env" "DB_PORT" "3306"
+Set-DotEnvValue ".env" "DB_DATABASE" "mon_blog"
+Set-DotEnvValue ".env" "DB_USERNAME" "root"
+Set-DotEnvValue ".env" "DB_PASSWORD" ""
 Set-DotEnvValue ".env" "LOG_LEVEL" "error"
 Set-DotEnvValue ".env" "MAIL_MAILER" "smtp"
 Set-DotEnvValue ".env" "MAIL_HOST" "smtp.gmail.com"
@@ -64,7 +69,7 @@ Set-DotEnvValue ".env" "MAIL_USERNAME" "kerphilesaint@gmail.com"
 Set-DotEnvValue ".env" "MAIL_ENCRYPTION" "tls"
 Set-DotEnvValue ".env" "MAIL_FROM_ADDRESS" "kerphilesaint@gmail.com"
 Set-DotEnvValue ".env" "MAIL_FROM_NAME" "KerpheX Blog"
-Set-DotEnvValue ".env" "ADMIN_EMAILS" "kerphilesaint@gmail.com,kerphileadome@gmail.com"
+Set-DotEnvValue ".env" "ADMIN_EMAILS" "kerphilesaint@gmail.com"
 
 $syncToken = Read-DotEnvValue ".env" "SYNC_EXPORT_TOKEN"
 if ([string]::IsNullOrWhiteSpace($syncToken)) {
@@ -94,43 +99,46 @@ if (Test-Path $railway) {
 Write-Host ">> Images de couverture depuis Git" -ForegroundColor Cyan
 git checkout HEAD -- storage/app/public/covers/ 2>$null
 
-# 4. Import base SQLite
+# 4. Import base (prod = SQLite, local = MySQL : fichier SQLite incompatible)
 $dbImported = $false
+$localDb = Read-DotEnvValue ".env" "DB_CONNECTION"
 
-Write-Host ">> Import base SQLite depuis la production" -ForegroundColor Cyan
+if ($localDb -eq "sqlite") {
+    Write-Host ">> Import base SQLite depuis la production" -ForegroundColor Cyan
+    php artisan blog:sync-from-production --no-interaction 2>&1 | ForEach-Object { Write-Host $_ }
+    if ($LASTEXITCODE -eq 0) { $dbImported = $true }
 
-php artisan blog:sync-from-production --no-interaction 2>&1 | ForEach-Object { Write-Host $_ }
-if ($LASTEXITCODE -eq 0) {
-    $dbImported = $true
-}
+    if (-not $dbImported -and (Test-Path $railway)) {
+        & $railway whoami 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host ">> Tentative Railway SSH..." -ForegroundColor Cyan
+            $backup = "database/database.sqlite.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+            if (Test-Path "database/database.sqlite") {
+                Copy-Item "database/database.sqlite" $backup
+            }
+            $b64 = & $railway ssh -- "base64 database/database.sqlite" 2>&1
+            if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($b64)) {
+                $bytes = [Convert]::FromBase64String(($b64 -join "").Trim())
+                [IO.File]::WriteAllBytes("$projectRoot/database/database.sqlite", $bytes)
+                $dbImported = $true
+                Write-Host "   Base importee via Railway SSH." -ForegroundColor Green
+            }
+        }
+    }
 
-if (-not $dbImported -and (Test-Path $railway)) {
-    & $railway whoami 2>&1 | Out-Null
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host ">> Tentative Railway SSH..." -ForegroundColor Cyan
+    $manualDb = "database/imports/production.sqlite"
+    if (-not $dbImported -and (Test-Path $manualDb)) {
         $backup = "database/database.sqlite.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
         if (Test-Path "database/database.sqlite") {
             Copy-Item "database/database.sqlite" $backup
         }
-        $b64 = & $railway ssh -- "base64 database/database.sqlite" 2>&1
-        if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($b64)) {
-            $bytes = [Convert]::FromBase64String(($b64 -join "").Trim())
-            [IO.File]::WriteAllBytes("$projectRoot/database/database.sqlite", $bytes)
-            $dbImported = $true
-            Write-Host "   Base importee via Railway SSH." -ForegroundColor Green
-        }
+        Copy-Item $manualDb "database/database.sqlite" -Force
+        $dbImported = $true
+        Write-Host "   Base importee depuis $manualDb" -ForegroundColor Green
     }
-}
-
-$manualDb = "database/imports/production.sqlite"
-if (-not $dbImported -and (Test-Path $manualDb)) {
-    $backup = "database/database.sqlite.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-    if (Test-Path "database/database.sqlite") {
-        Copy-Item "database/database.sqlite" $backup
-    }
-    Copy-Item $manualDb "database/database.sqlite" -Force
-    $dbImported = $true
-    Write-Host "   Base importee depuis $manualDb" -ForegroundColor Green
+} else {
+    Write-Host ">> Local MySQL : import SQLite prod ignore (bases differentes)." -ForegroundColor Yellow
+    Write-Host "   Utilisez scripts/setup-mysql-laragon.ps1 pour initialiser MySQL." -ForegroundColor Yellow
 }
 
 php artisan config:clear | Out-Null
@@ -140,13 +148,14 @@ php artisan storage:link 2>$null | Out-Null
 Write-Host ""
 if ($dbImported) {
     Write-Host "Sync terminee : donnees production copiees en local." -ForegroundColor Green
+} elseif ($localDb -eq "mysql") {
+    Write-Host "Sync partielle : config + images OK. Donnees MySQL via setup-mysql-laragon.ps1." -ForegroundColor Green
 } else {
-    Write-Host "Sync partielle : config + images OK, base SQLite non importee." -ForegroundColor Yellow
+    Write-Host "Sync partielle : config + images OK, base non importee." -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "Pour finir l'alignement complet :" -ForegroundColor Yellow
+    Write-Host "Pour finir l'alignement complet (SQLite local) :" -ForegroundColor Yellow
     Write-Host "  1. Sur Railway -> Variables : SYNC_EXPORT_TOKEN=$syncToken" -ForegroundColor Cyan
-    Write-Host "  2. git push (pour deployer les routes /internal/sync/*)" -ForegroundColor Cyan
-    Write-Host "  3. Relancez ce script" -ForegroundColor Cyan
+    Write-Host "  2. Relancez ce script" -ForegroundColor Cyan
     Write-Host "  OU : scripts/railway-login.cmd puis relancez ce script" -ForegroundColor Cyan
 }
 

@@ -1,7 +1,9 @@
-# 🐬 MySQL sur Railway — Guide d'alignement avec le local
+# 🐬 MySQL sur Railway — Guide optionnel
+
+> **Configuration actuelle du projet :** **SQLite** en production (Railway), **MySQL** en local (Laragon).
+> Ce guide sert uniquement si vous souhaitez passer Railway en MySQL plus tard.
 
 Ce guide permet d'utiliser **MySQL** en production (Railway), comme en local (Laragon).
-
 ---
 
 ## 📋 Prérequis

@@ -54,12 +54,12 @@ if (-not (Test-Path ".env")) {
 
 $appUrl = Read-DotEnvValue ".env" "APP_URL"
 if ([string]::IsNullOrWhiteSpace($appUrl)) {
-    $appUrl = "http://mon-blog.test:8080"
+    $appUrl = "http://mon-blog.test"
 }
 $appUrl = $appUrl.TrimEnd('/')
 
 Set-DotEnvValue ".env" "APP_URL" $appUrl
-Set-DotEnvValue ".env" "ADMIN_EMAILS" "kerphilesaint@gmail.com,kerphileadome@gmail.com"
+Set-DotEnvValue ".env" "ADMIN_EMAILS" "kerphilesaint@gmail.com"
 Set-DotEnvValue ".env" "GOOGLE_REDIRECT_URI" "$appUrl/auth/google/callback"
 
 $mailPassword = Read-DotEnvValue "mail.secret.env" "MAIL_PASSWORD"
@@ -99,7 +99,7 @@ Write-Host ""
 Write-Host "Variables appliquees :" -ForegroundColor Green
 Write-Host "  APP_URL              = $appUrl"
 Write-Host "  GOOGLE_REDIRECT_URI  = $appUrl/auth/google/callback"
-Write-Host "  ADMIN_EMAILS         = kerphilesaint@gmail.com, kerphileadome@gmail.com"
+Write-Host "  ADMIN_EMAILS         = kerphilesaint@gmail.com"
 Write-Host "  MAIL                 = smtp / kerphilesaint@gmail.com"
 
 if ([string]::IsNullOrWhiteSpace($googleId) -or $googleId -match "votre-id") {

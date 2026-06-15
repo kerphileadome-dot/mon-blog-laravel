@@ -16,6 +16,17 @@ if (-not $mysqlDirs) {
 $mysql = Join-Path $mysqlDirs[0].FullName "bin\mysql.exe"
 $dbName = "mon_blog"
 
+Write-Host ">> Test connexion MySQL..." -ForegroundColor Cyan
+& $mysql -u root -e "SELECT 1;" 2>&1 | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "MySQL n'est pas demarre." -ForegroundColor Red
+    Write-Host "  1. Ouvrez Laragon" -ForegroundColor Yellow
+    Write-Host "  2. Cliquez sur « Demarrer » (Apache + MySQL)" -ForegroundColor Yellow
+    Write-Host "  3. Relancez : powershell -ExecutionPolicy Bypass -File scripts/setup-mysql-laragon.ps1" -ForegroundColor Yellow
+    exit 1
+}
+
 Write-Host ">> Création de la base '$dbName'..." -ForegroundColor Cyan
 & $mysql -u root -e "CREATE DATABASE IF NOT EXISTS ``$dbName`` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 

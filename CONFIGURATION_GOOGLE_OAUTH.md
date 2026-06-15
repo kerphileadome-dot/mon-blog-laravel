@@ -23,7 +23,7 @@ Tu dois créer une application OAuth sur Google Cloud Console pour obtenir :
 ### ÉTAPE 1 : Accéder à Google Cloud Console
 
 1. Va sur https://console.cloud.google.com
-2. Connecte-toi avec ton compte **kerphileadome@gmail.com**
+2. Connecte-toi avec ton compte **kerphilesaint@gmail.com**
 
 ---
 
@@ -65,13 +65,13 @@ Si c'est la première fois, tu dois configurer l'écran de consentement :
 
 **Informations à remplir :**
 - Nom de l'application : **Blog KerpheX**
-- Adresse e-mail de l'assistance : **kerphileadome@gmail.com**
-- Adresse e-mail du développeur : **kerphileadome@gmail.com**
+- Adresse e-mail de l'assistance : **kerphilesaint@gmail.com**
+- Adresse e-mail du développeur : **kerphilesaint@gmail.com**
 
 4. Clique sur **"Enregistrer et continuer"**
 5. **Champs d'application** : Clique sur **"Enregistrer et continuer"** (pas besoin d'ajouter)
 6. **Utilisateurs test** : Clique sur **"Ajouter des utilisateurs"**
-   - Ajoute ton email : **kerphileadome@gmail.com**
+   - Ajoute ton email : **kerphilesaint@gmail.com**
    - Clique sur **"Ajouter"**
 7. Clique sur **"Enregistrer et continuer"**
 8. Clique sur **"Retour au tableau de bord"**
@@ -91,11 +91,15 @@ Si c'est la première fois, tu dois configurer l'écran de consentement :
 - **Origines JavaScript autorisées** :
   ```
   https://web-production-c5c2f.up.railway.app
+  http://mon-blog.test
+  http://127.0.0.1
   ```
 
 - **URI de redirection autorisés** :
   ```
   https://web-production-c5c2f.up.railway.app/auth/google/callback
+  http://mon-blog.test/auth/google/callback
+  http://127.0.0.1/mon_blog/public/auth/google/callback
   ```
 
 4. Clique sur **"Créer"**
@@ -133,26 +137,23 @@ GOOGLE_REDIRECT_URI=https://web-production-c5c2f.up.railway.app/auth/google/call
 
 ---
 
-## 🧪 POUR TESTER EN LOCAL (Optionnel)
+## 🧪 TESTER EN LOCAL
 
-Si tu veux tester en local d'abord :
+1. **Copiez `google.local.env.example` → `google.local.env`** et collez Client ID / Secret.
 
-1. **Ajoute les URI locaux dans Google Console** (mêmes identifiants que Railway) :
-   ```
-   Origine JavaScript : http://mon-blog.test:8080
-   URI de redirection : http://mon-blog.test:8080/auth/google/callback
-   ```
-
-2. **Copie `google.local.env.example` → `google.local.env`** et colle ton Client ID / Secret (depuis Railway ou Google Console).
-
-3. **Lance la configuration locale :**
+2. **Lancez :**
    ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts/setup-local-env.ps1
+   powershell -ExecutionPolicy Bypass -File scripts/setup-google-oauth.ps1
    ```
 
-4. **Teste :**
-   - Va sur http://mon-blog.test:8080/login
-   - Clique sur « Se connecter avec Google »
+3. **Vérifiez :**
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts/verify-google-oauth.ps1
+   ```
+
+4. **Testez :**
+   - http://mon-blog.test/login
+   - Cliquez sur « Se connecter avec Google »
 
 ---
 
@@ -164,7 +165,7 @@ Une fois que tu as ajouté les variables sur Railway et attendu le redéploiemen
 
 1. Va sur https://web-production-c5c2f.up.railway.app/login
 2. Clique sur le bouton **"Se connecter avec Google"**
-3. Sélectionne ton compte Google : **kerphileadome@gmail.com**
+3. Sélectionne ton compte Google : **kerphilesaint@gmail.com**
 4. Autorise l'application
 5. ✅ **Tu es connecté automatiquement !**
 
@@ -182,10 +183,10 @@ Une fois que tu as ajouté les variables sur Railway et attendu le redéploiemen
 
 ## 🔒 SÉCURITÉ
 
-Le code vérifie que **seul kerphileadome@gmail.com** peut se connecter :
+Le code vérifie que **seul kerphilesaint@gmail.com** peut se connecter :
 
 ```php
-if ($googleUser->getEmail() === 'kerphileadome@gmail.com') {
+if ($googleUser->getEmail() === 'kerphilesaint@gmail.com') {
     // Créer le compte admin
 } else {
     // Refuser l'accès
@@ -217,7 +218,7 @@ Donc même si quelqu'un trouve l'URL de login, il ne pourra pas se connecter ave
 ### Problème 3 : "Accès non autorisé"
 
 **Solution :**
-- Vérifie que tu utilises bien **kerphileadome@gmail.com**
+- Vérifie que tu utilises bien **kerphilesaint@gmail.com**
 - Vérifie que cet email est dans les utilisateurs test sur Google Console
 
 ---
@@ -236,7 +237,7 @@ Donc même si quelqu'un trouve l'URL de login, il ne pourra pas se connecter ave
 ## 💡 NOTE IMPORTANTE
 
 Tu pourras toujours te connecter avec **email/mot de passe** aussi :
-- Email : kerphileadome@gmail.com
+- Email : kerphilesaint@gmail.com
 - Mot de passe : Blogperso20?
 
 Les deux méthodes fonctionnent en parallèle ! 👍

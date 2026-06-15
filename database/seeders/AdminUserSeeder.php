@@ -35,5 +35,13 @@ class AdminUserSeeder extends Seeder
                 $this->command->info("Rôle admin confirmé : {$email}");
             }
         }
+
+        $demoted = User::where('role', 'admin')
+            ->whereNotIn('email', $adminEmails)
+            ->update(['role' => 'visitor']);
+
+        if ($demoted > 0) {
+            $this->command->info("{$demoted} ancien(s) admin(s) repassé(s) visiteur.");
+        }
     }
 }

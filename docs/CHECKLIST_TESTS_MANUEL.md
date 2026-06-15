@@ -2,7 +2,7 @@
 
 Utilisez cette liste pour valider le projet de A à Z.
 
-**Local :** http://mon-blog.test:8080  
+**Local :** http://mon-blog.test  
 **Production :** https://web-production-c5c2f.up.railway.app
 
 Cochez chaque case après test réussi.
@@ -167,7 +167,7 @@ npm run build
 | Rôle | Email | Connexion |
 |------|-------|-----------|
 | Admin | kerphilesaint@gmail.com | `/admin/login` |
-| Admin | kerphileadome@gmail.com | `/admin/login` |
+| Admin | kerphilesaint@gmail.com | `/admin/login` |
 | Visiteur test | Gmail uniquement | `/register` ou Google |
 
 ---
@@ -177,7 +177,7 @@ npm run build
 | Problème | Action |
 |----------|--------|
 | Email non reçu | Vérifier `MAIL_*` dans `.env`, lancer `php artisan blog:test-mail`. Sous Laragon/Windows, tester sur Railway si SSL local bloque |
-| Google OAuth local | Renseigner `google.local.env`, URI `http://mon-blog.test:8080/auth/google/callback` dans Google Console |
+| Google OAuth local | Renseigner `google.local.env`, URI `http://mon-blog.test/auth/google/callback` dans Google Console |
 | Google redirect_uri_mismatch | Vérifier `GOOGLE_REDIRECT_URI` = `{APP_URL}/auth/google/callback` dans Google Console |
 | Images absentes | `php artisan storage:link` |
 | Erreur base | `php artisan migrate` |
