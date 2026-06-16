@@ -18,7 +18,18 @@ fi
 
 MAIL_MAILER="${MAIL_MAILER:-smtp}"
 
-if [ "$MAIL_MAILER" = "resend" ]; then
+if [ "$MAIL_MAILER" = "brevo" ]; then
+    if [ -z "$BREVO_API_KEY" ]; then
+        echo "⚠️  BREVO_API_KEY manquant — les emails (OTP, reset MDP) ne fonctionneront pas."
+    else
+        echo "ℹ️  Brevo configuré (API key présente)."
+    fi
+    if [ -z "$MAIL_FROM_ADDRESS" ]; then
+        echo "⚠️  MAIL_FROM_ADDRESS manquant — vérifiez l'expéditeur sur Brevo."
+    else
+        echo "ℹ️  Expéditeur Brevo : $MAIL_FROM_ADDRESS"
+    fi
+elif [ "$MAIL_MAILER" = "resend" ]; then
     if [ -z "$RESEND_API_KEY" ]; then
         echo "⚠️  RESEND_API_KEY manquant — les emails (OTP, reset MDP) ne fonctionneront pas."
     else
@@ -93,7 +104,14 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-if [ "$MAIL_MAILER" = "resend" ] && [ -n "$RESEND_API_KEY" ]; then
+if [ "$MAIL_MAILER" = "brevo" ] && [ -n "$BREVO_API_KEY" ]; then
+    echo "📧 Test Brevo au démarrage..."
+    if php artisan blog:test-mail 2>&1; then
+        echo "✅ Brevo OK"
+    else
+        echo "❌ Brevo échec — vérifiez BREVO_API_KEY et expéditeur vérifié sur brevo.com"
+    fi
+elif [ "$MAIL_MAILER" = "resend" ] && [ -n "$RESEND_API_KEY" ]; then
     echo "📧 Test Resend au démarrage..."
     if php artisan blog:test-mail 2>&1; then
         echo "✅ Resend OK"

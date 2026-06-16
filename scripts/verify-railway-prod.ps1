@@ -95,9 +95,9 @@ $required = @(
 )
 
 $mail = @(
-    @{ Name = "MAIL_MAILER";        Value = "resend";                              Critical = $true },
-    @{ Name = "RESEND_API_KEY";     Value = "(cle API re_... depuis resend.com)"; Critical = $true },
-    @{ Name = "MAIL_FROM_ADDRESS";  Value = "contact@votredomaine.com (domaine verifie Resend)"; Critical = $true },
+    @{ Name = "MAIL_MAILER";        Value = "brevo";                              Critical = $true },
+    @{ Name = "BREVO_API_KEY";      Value = "(cle API xkeysib-... depuis brevo.com)"; Critical = $true },
+    @{ Name = "MAIL_FROM_ADDRESS";  Value = "kerphilesaint@gmail.com (expediteur verifie Brevo)"; Critical = $true },
     @{ Name = "MAIL_FROM_NAME";     Value = "KerpheX Blog";                      Critical = $false }
 )
 

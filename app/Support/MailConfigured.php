@@ -21,6 +21,10 @@ class MailConfigured
             return filled(config('services.resend.key'));
         }
 
+        if ($mailer === 'brevo') {
+            return filled(config('services.brevo.key'));
+        }
+
         return true;
     }
 }

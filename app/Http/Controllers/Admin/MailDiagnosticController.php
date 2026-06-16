@@ -13,26 +13,20 @@ class MailDiagnosticController extends Controller
     {
         $username = config('mail.mailers.smtp.username');
         $password = config('mail.mailers.smtp.password');
+        $mailer = config('mail.default');
 
         $status = [
-            'mailer' => config('mail.default'),
-            'host' => config('mail.mailers.smtp.host'),
-            'port' => config('mail.mailers.smtp.port'),
-            'scheme' => config('mail.mailers.smtp.scheme'),
-            'username' => $username,
+            'mailer' => $mailer,
             'from' => config('mail.from.address'),
             'password_set' => filled($password),
-            'password_length' => is_string($password) ? strlen($password) : 0,
             'resend_key_set' => filled(config('services.resend.key')),
-            'ssl_verify' => config('mail.mailers.smtp.verify_peer'),
-            'openssl' => extension_loaded('openssl'),
-            'from_matches_username' => strtolower((string) config('mail.from.address')) === strtolower((string) $username),
-            'railway_smtp_note' => 'Sur Railway Hobby, SMTP (ports 587/465) est bloqué. Utilisez MAIL_MAILER=resend + RESEND_API_KEY.',
+            'brevo_key_set' => filled(config('services.brevo.key')),
+            'railway_note' => 'Sur Railway Hobby, utilisez brevo ou resend (API HTTPS). SMTP Gmail est bloqué.',
         ];
 
         if (! MailConfigured::isReady()) {
             $status['probe'] = 'failed';
-            $status['error'] = 'Configuration mail incomplète (SMTP ou Resend).';
+            $status['error'] = 'Configuration mail incomplète.';
 
             return response()->json($status);
         }
@@ -52,6 +46,7 @@ class MailDiagnosticController extends Controller
                 fn ($message) => $message->to($recipient)->subject('Diagnostic email · '.config('app.name'))
             );
             $status['probe'] = 'ok';
+            $status['test_sent_to'] = $recipient;
         } catch (\Throwable $e) {
             $status['probe'] = 'failed';
             $status['error'] = $e->getMessage();
