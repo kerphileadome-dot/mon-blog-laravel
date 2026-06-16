@@ -65,7 +65,10 @@
         @auth('web')
             <a href="{{ route('favorites.index') }}">Mes favoris</a>
             <a href="{{ route('profile.edit') }}">Mon profil</a>
-            <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">Déconnexion</button></form>
+            <form method="POST" action="{{ route('logout') }}" class="mobile-menu-logout-form">
+                @csrf
+                <button type="submit" class="mobile-menu-logout">Déconnexion</button>
+            </form>
         @else
             <a href="{{ route('login') }}">Connexion</a>
             <a href="{{ route('register') }}">S'inscrire</a>

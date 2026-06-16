@@ -11,7 +11,7 @@ class GmailEmail implements ValidationRule
     {
         $email = strtolower((string) $value);
 
-        if (!str_ends_with($email, '@gmail.com')) {
+        if (! str_ends_with($email, '@gmail.com')) {
             $fail('Seules les adresses Gmail (@gmail.com) sont acceptées pour créer un compte.');
         }
     }

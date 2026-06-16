@@ -13,13 +13,15 @@ class ArticlesSeeder extends Seeder
         $adminEmail = config('blog.admin_emails')[0] ?? 'kerphilesaint@gmail.com';
         $admin = User::where('email', $adminEmail)->first();
 
-        if (!$admin) {
+        if (! $admin) {
             $this->command->error('Compte admin introuvable. Lancez AdminUserSeeder d\'abord.');
+
             return;
         }
 
         if (Post::count() > 0) {
             $this->command->info('Articles déjà présents — ignoré.');
+
             return;
         }
 

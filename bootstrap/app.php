@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CheckBlocked;
+use App\Http\Middleware\EnsureAdminLoginKey;
+use App\Http\Middleware\SyncExportMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,10 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'admin.login.key' => \App\Http\Middleware\EnsureAdminLoginKey::class,
-            'check.blocked' => \App\Http\Middleware\CheckBlocked::class,
-            'sync.export' => \App\Http\Middleware\SyncExportMiddleware::class,
+            'admin' => AdminMiddleware::class,
+            'admin.login.key' => EnsureAdminLoginKey::class,
+            'check.blocked' => CheckBlocked::class,
+            'sync.export' => SyncExportMiddleware::class,
         ]);
 
         $middleware->redirectGuestsTo(function (Request $request) {
@@ -32,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $middleware->appendToGroup('web', [
-            \App\Http\Middleware\CheckBlocked::class,
+            CheckBlocked::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

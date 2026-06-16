@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use App\Services\CoverImageProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,13 +20,13 @@ class MediaController extends Controller
 
         // Filtrer par recherche si nécessaire
         if ($search) {
-            $allFiles = array_filter($allFiles, function($file) use ($search) {
+            $allFiles = array_filter($allFiles, function ($file) use ($search) {
                 return str_contains(basename($file), $search);
             });
         }
 
         // Récupérer les informations des fichiers
-        $media = collect($allFiles)->map(function($file) {
+        $media = collect($allFiles)->map(function ($file) {
             return [
                 'path' => $file,
                 'url' => Storage::url($file),
@@ -38,7 +39,7 @@ class MediaController extends Controller
         // Statistiques
         $stats = [
             'total_files' => count($allFiles),
-            'total_size' => collect($allFiles)->sum(fn($file) => Storage::disk('public')->size($file)),
+            'total_size' => collect($allFiles)->sum(fn ($file) => Storage::disk('public')->size($file)),
         ];
 
         return view('admin.media.index', compact('media', 'stats', 'search'));
@@ -73,13 +74,13 @@ class MediaController extends Controller
 
         $path = $request->input('path');
 
-        if (!Storage::disk('public')->exists($path)) {
+        if (! Storage::disk('public')->exists($path)) {
             return back()->with('error', 'Image introuvable !');
         }
 
         // Vérifier si l'image est utilisée par un article publié
         $imageUrl = Storage::url($path);
-        $usedByPost = \App\Models\Post::where('cover_image', $path)
+        $usedByPost = Post::where('cover_image', $path)
             ->where('published', true)
             ->exists();
 
@@ -88,6 +89,7 @@ class MediaController extends Controller
         }
 
         Storage::disk('public')->delete($path);
+
         return back()->with('success', 'Image supprimée avec succès !');
     }
 
@@ -103,17 +105,18 @@ class MediaController extends Controller
         $skippedCount = 0;
 
         foreach ($request->input('files') as $file) {
-            if (!Storage::disk('public')->exists($file)) {
+            if (! Storage::disk('public')->exists($file)) {
                 continue;
             }
 
             // Vérifier si utilisé par un article publié
-            $usedByPost = \App\Models\Post::where('cover_image', $file)
+            $usedByPost = Post::where('cover_image', $file)
                 ->where('published', true)
                 ->exists();
 
             if ($usedByPost) {
                 $skippedCount++;
+
                 continue;
             }
 

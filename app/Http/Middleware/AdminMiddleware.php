@@ -13,7 +13,7 @@ class AdminMiddleware
     {
         Auth::shouldUse('admin');
 
-        if (!Auth::guard('admin')->check() || !Auth::guard('admin')->user()->isAdmin()) {
+        if (! Auth::guard('admin')->check() || ! Auth::guard('admin')->user()->isAdmin()) {
             abort(403, 'Accès non autorisé.');
         }
 

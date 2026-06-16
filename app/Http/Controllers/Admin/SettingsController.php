@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
+use App\Models\User;
 use App\Services\BlogSettings;
 use Illuminate\Http\Request;
 
@@ -38,15 +40,15 @@ class SettingsController extends Controller
 
     public function exportUsers()
     {
-        $users = \App\Models\User::where('role', 'visitor')
+        $users = User::where('role', 'visitor')
             ->withCount(['posts', 'comments', 'favorites'])
             ->get();
 
-        $filename = 'users_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'users_'.now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $callback = function () use ($users) {
@@ -72,16 +74,16 @@ class SettingsController extends Controller
 
     public function exportStats()
     {
-        $posts = \App\Models\Post::with(['likes', 'comments'])
+        $posts = Post::with(['likes', 'comments'])
             ->withCount(['likes', 'comments'])
             ->orderBy('views', 'desc')
             ->get();
 
-        $filename = 'stats_' . now()->format('Y-m-d_His') . '.csv';
+        $filename = 'stats_'.now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $callback = function () use ($posts) {

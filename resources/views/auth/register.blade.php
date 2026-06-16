@@ -25,7 +25,7 @@
             <label class="field-label">Confirmer le mot de passe</label>
             <input type="password" name="password_confirmation" class="form-input" required>
         </div>
-        <button type="submit" class="btn-primary btn-accent" style="width:100%;justify-content:center;">Créer mon compte</button>
+        <button type="submit" class="btn-primary btn-accent" style="width:100%;justify-content:center;">S'inscrire</button>
     </form>
 @endsection
 

@@ -31,7 +31,7 @@ class AdminLoginController extends Controller
                 ]);
             }
 
-            if (!$user->isAdmin()) {
+            if (! $user->isAdmin()) {
                 Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
                     'email' => 'Accès administrateur uniquement.',

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SyncExportController extends Controller
 {
@@ -35,7 +35,7 @@ class SyncExportController extends Controller
         ]);
     }
 
-    public function storageManifest(): \Illuminate\Http\JsonResponse
+    public function storageManifest(): JsonResponse
     {
         $root = storage_path('app/public');
         $files = [];

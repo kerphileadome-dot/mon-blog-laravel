@@ -140,6 +140,7 @@ class SyncFromProductionCommand extends Command
 
             if (! $download->successful()) {
                 $this->warn("    Ignoré : {$relative}");
+
                 continue;
             }
 

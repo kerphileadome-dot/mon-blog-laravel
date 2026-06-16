@@ -17,10 +17,10 @@ class SearchController extends Controller
             $posts = Post::where('published', true)
                 ->where(function ($q) use ($query) {
                     $q->where('title', 'like', "%{$query}%")
-                      ->orWhere('excerpt', 'like', "%{$query}%")
-                      ->orWhere('content', 'like', "%{$query}%")
-                      ->orWhere('category', 'like', "%{$query}%")
-                      ->orWhere('tags', 'like', "%{$query}%");
+                        ->orWhere('excerpt', 'like', "%{$query}%")
+                        ->orWhere('content', 'like', "%{$query}%")
+                        ->orWhere('category', 'like', "%{$query}%")
+                        ->orWhere('tags', 'like', "%{$query}%");
                 })
                 ->forList()
                 ->latest()

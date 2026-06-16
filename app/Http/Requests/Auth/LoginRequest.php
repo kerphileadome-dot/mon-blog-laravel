@@ -66,6 +66,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (Auth::guard('web')->user()->email_verified_at === null) {
+            Auth::guard('web')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Votre compte n\'est pas encore confirmé. Terminez l\'inscription avec le code reçu par email.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Services\BlogSettings;
 use App\Services\CoverImageProcessor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -48,7 +49,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        if (!$post->published && !\Illuminate\Support\Facades\Auth::guard('admin')->check()) {
+        if (! $post->published && ! Auth::guard('admin')->check()) {
             abort(404);
         }
 
@@ -66,8 +67,8 @@ class PostController extends Controller
         $isLiked = false;
         $isFavorited = false;
 
-        if (\Illuminate\Support\Facades\Auth::guard('web')->check()) {
-            $userId = \Illuminate\Support\Facades\Auth::guard('web')->id();
+        if (Auth::guard('web')->check()) {
+            $userId = Auth::guard('web')->id();
             $isLiked = $post->likes()->where('user_id', $userId)->exists();
             $isFavorited = DB::table('favorites')
                 ->where('user_id', $userId)
@@ -108,9 +109,9 @@ class PostController extends Controller
     {
         $this->authorize('create', Post::class);
         $request->validate([
-            'title'       => 'required|max:255',
-            'content'     => 'required',
-            'excerpt'     => 'nullable|max:500',
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'excerpt' => 'nullable|max:500',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
 
@@ -120,14 +121,14 @@ class PostController extends Controller
         }
 
         Post::create([
-            'user_id'     => auth()->id(),
-            'title'       => $request->title,
-            'excerpt'     => $request->excerpt,
-            'content'     => $request->content,
-            'category'    => $request->category,
-            'tags'        => $request->tags,
+            'user_id' => auth()->id(),
+            'title' => $request->title,
+            'excerpt' => $request->excerpt,
+            'content' => $request->content,
+            'category' => $request->category,
+            'tags' => $request->tags,
             'cover_image' => $coverImagePath,
-            'published'   => $request->has('published'),
+            'published' => $request->has('published'),
         ]);
 
         return redirect()->route('admin.dashboard')->with('success', 'Article publié avec succès !');
@@ -144,8 +145,8 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
         $request->validate([
-            'title'       => 'required|max:255',
-            'content'     => 'required',
+            'title' => 'required|max:255',
+            'content' => 'required',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
 
@@ -158,13 +159,13 @@ class PostController extends Controller
         }
 
         $post->update([
-            'title'       => $request->title,
-            'excerpt'     => $request->excerpt,
-            'content'     => $request->content,
-            'category'    => $request->category,
-            'tags'        => $request->tags,
+            'title' => $request->title,
+            'excerpt' => $request->excerpt,
+            'content' => $request->content,
+            'category' => $request->category,
+            'tags' => $request->tags,
             'cover_image' => $coverImagePath,
-            'published'   => $request->has('published'),
+            'published' => $request->has('published'),
         ]);
 
         return redirect()->route('posts.show', $post)->with('success', 'Article mis à jour !');
@@ -178,6 +179,7 @@ class PostController extends Controller
             Storage::disk('public')->delete($post->cover_image);
         }
         $post->delete();
+
         return redirect()->route('admin.dashboard')->with('success', 'Article supprimé !');
     }
 }

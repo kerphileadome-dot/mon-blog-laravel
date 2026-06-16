@@ -20,8 +20,9 @@ class ResetPasswordNotification extends ResetPassword
             ->subject('Réinitialisation de votre mot de passe — '.config('app.name'))
             ->greeting('Bonjour '.$notifiable->name.' !')
             ->line('Vous recevez cet email car une demande de réinitialisation de mot de passe a été effectuée pour votre compte sur '.config('app.name').'.')
-            ->action('Réinitialiser mon mot de passe', $url)
+            ->line('Cliquez sur le bouton ci-dessous pour revenir sur le blog et choisir un nouveau mot de passe.')
+            ->action('Modifier mon mot de passe', $url)
             ->line('Ce lien expire dans '.$expire.' minutes.')
-            ->line('Si vous n\'êtes pas à l\'origine de cette demande, ignorez simplement cet email — votre mot de passe restera inchangé.');
+            ->line('Après validation, connectez-vous avec votre email et votre nouveau mot de passe.');
     }
 }

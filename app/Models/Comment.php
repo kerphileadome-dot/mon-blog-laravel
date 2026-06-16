@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CommentMentionService;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
@@ -14,10 +15,12 @@ class Comment extends Model
         'email',
         'body',
         'approved',
+        'mentions_notified_at',
     ];
 
     protected $casts = [
         'approved' => 'boolean',
+        'mentions_notified_at' => 'datetime',
     ];
 
     // Relation avec le post
@@ -47,6 +50,18 @@ class Comment extends Model
     // Vérifier si c'est une réponse
     public function isReply()
     {
-        return !is_null($this->parent_id);
+        return ! is_null($this->parent_id);
+    }
+
+    public function mentionedUsers()
+    {
+        return $this->belongsToMany(User::class, 'comment_user_mentions')
+            ->withPivot('handle')
+            ->withTimestamps();
+    }
+
+    public function formattedBody(): string
+    {
+        return app(CommentMentionService::class)->formatBody($this->body);
     }
 }

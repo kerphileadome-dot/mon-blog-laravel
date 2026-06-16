@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Services\BlogSettings;
-use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
@@ -15,9 +14,11 @@ class FavoriteController extends Controller
 
         if ($user->hasFavorited($post)) {
             $user->favoritePosts()->detach($post->id);
+
             return back()->with('success', 'Article retiré des favoris');
         } else {
             $user->favoritePosts()->attach($post->id);
+
             return back()->with('success', 'Article ajouté aux favoris');
         }
     }
@@ -26,10 +27,10 @@ class FavoriteController extends Controller
     public function index(BlogSettings $settings)
     {
         $posts = auth()->user()->favoritePosts()
-                    ->where('published', true)
-                    ->forList()
-                    ->latest('favorites.created_at')
-                    ->paginate($settings->postsPerPage());
+            ->where('published', true)
+            ->forList()
+            ->latest('favorites.created_at')
+            ->paginate($settings->postsPerPage());
 
         return view('favorites.index', compact('posts'));
     }

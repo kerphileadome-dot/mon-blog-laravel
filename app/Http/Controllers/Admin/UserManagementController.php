@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserManagementController extends Controller
 {
@@ -31,15 +31,16 @@ class UserManagementController extends Controller
     public function toggleBlock(User $user)
     {
         // Empêcher de se bloquer soi-même
-        if ($user->id === \Illuminate\Support\Facades\Auth::guard('admin')->id()) {
+        if ($user->id === Auth::guard('admin')->id()) {
             return back()->with('error', 'Vous ne pouvez pas vous bloquer vous-même !');
         }
 
         $user->update([
-            'blocked' => !$user->blocked
+            'blocked' => ! $user->blocked,
         ]);
 
         $status = $user->blocked ? 'bloqué' : 'débloqué';
+
         return back()->with('success', "Utilisateur {$status} avec succès !");
     }
 
@@ -47,7 +48,7 @@ class UserManagementController extends Controller
     public function destroy(User $user)
     {
         // Empêcher de se supprimer soi-même
-        if ($user->id === \Illuminate\Support\Facades\Auth::guard('admin')->id()) {
+        if ($user->id === Auth::guard('admin')->id()) {
             return back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte !');
         }
 
@@ -57,6 +58,7 @@ class UserManagementController extends Controller
         }
 
         $user->delete();
+
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé avec succès !');
     }
 }

@@ -12,7 +12,7 @@ class AdminUserSeeder extends Seeder
         $adminEmails = config('blog.admin_emails', ['kerphilesaint@gmail.com']);
         $primaryEmail = $adminEmails[0] ?? 'kerphilesaint@gmail.com';
 
-        if (!User::where('email', $primaryEmail)->exists()) {
+        if (! User::where('email', $primaryEmail)->exists()) {
             User::create([
                 'name' => 'Kerphile Admin',
                 'email' => $primaryEmail,

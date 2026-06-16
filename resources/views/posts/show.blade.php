@@ -81,12 +81,15 @@
             @auth('web')
                 <div class="comment-form-card">
                     <h3 class="form-title">Laisser un commentaire</h3>
-                    <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:1rem;">
+                    <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:0.75rem;">
                         Commenter en tant que <strong>{{ auth('web')->user()->name }}</strong>
                     </p>
-                    <form method="POST" action="{{ route('comments.store', $post) }}">
+                    <p class="comment-mention-hint">
+                        Taguez un membre avec <strong>@prénom</strong> (ex. @akim) — il recevra un email.
+                    </p>
+                    <form method="POST" action="{{ route('comments.store', $post) }}" class="comment-submit-once">
                         @csrf
-                        <textarea name="body" rows="4" placeholder="Votre commentaire *"
+                        <textarea name="body" rows="4" placeholder="Votre commentaire… Utilisez @prénom pour mentionner quelqu'un."
                             class="form-input" style="margin-bottom:1rem;resize:vertical;" required>{{ old('body') }}</textarea>
                         <button type="submit" class="btn-primary">Publier le commentaire</button>
                     </form>
@@ -185,7 +188,55 @@
 @push('scripts')
 <script>
 function toggleReply(id) {
-    document.getElementById('reply-' + id).classList.toggle('open');
+    const el = document.getElementById('reply-' + id);
+    if (!el) return;
+    const open = !el.classList.contains('open');
+    document.querySelectorAll('.reply-form.open').forEach((f) => {
+        f.classList.remove('open');
+        f.style.display = 'none';
+        f.hidden = true;
+    });
+    if (open) {
+        el.classList.add('open');
+        el.style.display = 'block';
+        el.hidden = false;
+    }
 }
+
+function toggleEdit(id) {
+    const el = document.getElementById('edit-' + id);
+    const body = document.getElementById('comment-body-' + id);
+    if (!el) return;
+
+    const open = !el.classList.contains('open');
+
+    document.querySelectorAll('.edit-form.open').forEach((f) => {
+        f.classList.remove('open');
+        f.style.display = 'none';
+        f.hidden = true;
+    });
+
+    if (open) {
+        el.classList.add('open');
+        el.style.display = 'block';
+        el.hidden = false;
+        if (body) body.style.display = 'none';
+    } else {
+        el.classList.remove('open');
+        el.style.display = 'none';
+        el.hidden = true;
+        if (body) body.style.display = '';
+    }
+}
+
+document.querySelectorAll('.comment-submit-once').forEach((form) => {
+    form.addEventListener('submit', function () {
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Envoi…';
+        }
+    });
+});
 </script>
 @endpush

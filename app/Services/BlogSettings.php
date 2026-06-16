@@ -17,7 +17,7 @@ class BlogSettings
     public function all(): array
     {
         return Cache::remember('blog_settings', 3600, function () {
-            if (!File::exists($this->settingsFile)) {
+            if (! File::exists($this->settingsFile)) {
                 return $this->defaults();
             }
 

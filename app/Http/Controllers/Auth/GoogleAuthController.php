@@ -38,7 +38,7 @@ class GoogleAuthController extends Controller
                         ->with('error', 'Compte administrateur : utilisez la connexion admin.');
                 }
 
-                if (!$this->isGmailAddress($googleUser->getEmail())) {
+                if (! $this->isGmailAddress($googleUser->getEmail())) {
                     return redirect()->route('login')->with('error', 'Seules les adresses Gmail (@gmail.com) peuvent créer un compte.');
                 }
 

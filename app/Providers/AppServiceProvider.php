@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Policies\PostPolicy;
 use App\Support\AdminSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,12 +27,12 @@ class AppServiceProvider extends ServiceProvider
     {
         // Forcer HTTPS en production
         if ($this->app->environment('production')) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
         Blade::if('adminSession', fn () => AdminSession::active());
 
         // Enregistrer les policies
-        \Illuminate\Support\Facades\Gate::policy(\App\Models\Post::class, \App\Policies\PostPolicy::class);
+        Gate::policy(Post::class, PostPolicy::class);
     }
 }

@@ -32,9 +32,9 @@ class TagController extends Controller
         $posts = Post::where('published', true)
             ->where(function ($q) use ($tagName) {
                 $q->where('tags', $tagName)
-                  ->orWhere('tags', 'like', $tagName . ',%')
-                  ->orWhere('tags', 'like', '%,' . $tagName . ',%')
-                  ->orWhere('tags', 'like', '%,' . $tagName);
+                    ->orWhere('tags', 'like', $tagName.',%')
+                    ->orWhere('tags', 'like', '%,'.$tagName.',%')
+                    ->orWhere('tags', 'like', '%,'.$tagName);
             })
             ->forList()
             ->latest()

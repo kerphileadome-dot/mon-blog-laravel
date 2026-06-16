@@ -62,19 +62,25 @@ class Post extends Model
 
     public function isFavoritedBy($user)
     {
-        if (!$user) return false;
+        if (! $user) {
+            return false;
+        }
+
         return $this->favoritedBy()->where('user_id', $user->id)->exists();
     }
 
     public function isLikedBy($user)
     {
-        if (!$user) return false;
+        if (! $user) {
+            return false;
+        }
+
         return $this->likes()->where('user_id', $user->id)->exists();
     }
 
     public function getTagsListAttribute(): array
     {
-        if (!$this->tags) {
+        if (! $this->tags) {
             return [];
         }
 
@@ -95,7 +101,7 @@ class Post extends Model
         while (static::where('slug', $slug)
             ->when($exceptId, fn ($q) => $q->where('id', '!=', $exceptId))
             ->exists()) {
-            $slug = $base . '-' . $i++;
+            $slug = $base.'-'.$i++;
         }
 
         return $slug;
