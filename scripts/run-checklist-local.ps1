@@ -46,6 +46,23 @@ $ok = 0
 $fail = 0
 foreach ($path in $paths) {
     $url = $base.TrimEnd('/') + $path
+    if ($path -eq "/admin/login") {
+        try {
+            Invoke-WebRequest -Uri $url -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 15 -ErrorAction Stop | Out-Null
+            Write-Host "WARN /admin/login accessible sans key (attendu: 404)" -ForegroundColor Yellow
+            $fail++
+        } catch {
+            if ($_.Exception.Response -and $_.Exception.Response.StatusCode.value__ -eq 404) {
+                Write-Host "OK 404 /admin/login (protege par key)" -ForegroundColor Green
+                $ok++
+            } else {
+                Write-Host "FAIL /admin/login" -ForegroundColor Red
+                $fail++
+            }
+        }
+        continue
+    }
+
     try {
         $r = Invoke-WebRequest -Uri $url -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 15 -ErrorAction Stop
         Write-Host "OK $($r.StatusCode) $path" -ForegroundColor Green

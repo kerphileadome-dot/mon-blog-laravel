@@ -16,6 +16,22 @@ Write-Host ">> Pages publiques" -ForegroundColor Yellow
 $paths = @("/", "/login", "/register", "/admin/login", "/forgot-password", "/categories", "/about")
 $pageOk = 0
 foreach ($path in $paths) {
+    if ($path -eq "/admin/login") {
+        try {
+            Invoke-WebRequest -Uri ($base + $path) -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 20 -ErrorAction Stop | Out-Null
+            Write-Host "  WARN /admin/login accessible sans key (attendu: 404)" -ForegroundColor Yellow
+        } catch {
+            $code = $_.Exception.Response.StatusCode.value__
+            if ($code -eq 404) {
+                Write-Host "  OK  /admin/login (404 attendu, protege par key)" -ForegroundColor Green
+                $pageOk++
+            } else {
+                Write-Host "  FAIL /admin/login (HTTP $code)" -ForegroundColor Red
+            }
+        }
+        continue
+    }
+
     try {
         $r = Invoke-WebRequest -Uri ($base + $path) -UseBasicParsing -TimeoutSec 20
         Write-Host "  OK  $path" -ForegroundColor Green
@@ -30,21 +46,19 @@ Write-Host ""
 Write-Host ">> Google OAuth" -ForegroundColor Yellow
 $googleOk = $false
 try {
-    Invoke-WebRequest -Uri "$base/auth/google" -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 15 -ErrorAction Stop
-} catch {
-    if ($_.Exception.Response.StatusCode.value__ -in 302, 303, 307) {
-        $loc = $_.Exception.Response.Headers.Location
-        if ($loc -like "*accounts.google.com*") {
-            Write-Host "  OK  Redirection vers Google (GOOGLE_CLIENT_ID configure)" -ForegroundColor Green
-            $googleOk = $true
-        } elseif ($loc -like "*login*") {
-            Write-Host "  WARN Redirection login (GOOGLE_CLIENT_ID peut-etre vide)" -ForegroundColor Yellow
-        } else {
-            Write-Host "  WARN Redirect: $loc" -ForegroundColor Yellow
-        }
+    $headers = curl.exe -sI "$base/auth/google"
+    $status = ($headers | Select-String -Pattern "^HTTP/" | Select-Object -First 1).ToString()
+    $loc = ($headers | Select-String -Pattern "^location:" -CaseSensitive:$false | Select-Object -First 1).ToString()
+    if ($status -match " 30[237] " -and $loc -match "accounts\.google\.com") {
+        Write-Host "  OK  Redirection vers Google (GOOGLE_CLIENT_ID configure)" -ForegroundColor Green
+        $googleOk = $true
+    } elseif ($loc -like "*login*") {
+        Write-Host "  WARN Redirection login (GOOGLE_CLIENT_ID peut-etre vide)" -ForegroundColor Yellow
     } else {
-        Write-Host "  FAIL /auth/google" -ForegroundColor Red
+        Write-Host "  FAIL /auth/google (status=$status, location=$loc)" -ForegroundColor Red
     }
+} catch {
+    Write-Host "  FAIL /auth/google" -ForegroundColor Red
 }
 
 # --- Health ---

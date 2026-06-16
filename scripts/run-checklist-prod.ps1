@@ -20,11 +20,41 @@ $ok = 0
 $fail = 0
 foreach ($path in $paths) {
     $url = $base + $path
+    if ($path -eq "/admin/login") {
+        try {
+            Invoke-WebRequest -Uri $url -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 20 -ErrorAction Stop | Out-Null
+            Write-Host "WARN /admin/login accessible sans key (attendu: 404)" -ForegroundColor Yellow
+            $fail++
+        } catch {
+            $code = $_.Exception.Response.StatusCode.value__
+            if ($code -eq 404) {
+                Write-Host "OK 404 /admin/login (protege par key)" -ForegroundColor Green
+                $ok++
+            } else {
+                Write-Host "FAIL /admin/login (HTTP $code)" -ForegroundColor Red
+                $fail++
+            }
+        }
+        continue
+    }
+
+    if ($path -eq "/auth/google") {
+        $headers = curl.exe -sI $url
+        $status = ($headers | Select-String -Pattern "^HTTP/" | Select-Object -First 1).ToString()
+        $loc = ($headers | Select-String -Pattern "^location:" -CaseSensitive:$false | Select-Object -First 1).ToString()
+        if ($status -match " 30[237] " -and $loc -match "accounts\.google\.com") {
+            Write-Host "OK (OAuth redirect) $path" -ForegroundColor Green
+            $ok++
+        } else {
+            Write-Host "FAIL /auth/google (status=$status, location=$loc)" -ForegroundColor Red
+            $fail++
+        }
+        continue
+    }
+
     try {
-        $maxRedirect = if ($path -eq "/auth/google") { 5 } else { 0 }
-        $r = Invoke-WebRequest -Uri $url -UseBasicParsing -MaximumRedirection $maxRedirect -TimeoutSec 20 -ErrorAction Stop
-        $label = if ($path -eq "/auth/google") { "OK (OAuth redirect) $path" } else { "OK $($r.StatusCode) $path" }
-        Write-Host $label -ForegroundColor Green
+        $r = Invoke-WebRequest -Uri $url -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 20 -ErrorAction Stop
+        Write-Host "OK $($r.StatusCode) $path" -ForegroundColor Green
         $ok++
     } catch {
         Write-Host "FAIL $path" -ForegroundColor Red
