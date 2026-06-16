@@ -16,16 +16,16 @@
 
     <div class="auth-divider"><span>ou par email</span></div>
 
-    <form method="POST" action="{{ route('login') }}" class="auth-form">
+    <form method="POST" action="{{ route('login') }}" class="auth-form" autocomplete="off">
         @csrf
         <div class="form-group">
             <label class="field-label">Email</label>
-            <input type="email" name="email" class="form-input" value="{{ old('email') }}" placeholder="votre@email.com" required autofocus>
+            <input type="email" name="email" class="form-input" value="{{ old('email') }}" placeholder="votre@email.com" autocomplete="off" autocapitalize="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly')" required autofocus>
             @error('email') <p class="field-error">{{ $message }}</p> @enderror
         </div>
         <div class="form-group">
             <label class="field-label">Mot de passe</label>
-            <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+            <input type="password" name="password" class="form-input" placeholder="••••••••" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')" required>
             @error('password') <p class="field-error">{{ $message }}</p> @enderror
         </div>
         <div class="form-group" style="display:flex;justify-content:space-between;align-items:center;">
