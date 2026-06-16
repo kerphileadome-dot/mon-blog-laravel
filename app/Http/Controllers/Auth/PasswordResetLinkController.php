@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\MailConfigured;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -32,7 +33,7 @@ class PasswordResetLinkController extends Controller
                 ]);
             }
 
-            if ($this->mailNotConfigured()) {
+            if (! MailConfigured::isReady()) {
                 throw ValidationException::withMessages([
                     'email' => 'L\'envoi d\'emails n\'est pas configuré sur le serveur. Mettez à jour MAIL_PASSWORD sur Railway.',
                 ]);
@@ -59,21 +60,5 @@ class PasswordResetLinkController extends Controller
     {
         return in_array($email, config('blog.admin_emails', []), true)
             || User::where('email', $email)->where('role', 'admin')->exists();
-    }
-
-    protected function mailNotConfigured(): bool
-    {
-        $mailer = config('mail.default');
-
-        if (in_array($mailer, ['log', 'array'], true)) {
-            return app()->environment('production');
-        }
-
-        if ($mailer === 'smtp') {
-            return blank(config('mail.mailers.smtp.username'))
-                || blank(config('mail.mailers.smtp.password'));
-        }
-
-        return false;
     }
 }

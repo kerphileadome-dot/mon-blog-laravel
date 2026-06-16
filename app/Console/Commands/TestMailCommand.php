@@ -21,8 +21,14 @@ class TestMailCommand extends Command
             return self::FAILURE;
         }
 
-        if (blank(config('mail.mailers.smtp.password'))) {
+        if (blank(config('mail.mailers.smtp.password')) && config('mail.default') === 'smtp') {
             $this->error('MAIL_PASSWORD manquant. Ajoutez-le dans .env ou mail.secret.env puis relancez setup-local-env.ps1');
+
+            return self::FAILURE;
+        }
+
+        if (blank(config('services.resend.key')) && config('mail.default') === 'resend') {
+            $this->error('RESEND_API_KEY manquant pour le mailer resend.');
 
             return self::FAILURE;
         }

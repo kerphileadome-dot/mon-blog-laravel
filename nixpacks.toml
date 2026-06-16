@@ -1,14 +1,13 @@
-# Variables mail (sauf MAIL_PASSWORD — secret à définir sur Railway ou via scripts/sync-mail-to-railway.ps1)
+# Variables mail — Railway Hobby bloque SMTP (587/465). Utiliser Resend (HTTPS).
+# 1. Créez un compte sur https://resend.com
+# 2. Ajoutez RESEND_API_KEY dans Railway Variables
+# 3. Vérifiez un domaine d'envoi (ou upgrade Railway Pro pour Gmail SMTP)
 [variables]
-MAIL_MAILER = "smtp"
-MAIL_HOST = "smtp.gmail.com"
-MAIL_PORT = "587"
-MAIL_USERNAME = "kerphilesaint@gmail.com"
-MAIL_ENCRYPTION = "tls"
-MAIL_SSL_VERIFY = "false"
+MAIL_MAILER = "resend"
 MAIL_FROM_ADDRESS = "kerphilesaint@gmail.com"
 MAIL_FROM_NAME = "KerpheX Blog"
-# MAIL_PASSWORD : a definir dans Railway Variables (mot de passe application Gmail)
+# RESEND_API_KEY : à définir dans Railway Variables
+# Pour le local, gardez MAIL_MAILER=smtp dans .env
 
 [phases.setup]
 nixPkgs = ['php83', 'php83Packages.composer']

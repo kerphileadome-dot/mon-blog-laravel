@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\RegistrationOtpNotification;
 use App\Rules\GmailEmail;
 use App\Services\RegistrationOtpService;
+use App\Support\MailConfigured;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -42,7 +43,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        if ($this->mailNotConfigured()) {
+        if (! MailConfigured::isReady()) {
             throw ValidationException::withMessages([
                 'email' => 'L\'envoi d\'emails n\'est pas configuré. Contactez l\'administrateur du blog.',
             ]);
@@ -72,21 +73,5 @@ class RegisteredUserController extends Controller
         return redirect()
             ->route('register.verify')
             ->with('status', 'Un code de confirmation a été envoyé à votre adresse Gmail.');
-    }
-
-    protected function mailNotConfigured(): bool
-    {
-        $mailer = config('mail.default');
-
-        if (in_array($mailer, ['log', 'array'], true)) {
-            return app()->environment('production');
-        }
-
-        if ($mailer === 'smtp') {
-            return blank(config('mail.mailers.smtp.username'))
-                || blank(config('mail.mailers.smtp.password'));
-        }
-
-        return false;
     }
 }
