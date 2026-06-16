@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MailDiagnosticController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserManagementController;
@@ -49,6 +50,9 @@ Route::middleware(['guest:admin', 'admin.login.key'])->group(function () {
     Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit');
 });
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/mail-diagnostic', MailDiagnosticController::class)
+    ->middleware('admin.login.key')
+    ->name('admin.mail-diagnostic');
 
 // Routes Google OAuth
 Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');

@@ -81,4 +81,13 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+if [ -n "$MAIL_USERNAME" ] && [ -n "$MAIL_PASSWORD" ]; then
+    echo "📧 Test SMTP au démarrage..."
+    if php artisan blog:test-mail "$MAIL_USERNAME" 2>&1; then
+        echo "✅ SMTP OK"
+    else
+        echo "❌ SMTP échec — vérifiez MAIL_PASSWORD (16 car., sans guillemets)"
+    fi
+fi
+
 echo "✅ Prêt."
