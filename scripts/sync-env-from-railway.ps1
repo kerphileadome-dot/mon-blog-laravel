@@ -1,4 +1,5 @@
-# Synchronise GOOGLE_* et MAIL_PASSWORD depuis Railway vers le .env local.
+# Synchronise GOOGLE_* depuis Railway vers le .env local.
+# Les emails locaux (Gmail SMTP) restent dans mail.secret.env — Railway utilise Brevo.
 # Prerequis : npm exec --yes @railway/cli -- login  puis  railway link
 #
 # Usage : powershell -ExecutionPolicy Bypass -File scripts/sync-env-from-railway.ps1
@@ -70,12 +71,7 @@ foreach ($item in $vars) {
 
 $keys = @(
     "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET",
-    "MAIL_PASSWORD",
-    "MAIL_USERNAME",
-    "MAIL_HOST",
-    "MAIL_PORT",
-    "MAIL_ENCRYPTION"
+    "GOOGLE_CLIENT_SECRET"
 )
 
 $updated = 0

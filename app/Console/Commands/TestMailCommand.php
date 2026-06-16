@@ -30,12 +30,6 @@ class TestMailCommand extends Command
             return self::FAILURE;
         }
 
-        if ($mailer === 'resend' && blank(config('services.resend.key'))) {
-            $this->error('RESEND_API_KEY manquant pour le mailer resend.');
-
-            return self::FAILURE;
-        }
-
         if ($mailer === 'brevo' && blank(config('services.brevo.key'))) {
             $this->error('BREVO_API_KEY manquant pour le mailer brevo.');
 

@@ -11,17 +11,15 @@ class MailDiagnosticController extends Controller
 {
     public function __invoke(): JsonResponse
     {
-        $username = config('mail.mailers.smtp.username');
-        $password = config('mail.mailers.smtp.password');
         $mailer = config('mail.default');
 
         $status = [
             'mailer' => $mailer,
             'from' => config('mail.from.address'),
-            'password_set' => filled($password),
-            'resend_key_set' => filled(config('services.resend.key')),
             'brevo_key_set' => filled(config('services.brevo.key')),
-            'railway_note' => 'Sur Railway Hobby, utilisez brevo ou resend (API HTTPS). SMTP Gmail est bloqué.',
+            'smtp_configured' => filled(config('mail.mailers.smtp.username'))
+                && filled(config('mail.mailers.smtp.password')),
+            'railway_note' => 'Sur Railway Hobby, utilisez Brevo (API HTTPS). SMTP Gmail est bloqué.',
         ];
 
         if (! MailConfigured::isReady()) {
@@ -31,11 +29,11 @@ class MailDiagnosticController extends Controller
             return response()->json($status);
         }
 
-        $recipient = $username ?: config('mail.from.address');
+        $recipient = config('mail.from.address');
 
         if (! filled($recipient)) {
             $status['probe'] = 'failed';
-            $status['error'] = 'Aucune adresse de test disponible.';
+            $status['error'] = 'MAIL_FROM_ADDRESS manquant.';
 
             return response()->json($status);
         }

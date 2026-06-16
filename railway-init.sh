@@ -29,24 +29,17 @@ if [ "$MAIL_MAILER" = "brevo" ]; then
     else
         echo "ℹ️  Expéditeur Brevo : $MAIL_FROM_ADDRESS"
     fi
-elif [ "$MAIL_MAILER" = "resend" ]; then
-    if [ -z "$RESEND_API_KEY" ]; then
-        echo "⚠️  RESEND_API_KEY manquant — les emails (OTP, reset MDP) ne fonctionneront pas."
+elif [ "$MAIL_MAILER" = "smtp" ]; then
+    if [ -z "$MAIL_PASSWORD" ]; then
+        echo "⚠️  MAIL_PASSWORD manquant — les emails ne fonctionneront pas en SMTP."
     else
-        echo "ℹ️  Resend configuré (API key présente)."
+        echo "ℹ️  SMTP configuré (${#MAIL_PASSWORD} caractères)."
+        if [ -n "$MAIL_FROM_ADDRESS" ] && [ -n "$MAIL_USERNAME" ] && [ "$MAIL_FROM_ADDRESS" != "$MAIL_USERNAME" ]; then
+            echo "⚠️  MAIL_FROM_ADDRESS ($MAIL_FROM_ADDRESS) ≠ MAIL_USERNAME ($MAIL_USERNAME) — Gmail peut refuser l'envoi."
+        fi
     fi
-    if [ -z "$MAIL_FROM_ADDRESS" ]; then
-        echo "⚠️  MAIL_FROM_ADDRESS manquant — utilisez une adresse @domaine vérifié sur Resend."
-    else
-        echo "ℹ️  Expéditeur Resend : $MAIL_FROM_ADDRESS"
-    fi
-elif [ -z "$MAIL_PASSWORD" ]; then
-    echo "⚠️  MAIL_PASSWORD manquant — les emails (reset MDP) ne fonctionneront pas."
 else
-    echo "ℹ️  MAIL_PASSWORD configuré (${#MAIL_PASSWORD} caractères)."
-    if [ -n "$MAIL_FROM_ADDRESS" ] && [ -n "$MAIL_USERNAME" ] && [ "$MAIL_FROM_ADDRESS" != "$MAIL_USERNAME" ]; then
-        echo "⚠️  MAIL_FROM_ADDRESS ($MAIL_FROM_ADDRESS) ≠ MAIL_USERNAME ($MAIL_USERNAME) — Gmail peut refuser l'envoi."
-    fi
+    echo "ℹ️  Mailer : $MAIL_MAILER"
 fi
 
 DB_DRIVER="${DB_CONNECTION:-sqlite}"
@@ -104,26 +97,21 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-if [ "$MAIL_MAILER" = "brevo" ] && [ -n "$BREVO_API_KEY" ]; then
-    echo "📧 Test Brevo au démarrage..."
-    if php artisan blog:test-mail 2>&1; then
-        echo "✅ Brevo OK"
-    else
-        echo "❌ Brevo échec — vérifiez BREVO_API_KEY et expéditeur vérifié sur brevo.com"
-    fi
-elif [ "$MAIL_MAILER" = "resend" ] && [ -n "$RESEND_API_KEY" ]; then
-    echo "📧 Test Resend au démarrage..."
-    if php artisan blog:test-mail 2>&1; then
-        echo "✅ Resend OK"
-    else
-        echo "❌ Resend échec — vérifiez RESEND_API_KEY et MAIL_FROM_ADDRESS (@domaine vérifié)"
-    fi
-elif [ -n "$MAIL_USERNAME" ] && [ -n "$MAIL_PASSWORD" ]; then
-    echo "📧 Test SMTP au démarrage..."
-    if php artisan blog:test-mail "$MAIL_USERNAME" 2>&1; then
-        echo "✅ SMTP OK"
-    else
-        echo "❌ SMTP échec — vérifiez MAIL_PASSWORD (16 car., sans guillemets)"
+if [ "${MAIL_STARTUP_PROBE:-false}" = "true" ]; then
+    if [ "$MAIL_MAILER" = "brevo" ] && [ -n "$BREVO_API_KEY" ]; then
+        echo "📧 Test Brevo au démarrage..."
+        if php artisan blog:test-mail 2>&1; then
+            echo "✅ Brevo OK"
+        else
+            echo "❌ Brevo échec — vérifiez BREVO_API_KEY et expéditeur vérifié sur brevo.com"
+        fi
+    elif [ "$MAIL_MAILER" = "smtp" ] && [ -n "$MAIL_USERNAME" ] && [ -n "$MAIL_PASSWORD" ]; then
+        echo "📧 Test SMTP au démarrage..."
+        if php artisan blog:test-mail "$MAIL_USERNAME" 2>&1; then
+            echo "✅ SMTP OK"
+        else
+            echo "❌ SMTP échec — vérifiez MAIL_PASSWORD (16 car., sans guillemets)"
+        fi
     fi
 fi
 

@@ -17,10 +17,6 @@ class MailConfigured
                 && filled(config('mail.mailers.smtp.password'));
         }
 
-        if ($mailer === 'resend') {
-            return filled(config('services.resend.key'));
-        }
-
         if ($mailer === 'brevo') {
             return filled(config('services.brevo.key'));
         }

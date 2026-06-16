@@ -176,7 +176,8 @@ npm run build
 
 | Problème | Action |
 |----------|--------|
-| Email non reçu | Vérifier `MAIL_*` dans `.env`, lancer `php artisan blog:test-mail`. Sous Laragon/Windows, tester sur Railway si SSL local bloque |
+| Email non reçu (local) | Vérifier `MAIL_*` dans `.env` / `mail.secret.env`, lancer `php artisan blog:test-mail` |
+| Email non reçu (prod) | Railway Hobby bloque SMTP — utiliser Brevo (`BREVO_API_KEY`). Diagnostic : `/admin/mail-diagnostic?key=...` |
 | Google OAuth local | Renseigner `google.local.env`, URI `http://mon-blog.test/auth/google/callback` dans Google Console |
 | Google redirect_uri_mismatch | Vérifier `GOOGLE_REDIRECT_URI` = `{APP_URL}/auth/google/callback` dans Google Console |
 | Images absentes | `php artisan storage:link` |

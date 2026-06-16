@@ -119,12 +119,16 @@ SESSION_DRIVER=database
 CACHE_STORE=database
 QUEUE_CONNECTION=database
 
-MAIL_MAILER=log
+# Production Railway : Brevo (SMTP Gmail bloqué sur plan Hobby)
+MAIL_MAILER=brevo
+BREVO_API_KEY=xkeysib-VOTRE_CLE
+MAIL_FROM_ADDRESS=kerphilesaint@gmail.com
+MAIL_FROM_NAME=KerpheX Blog
 ```
 
-> **Local vs prod :** Laragon utilise **MySQL** (`.env` local). Railway utilise **SQLite** — ne définissez pas `DB_HOST` / `DB_DATABASE` MySQL sur Railway.
+> **Emails :** en local (Laragon), utilisez Gmail SMTP (`MAIL_MAILER=smtp` dans `.env`). Sur Railway, utilisez **Brevo** — voir `env.railway.template` et `scripts/setup-brevo-railway.ps1`.
 >
-> MySQL sur Railway est optionnel : voir [docs/MYSQL_RAILWAY.md](docs/MYSQL_RAILWAY.md).
+> **Local vs prod :** Laragon utilise **MySQL** (`.env` local). Railway utilise **SQLite** par défaut — ne définissez pas `DB_HOST` / `DB_DATABASE` MySQL sur Railway sauf migration MySQL (voir [docs/MYSQL_RAILWAY.md](docs/MYSQL_RAILWAY.md)).
 
 ### Générer APP_KEY
 

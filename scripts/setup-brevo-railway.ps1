@@ -77,5 +77,4 @@ foreach ($key in $vars.Keys) {
 
 Write-Host ""
 Write-Host "Variables Brevo envoyees sur Railway." -ForegroundColor Green
-Write-Host "Redeployez, puis testez :" -ForegroundColor Cyan
-Write-Host "  https://web-production-c5c2f.up.railway.app/admin/mail-diagnostic?key=kerphex-panel-8f3a2c" -ForegroundColor White
+Write-Host "Redeployez, puis testez le diagnostic admin (ADMIN_LOGIN_KEY dans Railway Variables)." -ForegroundColor Cyan

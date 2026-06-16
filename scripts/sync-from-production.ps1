@@ -82,7 +82,7 @@ if ([string]::IsNullOrWhiteSpace($syncToken)) {
 
 powershell -ExecutionPolicy Bypass -File scripts/setup-local-env.ps1 | Out-Null
 
-# 2. Secrets Railway (Google, MAIL_PASSWORD) si CLI connectee
+# 2. Secrets Railway (Google OAuth) si CLI connectee
 $railway = Join-Path $projectRoot "node_modules\.bin\railway.cmd"
 if (Test-Path $railway) {
     & $railway whoami 2>&1 | Out-Null
@@ -91,7 +91,7 @@ if (Test-Path $railway) {
         powershell -ExecutionPolicy Bypass -File scripts/sync-env-from-railway.ps1
     } else {
         Write-Host ">> Railway CLI non connectee (optionnel pour secrets)." -ForegroundColor DarkYellow
-        Write-Host "   Lancez scripts/railway-login.cmd pour recuperer Google OAuth et MAIL_PASSWORD." -ForegroundColor DarkYellow
+        Write-Host "   Lancez scripts/railway-login.cmd pour recuperer Google OAuth depuis Railway." -ForegroundColor DarkYellow
     }
 }
 

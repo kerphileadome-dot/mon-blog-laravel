@@ -115,7 +115,7 @@ if ([string]::IsNullOrWhiteSpace($googleId) -or $googleId -match "votre-id") {
 Write-Host ""
 if ([string]::IsNullOrWhiteSpace($googleSecret) -or $googleSecret -match "votre-secret") {
     Write-Host ""
-    Write-Host "Pour recuperer GOOGLE_CLIENT_SECRET et MAIL_PASSWORD depuis Railway :" -ForegroundColor Cyan
+    Write-Host "Pour recuperer GOOGLE_CLIENT_SECRET depuis Railway :" -ForegroundColor Cyan
     Write-Host "  powershell -ExecutionPolicy Bypass -File scripts/sync-env-from-railway.ps1" -ForegroundColor Cyan
 }
 

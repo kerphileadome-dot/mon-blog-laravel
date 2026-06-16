@@ -6,7 +6,7 @@ $mailPassword = is_string($pass = env('MAIL_PASSWORD')) ? trim($pass) : $pass;
 $mailMailer = env('MAIL_MAILER', 'log');
 $mailFromAddress = env('MAIL_FROM_ADDRESS', 'hello@example.com');
 
-// Gmail SMTP : expéditeur = compte authentifié. Resend : adresse @domaine vérifié.
+// Gmail SMTP (local Laragon) : expéditeur = compte authentifié. Brevo : expéditeur vérifié sur brevo.com.
 if ($mailMailer === 'smtp' && $mailHost === 'smtp.gmail.com' && filled($mailUsername)) {
     $mailFromAddress = $mailUsername;
 }
@@ -76,10 +76,6 @@ return [
             // 'client' => [
             //     'timeout' => 5,
             // ],
-        ],
-
-        'resend' => [
-            'transport' => 'resend',
         ],
 
         'brevo' => [

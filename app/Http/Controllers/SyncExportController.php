@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\MailConfigured;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -72,36 +73,40 @@ class SyncExportController extends Controller
 
     public function mailHealth(Request $request): JsonResponse
     {
-        $username = config('mail.mailers.smtp.username');
-        $password = config('mail.mailers.smtp.password');
+        $mailer = config('mail.default');
 
         $status = [
-            'mailer' => config('mail.default'),
-            'host' => config('mail.mailers.smtp.host'),
-            'port' => config('mail.mailers.smtp.port'),
-            'scheme' => config('mail.mailers.smtp.scheme'),
-            'username' => $username,
+            'mailer' => $mailer,
             'from_address' => config('mail.from.address'),
-            'password_set' => filled($password),
-            'password_length' => is_string($password) ? strlen($password) : 0,
-            'ssl_verify' => config('mail.mailers.smtp.verify_peer'),
-            'from_matches_username' => strtolower((string) config('mail.from.address')) === strtolower((string) $username),
+            'brevo_key_set' => filled(config('services.brevo.key')),
+            'smtp_configured' => filled(config('mail.mailers.smtp.username'))
+                && filled(config('mail.mailers.smtp.password')),
         ];
 
         if ($request->boolean('probe')) {
-            if (! filled($username) || ! filled($password)) {
+            if (! MailConfigured::isReady()) {
                 $status['probe'] = 'failed';
-                $status['error'] = 'MAIL_USERNAME ou MAIL_PASSWORD manquant.';
+                $status['error'] = 'Configuration mail incomplète.';
+
+                return response()->json($status);
+            }
+
+            $recipient = config('mail.from.address');
+
+            if (! filled($recipient)) {
+                $status['probe'] = 'failed';
+                $status['error'] = 'MAIL_FROM_ADDRESS manquant.';
 
                 return response()->json($status);
             }
 
             try {
                 Mail::raw(
-                    'Test SMTP KerpheX — diagnostic interne.',
-                    fn ($message) => $message->to($username)->subject('Probe SMTP · '.config('app.name'))
+                    'Test email KerpheX — diagnostic interne.',
+                    fn ($message) => $message->to($recipient)->subject('Probe email · '.config('app.name'))
                 );
                 $status['probe'] = 'ok';
+                $status['test_sent_to'] = $recipient;
             } catch (\Throwable $e) {
                 $status['probe'] = 'failed';
                 $status['error'] = $e->getMessage();

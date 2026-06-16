@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\MailConfigurationMessages;
 use App\Support\MailConfigured;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class PasswordResetLinkController extends Controller
 
             if (! MailConfigured::isReady()) {
                 throw ValidationException::withMessages([
-                    'email' => 'L\'envoi d\'emails n\'est pas configuré sur le serveur. Mettez à jour MAIL_PASSWORD sur Railway.',
+                    'email' => MailConfigurationMessages::notConfigured(),
                 ]);
             }
 
@@ -51,7 +52,7 @@ class PasswordResetLinkController extends Controller
             logger()->error('password.reset.failed', ['message' => $e->getMessage()]);
 
             throw ValidationException::withMessages([
-                'email' => 'Impossible d\'envoyer l\'email pour le moment. Vérifiez que MAIL_PASSWORD est à jour sur Railway.',
+                'email' => MailConfigurationMessages::sendFailed(),
             ]);
         }
     }

@@ -298,6 +298,8 @@ MAIL_FROM_ADDRESS=votre-email@gmail.com
 MAIL_FROM_NAME="${APP_NAME}"
 ```
 
+> **Production Railway :** le plan Hobby bloque SMTP Gmail. Utilisez **Brevo** (`MAIL_MAILER=brevo`, `BREVO_API_KEY`) — voir `env.railway.template` et `scripts/setup-brevo-railway.ps1`.
+
 ### Changer le nom du blog
 
 Dans `.env` :

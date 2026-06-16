@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\RegistrationOtpNotification;
 use App\Services\RegistrationOtpService;
 use App\Support\AdminSession;
+use App\Support\MailConfigurationMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -110,7 +111,7 @@ class RegisterVerificationController extends Controller
         } catch (\Throwable $e) {
             logger()->error('registration.otp.resend.failed', ['message' => $e->getMessage()]);
 
-            return back()->with('error', 'Impossible d\'envoyer le code. Vérifiez la configuration email du serveur.');
+            return back()->with('error', MailConfigurationMessages::sendFailed());
         }
 
         return back()->with('status', 'Un nouveau code a été envoyé à votre adresse Gmail.');

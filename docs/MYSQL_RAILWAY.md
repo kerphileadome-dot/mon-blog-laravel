@@ -66,12 +66,10 @@ GOOGLE_CLIENT_ID=<si configuré>
 GOOGLE_CLIENT_SECRET=<si configuré>
 GOOGLE_REDIRECT_URI=https://web-production-c5c2f.up.railway.app/auth/google/callback
 
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=kerphilesaint@gmail.com
-MAIL_PASSWORD=<mot de passe application Gmail>
-MAIL_ENCRYPTION=tls
+MAIL_MAILER=brevo
+BREVO_API_KEY=<clé API Brevo xkeysib-...>
+MAIL_FROM_ADDRESS=kerphilesaint@gmail.com
+MAIL_FROM_NAME=KerpheX Blog
 ```
 
 ---

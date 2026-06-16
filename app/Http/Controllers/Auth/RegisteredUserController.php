@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\RegistrationOtpNotification;
 use App\Rules\GmailEmail;
 use App\Services\RegistrationOtpService;
+use App\Support\MailConfigurationMessages;
 use App\Support\MailConfigured;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class RegisteredUserController extends Controller
 
         if (! MailConfigured::isReady()) {
             throw ValidationException::withMessages([
-                'email' => 'L\'envoi d\'emails n\'est pas configuré. Contactez l\'administrateur du blog.',
+                'email' => MailConfigurationMessages::notConfigured(),
             ]);
         }
 
@@ -64,7 +65,7 @@ class RegisteredUserController extends Controller
             $this->otpService->forget($request->string('email')->toString());
 
             throw ValidationException::withMessages([
-                'email' => 'Impossible d\'envoyer le code de confirmation. Vérifiez que votre adresse Gmail est correcte et réessayez.',
+                'email' => MailConfigurationMessages::sendFailed(),
             ]);
         }
 
