@@ -11,10 +11,19 @@ if [ -z "$APP_URL" ] && [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
     echo "ℹ️  APP_URL défini depuis Railway : $APP_URL"
 fi
 
+if [ -n "$MAIL_PASSWORD" ]; then
+    MAIL_PASSWORD="$(printf '%s' "$MAIL_PASSWORD" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+    export MAIL_PASSWORD
+fi
+
 if [ -z "$MAIL_PASSWORD" ]; then
     echo "⚠️  MAIL_PASSWORD manquant — les emails (reset MDP) ne fonctionneront pas."
 else
-    echo "ℹ️  MAIL_PASSWORD configuré."
+    echo "ℹ️  MAIL_PASSWORD configuré (${#MAIL_PASSWORD} caractères)."
+fi
+
+if [ -n "$MAIL_FROM_ADDRESS" ] && [ -n "$MAIL_USERNAME" ] && [ "$MAIL_FROM_ADDRESS" != "$MAIL_USERNAME" ]; then
+    echo "⚠️  MAIL_FROM_ADDRESS ($MAIL_FROM_ADDRESS) ≠ MAIL_USERNAME ($MAIL_USERNAME) — Gmail peut refuser l'envoi."
 fi
 
 DB_DRIVER="${DB_CONNECTION:-sqlite}"

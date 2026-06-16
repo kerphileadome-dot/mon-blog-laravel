@@ -56,6 +56,7 @@ $fixes = @{
     MAIL_USERNAME     = "kerphilesaint@gmail.com"
     MAIL_PASSWORD     = $mailPassword
     MAIL_ENCRYPTION   = "tls"
+    MAIL_SSL_VERIFY   = "false"
     MAIL_FROM_ADDRESS = "kerphilesaint@gmail.com"
     MAIL_FROM_NAME    = "KerpheX Blog"
 }

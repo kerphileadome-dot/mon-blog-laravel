@@ -1,5 +1,15 @@
 <?php
 
+$mailHost = env('MAIL_HOST', '127.0.0.1');
+$mailUsername = is_string($user = env('MAIL_USERNAME')) ? trim($user) : $user;
+$mailPassword = is_string($pass = env('MAIL_PASSWORD')) ? trim($pass) : $pass;
+$mailFromAddress = env('MAIL_FROM_ADDRESS', 'hello@example.com');
+
+// Gmail SMTP exige que l'expéditeur corresponde au compte authentifié.
+if ($mailHost === 'smtp.gmail.com' && filled($mailUsername)) {
+    $mailFromAddress = $mailUsername;
+}
+
 return [
 
     /*
@@ -42,10 +52,10 @@ return [
             // MAIL_ENCRYPTION=tls → smtp + STARTTLS (port 587). Only ssl maps to smtps.
             'scheme' => env('MAIL_SCHEME') ?: (env('MAIL_ENCRYPTION') === 'ssl' ? 'smtps' : null),
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'host' => $mailHost,
             'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'username' => $mailUsername,
+            'password' => $mailPassword,
             'timeout' => (int) env('MAIL_TIMEOUT', 15),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
             'verify_peer' => filter_var(env('MAIL_SSL_VERIFY', true), FILTER_VALIDATE_BOOLEAN),
@@ -113,7 +123,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'address' => $mailFromAddress,
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 

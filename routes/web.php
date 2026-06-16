@@ -24,6 +24,7 @@ Route::middleware('sync.export')->prefix('internal/sync')->group(function () {
     Route::get('/settings', [SyncExportController::class, 'settings'])->name('sync.settings');
     Route::get('/storage-manifest', [SyncExportController::class, 'storageManifest'])->name('sync.storage-manifest');
     Route::get('/storage/{path}', [SyncExportController::class, 'storageFile'])->where('path', '.*')->name('sync.storage-file');
+    Route::get('/mail-health', [SyncExportController::class, 'mailHealth'])->name('sync.mail-health');
 });
 
 // Page d'accueil
