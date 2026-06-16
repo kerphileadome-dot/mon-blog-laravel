@@ -4,9 +4,8 @@
 # 3. Vérifiez un domaine d'envoi (ou upgrade Railway Pro pour Gmail SMTP)
 [variables]
 MAIL_MAILER = "resend"
-MAIL_FROM_ADDRESS = "kerphilesaint@gmail.com"
 MAIL_FROM_NAME = "KerpheX Blog"
-# RESEND_API_KEY : à définir dans Railway Variables
+# RESEND_API_KEY et MAIL_FROM_ADDRESS (@domaine verifie) : Railway Variables
 # Pour le local, gardez MAIL_MAILER=smtp dans .env
 
 [phases.setup]

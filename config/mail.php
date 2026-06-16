@@ -3,10 +3,11 @@
 $mailHost = env('MAIL_HOST', '127.0.0.1');
 $mailUsername = is_string($user = env('MAIL_USERNAME')) ? trim($user) : $user;
 $mailPassword = is_string($pass = env('MAIL_PASSWORD')) ? trim($pass) : $pass;
+$mailMailer = env('MAIL_MAILER', 'log');
 $mailFromAddress = env('MAIL_FROM_ADDRESS', 'hello@example.com');
 
-// Gmail SMTP exige que l'expéditeur corresponde au compte authentifié.
-if ($mailHost === 'smtp.gmail.com' && filled($mailUsername)) {
+// Gmail SMTP : expéditeur = compte authentifié. Resend : adresse @domaine vérifié.
+if ($mailMailer === 'smtp' && $mailHost === 'smtp.gmail.com' && filled($mailUsername)) {
     $mailFromAddress = $mailUsername;
 }
 

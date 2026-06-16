@@ -16,14 +16,26 @@ if [ -n "$MAIL_PASSWORD" ]; then
     export MAIL_PASSWORD
 fi
 
-if [ -z "$MAIL_PASSWORD" ]; then
+MAIL_MAILER="${MAIL_MAILER:-smtp}"
+
+if [ "$MAIL_MAILER" = "resend" ]; then
+    if [ -z "$RESEND_API_KEY" ]; then
+        echo "⚠️  RESEND_API_KEY manquant — les emails (OTP, reset MDP) ne fonctionneront pas."
+    else
+        echo "ℹ️  Resend configuré (API key présente)."
+    fi
+    if [ -z "$MAIL_FROM_ADDRESS" ]; then
+        echo "⚠️  MAIL_FROM_ADDRESS manquant — utilisez une adresse @domaine vérifié sur Resend."
+    else
+        echo "ℹ️  Expéditeur Resend : $MAIL_FROM_ADDRESS"
+    fi
+elif [ -z "$MAIL_PASSWORD" ]; then
     echo "⚠️  MAIL_PASSWORD manquant — les emails (reset MDP) ne fonctionneront pas."
 else
     echo "ℹ️  MAIL_PASSWORD configuré (${#MAIL_PASSWORD} caractères)."
-fi
-
-if [ -n "$MAIL_FROM_ADDRESS" ] && [ -n "$MAIL_USERNAME" ] && [ "$MAIL_FROM_ADDRESS" != "$MAIL_USERNAME" ]; then
-    echo "⚠️  MAIL_FROM_ADDRESS ($MAIL_FROM_ADDRESS) ≠ MAIL_USERNAME ($MAIL_USERNAME) — Gmail peut refuser l'envoi."
+    if [ -n "$MAIL_FROM_ADDRESS" ] && [ -n "$MAIL_USERNAME" ] && [ "$MAIL_FROM_ADDRESS" != "$MAIL_USERNAME" ]; then
+        echo "⚠️  MAIL_FROM_ADDRESS ($MAIL_FROM_ADDRESS) ≠ MAIL_USERNAME ($MAIL_USERNAME) — Gmail peut refuser l'envoi."
+    fi
 fi
 
 DB_DRIVER="${DB_CONNECTION:-sqlite}"
@@ -81,7 +93,14 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-if [ -n "$MAIL_USERNAME" ] && [ -n "$MAIL_PASSWORD" ]; then
+if [ "$MAIL_MAILER" = "resend" ] && [ -n "$RESEND_API_KEY" ]; then
+    echo "📧 Test Resend au démarrage..."
+    if php artisan blog:test-mail 2>&1; then
+        echo "✅ Resend OK"
+    else
+        echo "❌ Resend échec — vérifiez RESEND_API_KEY et MAIL_FROM_ADDRESS (@domaine vérifié)"
+    fi
+elif [ -n "$MAIL_USERNAME" ] && [ -n "$MAIL_PASSWORD" ]; then
     echo "📧 Test SMTP au démarrage..."
     if php artisan blog:test-mail "$MAIL_USERNAME" 2>&1; then
         echo "✅ SMTP OK"

@@ -95,13 +95,9 @@ $required = @(
 )
 
 $mail = @(
-    @{ Name = "MAIL_MAILER";        Value = "smtp";                              Critical = $true },
-    @{ Name = "MAIL_HOST";          Value = "smtp.gmail.com";                    Critical = $true },
-    @{ Name = "MAIL_PORT";          Value = "587";                               Critical = $true },
-    @{ Name = "MAIL_USERNAME";      Value = "kerphilesaint@gmail.com";           Critical = $true },
-    @{ Name = "MAIL_PASSWORD";      Value = "(mot de passe application Gmail)";   Critical = $true },
-    @{ Name = "MAIL_ENCRYPTION";   Value = "tls";                               Critical = $true },
-    @{ Name = "MAIL_FROM_ADDRESS";  Value = "kerphilesaint@gmail.com";           Critical = $true },
+    @{ Name = "MAIL_MAILER";        Value = "resend";                              Critical = $true },
+    @{ Name = "RESEND_API_KEY";     Value = "(cle API re_... depuis resend.com)"; Critical = $true },
+    @{ Name = "MAIL_FROM_ADDRESS";  Value = "contact@votredomaine.com (domaine verifie Resend)"; Critical = $true },
     @{ Name = "MAIL_FROM_NAME";     Value = "KerpheX Blog";                      Critical = $false }
 )
 
